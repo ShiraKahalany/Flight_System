@@ -5,7 +5,6 @@ class User:
     def __init__(self, username, password):
         self.username = username
         self.password = password
-        self.flights = {}  # Dictionary to hold <dateTime, flightInfo>
 
     def add_flight(self, flight_datetime, flight_info_part):
         if isinstance(flight_datetime, datetime) and isinstance(flight_info_part, FlightInfoPartial):
