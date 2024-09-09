@@ -1,0 +1,18 @@
+[
+  {
+    "ContainingType": "AppServer.API.ImageController",
+    "Method": "AnalyzeImage",
+    "RelativePath": "api/Image/analyze",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "imageUrl",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]
