@@ -9,6 +9,7 @@ builder.Services.AddHttpClient();  // This allows you to use HttpClient for exte
 
 // Register the custom service for Imagga API integration
 builder.Services.AddScoped<AppServer.Services.IImaggaService, AppServer.Services.ImaggaService>();
+builder.Services.AddScoped<IHebcalService, HebcalService>();
 
 var app = builder.Build();
 
@@ -32,8 +33,6 @@ app.MapRazorPages();
 // Add this line to map API endpoints
 app.MapControllers(); // This ensures that your API controllers (like ImageController) are accessible
 
-// Register Hebcal service
-builder.Services.AddScoped<IHebcalService, HebcalService>();
 
 app.Run();
 

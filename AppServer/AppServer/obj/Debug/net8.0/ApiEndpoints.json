@@ -1,5 +1,21 @@
 [
   {
+    "ContainingType": "AppServer.API.HebcalController",
+    "Method": "GetHebcalData",
+    "RelativePath": "api/Hebcal/checkdate",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "AppServer.Models.DateRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "AppServer.API.ImageController",
     "Method": "AnalyzeImage",
     "RelativePath": "api/Image/analyze",
