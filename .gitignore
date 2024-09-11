@@ -1,0 +1,26 @@
+# Compiled files
+*.dll
+*.exe
+*.pdb
+*.cache
+*.suo
+
+# Generated files
+*.cshtml.css
+*.csproj.user
+*.csproj.nuget.*
+AppServer.AssemblyInfo.cs
+AppServer.AssemblyInfoInputs.cache
+AppServer.assets.cache
+AppServer.csproj.AssemblyReference.cache
+AppServer.GeneratedMSBuildEditorConfig.editorconfig
+AppServer.genruntimeconfig.cache
+
+# Other
+appsettings.json
+appsettings.Development.json
+project.assets.json
+project.nuget.cache
+ApiEndpoints.json
+apphost.exe
+staticwebassets.*
