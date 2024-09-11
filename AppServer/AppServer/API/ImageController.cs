@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace AppServer.API
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/image")]
     public class ImageController : ControllerBase
     {
         private readonly IImaggaService _imaggaService;
