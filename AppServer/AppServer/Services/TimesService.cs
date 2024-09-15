@@ -7,7 +7,7 @@ namespace AppServer.Services
 {
     public interface IHebcalService
     {
-        Task<string> CheckDate(DateTime date);
+        Task<string> CheckDate(DateTime date, int choose);
 
     }
 
@@ -19,13 +19,21 @@ namespace AppServer.Services
         {
             _httpClient = httpClient;
         }
-        public async Task<string> CheckDate(DateTime date)
+        public async Task<string> CheckDate(DateTime date, int choose)
         {
+            string hebcalApiUrl;
             // Build the Hebcal API URL
-
-            string hebcalApiUrl = $"https://www.hebcal.com/shabbat?cfg=json&geonameid=293397&M=on&gy={date.Year}&gm={date.Month}&gd={date.Day}";
-
-
+            if (choose == 0)
+            {
+                //shabbat times
+                hebcalApiUrl = $"https://www.hebcal.com/shabbat?cfg=json&geonameid=293397&M=on&gy={date.Year}&gm={date.Month}&gd={date.Day}";
+            }
+            else
+            {
+                //hebrew date
+                string dateString = date.ToString("yyyy-MM-dd");
+                hebcalApiUrl = $"https://www.hebcal.com/converter?cfg=json&date={dateString}&g2h=1&strict=1";
+            }
             // Send the GET request to Hebcal API
             HttpResponseMessage response = await _httpClient.GetAsync(hebcalApiUrl);
 
