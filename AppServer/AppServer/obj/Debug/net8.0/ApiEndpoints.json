@@ -144,8 +144,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "imageUrl",
-        "Type": "System.String",
+        "Name": "request",
+        "Type": "AppServer.API.ImageController\u002BImageRequest",
         "IsRequired": true
       }
     ],

@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using AppServer.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 
 namespace AppServer.API
@@ -25,59 +26,83 @@ namespace AppServer.API
             if (request?.Date == null)
                 return BadRequest("Date is required.");
 
-            // Step 1: Fetch the full response from Hebcal API
-            var hebcalData = await _hebcalService.checkdate(request.Date);
-            var holidayData = await _hebcalService.checkHolyDay(request.Date);
-            // Step 2: Deserialize the JSON responses
+            // Step 1: Call the CheckDate function in the service to get the Hebcal data
+            var hebcalData = await _hebcalService.CheckDate(request.Date);
+
+            // Step 2: Deserialize the JSON response
             var jsonData = JsonConvert.DeserializeObject<dynamic>(hebcalData);
-            var jsonData2 = JsonConvert.DeserializeObject<dynamic>(holidayData);
+
             if (jsonData == null)
                 return BadRequest("Invalid data from Hebcal API.");
-            if (jsonData2 == null)
-                return BadRequest("Invalid data from Hebcal API.");
-            return Ok(holidayData);
-            // Step 3: Extract the required fields from the JSON
+
+            // Step 3: Extract the relevant fields from the JSON
             string parsha = null;
+            string hebrewDate = null;
             string candleLighting = null;
             string havdalah = null;
-            string hebrewDate = null;
 
-            // Loop through the "items" to find Parsha, Candle lighting, and Havdalah
-            foreach (var item in jsonData["items"])
+            // Cast jsonData["items"] to a JArray to handle it as a strongly typed collection
+            JArray itemsArray = jsonData["items"] as JArray;
+
+            DateTime nextShabbatStart = DateTime.MinValue;
+            DateTime nextShabbatEnd = DateTime.MinValue;
+
+            if (itemsArray != null)
             {
-                string category = item["category"];
-                if (category == "candles")
+                // Loop through the items to find relevant data
+                foreach (var item in itemsArray)
                 {
-                    candleLighting = item["title"]; // Candle lighting time
-                }
-                else if (category == "parashat")
-                {
-                    parsha = item["hebrew"]; // Parashat Ki Teitzei in Hebrew
-                    hebrewDate = item["hdate"]; // Hebrew date, e.g., 11 Elul 5784
-                }
-                else if (category == "havdalah")
-                {
-                    havdalah = item["title"]; // Havdalah time
+                    string title = (string)item["title"];
+
+                    // Check for candle lighting time
+                    if (title.Contains("Candle lighting:"))
+                    {
+                        candleLighting = title; // Candle lighting time (Shabbat start)
+                        if (DateTime.TryParse((string)item["date"], out DateTime parsedDateStart))
+                        {
+                            nextShabbatStart = parsedDateStart;
+                        }
+                    }
+                    // Check for Havdalah time
+                    else if (title.Contains("Havdalah:"))
+                    {
+                        havdalah = title; // Havdalah time (Shabbat end)
+                        if (DateTime.TryParse((string)item["date"], out DateTime parsedDateEnd))
+                        {
+                            nextShabbatEnd = parsedDateEnd;
+                        }
+                    }
+                    // Check for Parasha information
+                    else if (title.Contains("Parashat"))
+                    {
+                        parsha = (string)item["hebrew"]; // Parasha name
+                        hebrewDate = item["hdate"] != null ? (string)item["hdate"] : null; // Hebrew date, e.g., "18 Elul 5784"
+                    }
                 }
             }
 
-            // Step 4: Create a new MyDate object
+            // Step 5: Create a new MyDate object with the extracted information
             MyDate myDate = new MyDate(
-            hebrewDate: hebrewDate,
-            gregorianDate: request.Date,
-            dayOfWeek: request.Date.DayOfWeek,
-            parsha: parsha,
-            isHoliday: false,  // Assuming no holiday data in this case
-            nextShabbatStart: candleLighting != null ? DateTime.Parse(jsonData["items"][0]["date"].ToString()) : DateTime.MinValue,
-            nextShabbatEnd: havdalah != null ? DateTime.Parse(jsonData["items"][2]["date"].ToString()) : DateTime.MinValue,
-             holidayStart: null,
-            holidayEnd: null
-        );
+                hebrewDate: hebrewDate,
+                gregorianDate: request.Date,
+                dayOfWeek: request.Date.DayOfWeek,
+                parsha: parsha,
+                isHoliday: false, // Not handling holidays for now
+                holidayName: null, // No holiday handling
+                nextShabbatStart: nextShabbatStart, // Candle lighting time
+                nextShabbatEnd: nextShabbatEnd,     // Havdalah time
+                holidayStart: null,                 // No holiday
+                holidayEnd: null                    // No holiday
+            );
 
-
-            // Step 5: Return the newly created MyDate object
+            // Step 6: Return the populated MyDate object
             return Ok(myDate);
         }
+
+
+
+
+
 
 
     }
