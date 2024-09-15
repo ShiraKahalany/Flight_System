@@ -3,6 +3,7 @@ from dal.interfaces.iuser_dal import IUserDAL
 from dal.interfaces.iflight_dal import IFlightDAL
 from dal.interfaces.iaircraft_dal import IAircraftDAL
 from dal.interfaces.iticket_dal import ITicketDAL
+from dal.interfaces.idate_details_dal import IDateDetailsDAL
 
 class IDAL(ABC):
     @property
@@ -20,8 +21,12 @@ class IDAL(ABC):
     def Aircraft(self) -> IAircraftDAL:
         pass
 
-
     @property
     @abstractmethod
     def Ticket(self) -> ITicketDAL:
+        pass
+
+    @property
+    @abstractmethod
+    def DateType(self) -> IDateDetailsDAL:
         pass

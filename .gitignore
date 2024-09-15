@@ -4,6 +4,8 @@
 *.pdb
 *.cache
 *.suo
+*.json
+*.csproj.nuget.g.props
 
 # Generated files
 *.cshtml.css
@@ -52,4 +54,3 @@ staticwebassets.*
 /AppServer/AppServer/obj/Debug/net8.0/apphost.exe
 /AppServer/.vs/AppServer/v17/DocumentLayout.backup.json
 /AppServer/.vs/AppServer/FileContentIndex/afa347f8-9405-4ec4-9313-74a4837a32e1.vsidx
-/AppServer/.vs/AppServer/FileContentIndex/586ca867-1e0c-4a84-8bf8-185eb31af597.vsidx

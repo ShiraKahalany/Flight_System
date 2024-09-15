@@ -3,6 +3,7 @@ from dal.implementations.user_dal import UserDAL
 from dal.implementations.flight_dal import FlightDAL
 from dal.implementations.aircraft_dal import AircraftDAL
 from dal.implementations.ticket_dal import TicketDAL
+from dal.implementations.date_details_dal import DateDetailsDAL
 from dal.api_client import APIClient
 
 class DALImpl(IDAL):
@@ -28,3 +29,7 @@ class DALImpl(IDAL):
     @property
     def Ticket(self) -> TicketDAL:
         return self._ticket
+    
+    @property
+    def DateDetails(self) -> DateDetailsDAL:
+        return self._date_details
