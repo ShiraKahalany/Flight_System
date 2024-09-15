@@ -24,3 +24,15 @@ project.nuget.cache
 ApiEndpoints.json
 apphost.exe
 staticwebassets.*
+/AppServer/AppServer/obj/project.nuget.cache
+/AppServer/AppServer/obj/project.assets.json
+/AppServer/AppServer/obj/Debug/net8.0/AppServer.assets.cache
+/AppServer/AppServer/obj/Debug/net8.0/AppServer.GeneratedMSBuildEditorConfig.editorconfig
+/AppServer/AppServer/obj/Debug/net8.0/AppServer.AssemblyInfo.cs
+/AppServer/AppServer/obj/Debug/net8.0/AppServer.AssemblyInfoInputs.cache
+/AppServer/.vs/AppServer/FileContentIndex/eaa8d8d9-2d3a-4aa5-931a-c64722ab531b.vsidx
+/AppServer/AppServer/obj/AppServer.csproj.nuget.dgspec.json
+/AppServer/.vs/AppServer/FileContentIndex/af453fa0-e454-4961-a28c-2db46ab88c1f.vsidx
+/AppServer/.vs/AppServer/FileContentIndex/4af5ee1b-7887-4c4b-8eea-00bbdfa50196.vsidx
+/.vs/Flight_System/v17/.wsuo
+/.vs/Flight_System/v17/DocumentLayout.json
