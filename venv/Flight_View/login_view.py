@@ -1,9 +1,9 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton
-from mock_data import users
 
 class LoginView(QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self, controller):
+        super().__init__()
+        self.controller = controller
         layout = QVBoxLayout()
 
         self.label = QLabel("Login", self)
@@ -19,7 +19,7 @@ class LoginView(QWidget):
         layout.addWidget(self.password_input)
 
         self.login_button = QPushButton("Login", self)
-        self.login_button.clicked.connect(self.login)
+        self.login_button.clicked.connect(self.login)  # Logic in controller
         layout.addWidget(self.login_button)
 
         self.setLayout(layout)
@@ -27,12 +27,7 @@ class LoginView(QWidget):
     def login(self):
         username = self.username_input.text()
         password = self.password_input.text()
+        self.controller.login(username, password)  # Delegate logic to controller
 
-        for user in users:
-            if user['username'] == username and user['password_hash'] == password:
-                if user['role'] == 'admin':
-                    self.parent().show_admin_dashboard(user)
-                else:
-                    self.parent().show_passenger_dashboard(user)
-                return
-        self.label.setText("Login failed. Try again.")
+    def show_error(self, message):
+        self.label.setText(message)
