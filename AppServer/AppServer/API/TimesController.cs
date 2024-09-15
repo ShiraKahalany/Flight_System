@@ -28,7 +28,7 @@ namespace AppServer.API
             // Step 1: Fetch the full response from Hebcal API
             var hebcalData = await _hebcalService.checkdate(request.Date);
             var holidayData = await _hebcalService.checkHolyDay(request.Date);
-            // Step 2: Deserialize the JSON response
+            // Step 2: Deserialize the JSON responses
             var jsonData = JsonConvert.DeserializeObject<dynamic>(hebcalData);
             var jsonData2 = JsonConvert.DeserializeObject<dynamic>(holidayData);
             if (jsonData == null)

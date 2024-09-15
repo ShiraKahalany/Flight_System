@@ -24,7 +24,7 @@ namespace AppServer.Services
 
 
             // Send the GET request to Hebcal API
-            HttpResponseMessage response = await _httpClient.GetAsync(hebcalApiUrl);
+            HttpResponseMessage response = await _httpClient.GetAsync(hebcalApiUrl); 
 
             // Check if the response was successful
             if (response.IsSuccessStatusCode)
