@@ -1,0 +1,7 @@
+
+/etc/default/isc-dhcp-server
+
+
+
+workstation id=TSH_FlightDB.mssql.somee.com;packet size=4096;user id=tamar_SQLLogin_2;pwd=qzesmjd7bu;data source=TSH_FlightDB.mssql.somee.com;persist security info=False;initial catalog=TSH_FlightDB;TrustServerCertificate=True
+
