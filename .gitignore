@@ -4,6 +4,7 @@
 *.pdb
 *.cache
 *.suo
+*.json
 
 # Generated files
 *.cshtml.css
