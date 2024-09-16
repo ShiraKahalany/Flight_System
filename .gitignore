@@ -68,3 +68,4 @@ AppServer/.vs/AppServer/FileContentIndex/329561a5-bfc4-44d8-8cc6-0a4cb3e9ba00.vs
 AppServer/AppServer/obj/AppServer.csproj.nuget.g.props
 AppServer/AppServer/obj/Debug/net8.0/AppServer.csproj.AssemblyReference.cache
 venv/models/__pycache__/user.cpython-311.pyc
+AppServer/.vs/AppServer/DesignTimeBuild/.dtbcache.v2
