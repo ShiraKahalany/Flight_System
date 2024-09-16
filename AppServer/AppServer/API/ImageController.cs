@@ -2,6 +2,7 @@
 using AppServer.Services;
 using System.Threading.Tasks;
 
+
 namespace AppServer.API
 {
     [ApiController]
@@ -16,18 +17,24 @@ namespace AppServer.API
         }
 
         // Accepts an image URL in the request body
-        [HttpPost("analyze")]
-        public async Task<IActionResult> AnalyzeImage([FromBody] string imageUrl)
+        public class ImageRequest
         {
-            if (string.IsNullOrEmpty(imageUrl))
+            public string ImageUrl { get; set; }
+        }
+
+        [HttpPost("analyze")]
+        public async Task<IActionResult> AnalyzeImage([FromBody] ImageRequest request)
+        {
+            if (string.IsNullOrEmpty(request.ImageUrl))
                 return BadRequest("Image URL is required.");
 
-            var result = await _imaggaService.AnalyzeImage(imageUrl);
+            var result = await _imaggaService.AnalyzeImage(request.ImageUrl);
 
             if (result == null)
                 return StatusCode(500, "Error communicating with Imagga.");
 
             return Ok(result);
         }
+
     }
 }

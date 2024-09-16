@@ -1,6 +1,8 @@
 ﻿using System.Text;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+
 
 namespace AppServer.Services
 {
@@ -43,7 +45,18 @@ namespace AppServer.Services
             {
                 // Read the response content as a string
                 string jsonResponse = await response.Content.ReadAsStringAsync();
-                return jsonResponse;
+
+                //create json
+                var json = JObject.Parse(jsonResponse);
+
+                // Extract the tags from the JSON response
+                var tags = json["result"]["tags"]
+                    .Select(t => t["tag"]["en"].ToString()) // Extract only the 'en' tag values
+                    .ToList();
+
+                // Join the tags into a space-separated string
+                string tagsString = string.Join("\n", tags);
+                return tagsString;
             }
             else
             {

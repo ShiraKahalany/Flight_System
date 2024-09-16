@@ -61,11 +61,7 @@ staticwebassets.*
 /AppServer/AppServer/obj/Debug/net8.0/apphost.exe
 /AppServer/.vs/AppServer/v17/DocumentLayout.backup.json
 /AppServer/.vs/AppServer/FileContentIndex/afa347f8-9405-4ec4-9313-74a4837a32e1.vsidx
-AppServer/.vs/AppServer/FileContentIndex/f3ffe1d4-f1a9-4aa9-b319-7f4c5fb8e909.vsidx
-AppServer/AppServer/obj/AppServer.csproj.nuget.g.props
-AppServer/AppServer/obj/Debug/net8.0/AppServer.csproj.AssemblyReference.cache
-AppServer/.vs/AppServer/FileContentIndex/329561a5-bfc4-44d8-8cc6-0a4cb3e9ba00.vsidx
-AppServer/AppServer/obj/AppServer.csproj.nuget.g.props
-AppServer/AppServer/obj/Debug/net8.0/AppServer.csproj.AssemblyReference.cache
+/AppServer/.vs/AppServer/FileContentIndex/586ca867-1e0c-4a84-8bf8-185eb31af597.vsidx
+/AppServer/.vs/AppServer/FileContentIndex/c8ab8694-51a7-4a6c-9dbb-63a4811b4b93.vsidx
 venv/models/__pycache__/user.cpython-311.pyc
 AppServer/.vs/AppServer/DesignTimeBuild/.dtbcache.v2
