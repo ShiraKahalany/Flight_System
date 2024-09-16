@@ -1,6 +1,8 @@
+#from ..interfaces.iuser_dal import IUserDAL
 from dal.interfaces.iuser_dal import IUserDAL
 from models.user import User
 from models.flight import Flight
+#import IUserDAL from interfaces.iuser_dal
 
 class UserDAL(IUserDAL):
     def __init__(self, api_client):

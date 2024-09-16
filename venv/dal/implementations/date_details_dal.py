@@ -1,11 +1,10 @@
 
 from dal.interfaces.idal import IDateDetailsDAL
 from models.hebrew_times import DateDetails
-from dal.api_client import APIClient
 from datetime import datetime
 
 class DateDetailsDAL(IDateDetailsDAL):
-    def __init__(self, api_client: APIClient):
+    def __init__(self, api_client):
         self.api_client = api_client
 
     def get_date_details(self, date: datetime, location: str) -> DateDetails:

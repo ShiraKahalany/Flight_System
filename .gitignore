@@ -7,6 +7,13 @@
 *.json
 *.csproj.nuget.g.props
 
+#all cpython files
+__pycache__/
+*.pyc
+
+#all csproj files
+*.csproj.*
+
 # Generated files
 *.cshtml.css
 *.csproj.user
@@ -60,3 +67,4 @@ AppServer/AppServer/obj/Debug/net8.0/AppServer.csproj.AssemblyReference.cache
 AppServer/.vs/AppServer/FileContentIndex/329561a5-bfc4-44d8-8cc6-0a4cb3e9ba00.vsidx
 AppServer/AppServer/obj/AppServer.csproj.nuget.g.props
 AppServer/AppServer/obj/Debug/net8.0/AppServer.csproj.AssemblyReference.cache
+venv/models/__pycache__/user.cpython-311.pyc

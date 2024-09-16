@@ -1,5 +1,4 @@
 import requests
-from .dal_impl import DALImpl
 from config import API_BASE_URL
 
 class APIClient:
@@ -11,10 +10,21 @@ class APIClient:
         response.raise_for_status()
         return response.json()
 
+    #def post(self, endpoint, data):
+        # headers = {'Content-Type': 'application/json'}
+        # response = requests.post(f"{self.base_url}/{endpoint}", json=data, headers=headers)
+        # response.raise_for_status()
+        # return response.json()
     def post(self, endpoint, data):
-        response = requests.post(f"{self.base_url}/{endpoint}", json=data)
+        url = f"{self.base_url}/{endpoint}"
+        headers = {'Content-Type': 'application/json'}
+        print(f"Sending POST request to {url}")
+        print(f"Headers: {headers}")
+        print(f"Data: {data}")
+        response = requests.post(url, json=data, headers=headers)
         response.raise_for_status()
         return response.json()
+
 
     def put(self, endpoint, data):
         response = requests.put(f"{self.base_url}/{endpoint}", json=data)
