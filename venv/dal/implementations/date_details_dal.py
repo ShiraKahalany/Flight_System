@@ -1,17 +1,16 @@
 
 from dal.interfaces.idal import IDateDetailsDAL
 from models.hebrew_times import DateDetails
-from dal.api_client import APIClient
 from datetime import datetime
 
 class DateDetailsDAL(IDateDetailsDAL):
-    def __init__(self, api_client: APIClient):
+    def __init__(self, api_client):
         self.api_client = api_client
 
     def get_date_details(self, date: datetime, location: str) -> DateDetails:
         response = self.api_client.get(
-            "date_type_info",
-            params={"date": date.isoformat(), "location": location}
+            "times/checkdate",
+            data={"date": date.isoformat(), "location": location}
         )
         return DateDetails(
             gregorian_date=datetime.fromisoformat(response['gregorian_date']),

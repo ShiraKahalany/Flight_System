@@ -1,5 +1,5 @@
-from dal.interfaces.idal import IDAL
-from dal.dal_impl import DALImpl
+from interfaces.idal import IDAL
+from dal_impl import DALImpl
 
 class DALFactory:
     _instance = None

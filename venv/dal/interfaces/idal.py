@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
-from dal.interfaces.iuser_dal import IUserDAL
-from dal.interfaces.iflight_dal import IFlightDAL
-from dal.interfaces.iaircraft_dal import IAircraftDAL
-from dal.interfaces.iticket_dal import ITicketDAL
-from dal.interfaces.idate_details_dal import IDateDetailsDAL
+from .iuser_dal import IUserDAL
+from .iflight_dal import IFlightDAL
+from .iaircraft_dal import IAircraftDAL
+from .iticket_dal import ITicketDAL
+from .idate_details_dal import IDateDetailsDAL
+from .iimage_recognition_dal import IImageRecognitionDAL
 
 class IDAL(ABC):
     @property
@@ -28,5 +29,10 @@ class IDAL(ABC):
 
     @property
     @abstractmethod
-    def DateType(self) -> IDateDetailsDAL:
+    def DateDetails(self) -> IDateDetailsDAL:
+        pass
+
+    @property
+    @abstractmethod
+    def ImageRecognition(self) -> IImageRecognitionDAL:
         pass
