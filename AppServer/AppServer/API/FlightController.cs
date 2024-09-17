@@ -18,7 +18,7 @@ public class FlightController : ControllerBase
     public async Task<IActionResult> PostFlight([FromBody] Flight flight)
     {
         await _flightService.AddFlightAsync(flight);
-        return Ok("Flight successfully added");
+        return Ok(flight);
     }
 
     // DELETE: api/flight/delete/{id}
