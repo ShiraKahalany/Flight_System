@@ -17,7 +17,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> PostUser([FromBody] User user)
     {
         await _userService.AddUserAsync(user);
-        return Ok("User successfully added");
+        return Ok(user);
     }
 
     // DELETE: api/user/delete/{id}

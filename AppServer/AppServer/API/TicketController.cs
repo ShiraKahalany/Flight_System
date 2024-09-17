@@ -17,7 +17,7 @@ public class TicketController : ControllerBase
     public async Task<IActionResult> AddTicket([FromBody] Ticket ticket)
     {
         await _ticketService.AddTicketAsync(ticket);
-        return Ok("Ticket successfully added");
+        return Ok(ticket);
     }
 
     // DELETE: api/ticket/delete/{id}
