@@ -9,14 +9,16 @@ class LoginController:
         self.login_view = LoginView(self)
 
     def login(self, username, password):
-        user = next((u for u in users if u['username'] == username and u['password_hash'] == password), None)
+        user = next((u for u in users if u.username == username and u.password == password), None)
         if user:
-            if user['role'] == 'admin':
+            self.passenger_controller.current_user_id = user.id  # Set the current user in passenger controller
+            if user.role == 'admin':
                 self.admin_controller.show_admin_view()
             else:
-                self.passenger_controller.show_passenger_view()
+                self.passenger_controller.show_passenger_view()  # No need to pass the user object
         else:
             self.login_view.show_error("Invalid username or password")
+
 
     def show_login(self):
         self.main_controller.set_view(self.login_view)  # Set the login view in the main window
