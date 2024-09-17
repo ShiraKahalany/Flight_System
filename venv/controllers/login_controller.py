@@ -1,8 +1,9 @@
 from Flight_View.login_view import LoginView
 from Flight_View.mock_data import users
+from dal.interfaces.idal import IDAL
 
 class LoginController:
-    def __init__(self, main_controller, admin_controller, passenger_controller):
+    def __init__(self, main_controller, admin_controller, passenger_controller, dal: IDAL):
         self.main_controller = main_controller
         self.admin_controller = admin_controller
         self.passenger_controller = passenger_controller

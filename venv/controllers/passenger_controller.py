@@ -10,9 +10,11 @@ from models.aircraft import Aircraft  # Ensure you import the Aircraft model
 from datetime import datetime, timedelta
 from models.ticket import Ticket
 from Flight_View.my_flights_view import MyFlightsView
+from dal.interfaces.idal import IDAL
+
 
 class PassengerController:
-    def __init__(self, main_controller):
+    def __init__(self, main_controller, dal: IDAL):
         self.main_controller = main_controller
         self.passenger_view = None
         self.current_user_id = None  # Set this when the user logs in

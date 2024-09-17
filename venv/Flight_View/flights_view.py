@@ -2,7 +2,7 @@ import requests  # For downloading images from the internet
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, QPushButton, QLabel
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt
-from mock_data import flights, aircrafts
+from Flight_View.mock_data import flights, aircrafts
 
 class FlightsView(QWidget):
     def __init__(self, controller=None):

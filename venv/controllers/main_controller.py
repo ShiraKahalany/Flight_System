@@ -7,11 +7,11 @@ class MainController:
     def __init__(self, dal: IDAL):
         self.dal = dal
         self.main_window = None
-        self.admin_controller = AdminController(self)
-        self.passenger_controller = PassengerController(self)
+        self.admin_controller = AdminController(self, dal)
+        self.passenger_controller = PassengerController(self, dal)
 
         # Pass both admin_controller and passenger_controller to LoginController
-        self.login_controller = LoginController(self, self.admin_controller, self.passenger_controller)
+        self.login_controller = LoginController(self, self.admin_controller, self.passenger_controller, dal)
 
     def show_main_window(self):
         # self.main_window = MainWindow(self)
