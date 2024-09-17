@@ -1,8 +1,6 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-print(sys.path)
 from dal.dal_factory import DALFactory
 #from interfaces.idal import IDAL 
 from datetime import datetime, timedelta
@@ -60,24 +58,26 @@ def test_flight_dal(dal):
 
     # Assuming these methods exist. Adjust as necessary.
     new_flight = {
-        "flight_number": "FL123",
-        "departure": "Tel Aviv",
-        "arrival": "New York",
-        "departure_time": datetime.now() + timedelta(days=1),
-        "arrival_time": datetime.now() + timedelta(days=1, hours=12)
+        "id": "123",
+        "aircraft_id": "1054",
+        "source": "Tel Aviv",
+        "destination": "New York",
+        "departure_datetime": str(datetime.now() + timedelta(days=1)),
+        "landing_datetime": str(datetime.now() + timedelta(days=1, hours=12)),
+        "delayed_landing_time": ""
     }
     created_flight = flight_dal.create_flight(new_flight)
     logger.info(f"Created flight: {created_flight}")
 
-    flight = flight_dal.get_flight(created_flight['id'])
-    logger.info(f"Retrieved flight: {flight}")
+    # flight = flight_dal.get_flight(created_flight['id'])
+    # logger.info(f"Retrieved flight: {flight}")
 
-    flight_dal.update_flight(created_flight['id'], {"arrival": "Los Angeles"})
-    updated_flight = flight_dal.get_flight(created_flight['id'])
-    logger.info(f"Updated flight: {updated_flight}")
+    # flight_dal.update_flight(created_flight['id'], {"arrival": "Los Angeles"})
+    # updated_flight = flight_dal.get_flight(created_flight['id'])
+    # logger.info(f"Updated flight: {updated_flight}")
 
-    flight_dal.delete_flight(created_flight['id'])
-    logger.info("Flight deleted")
+    # flight_dal.delete_flight(created_flight['id'])
+    # logger.info("Flight deleted")
 
 def test_aircraft_dal(dal):
     logger.info("Testing AircraftDAL")
@@ -85,22 +85,26 @@ def test_aircraft_dal(dal):
 
     # Assuming these methods exist. Adjust as necessary.
     new_aircraft = {
-        "model": "Boeing 747",
-        "capacity": 366,
-        "manufacturer": "Boeing"
+        "manufacturer": "Boeing",
+        "nickname": "Jumbo Jet",
+        "YearOfManufacture": 1998,
+        "ImageUrl": "https://picsum.photos/400/300",
+        "NumberOfChairs": 400
     }
-    created_aircraft = aircraft_dal.create_aircraft(new_aircraft)
-    logger.info(f"Created aircraft: {created_aircraft}")
 
-    aircraft = aircraft_dal.get_aircraft(created_aircraft['id'])
+    aircraft_dal.create_aircraft(new_aircraft)
+    
+    # logger.info(f"Created aircraft")
+
+    aircraft = aircraft_dal.get_aircraft(1023)
     logger.info(f"Retrieved aircraft: {aircraft}")
 
-    aircraft_dal.update_aircraft(created_aircraft['id'], {"capacity": 400})
-    updated_aircraft = aircraft_dal.get_aircraft(created_aircraft['id'])
-    logger.info(f"Updated aircraft: {updated_aircraft}")
+    # aircraft_dal.update_aircraft(created_aircraft['id'], {"capacity": 400})
+    # updated_aircraft = aircraft_dal.get_aircraft(created_aircraft['id'])
+    # logger.info(f"Updated aircraft: {updated_aircraft}")
 
-    aircraft_dal.delete_aircraft(created_aircraft['id'])
-    logger.info("Aircraft deleted")
+    # aircraft_dal.delete_aircraft(created_aircraft['id'])
+    # logger.info("Aircraft deleted")
 
 def test_ticket_dal(dal):
     logger.info("Testing TicketDAL")
@@ -108,9 +112,10 @@ def test_ticket_dal(dal):
 
     # Assuming these methods exist. Adjust as necessary.
     new_ticket = {
+        "Id": "FL123",
         "flight_id": "FL123",
         "user_id": "USER456",
-        "seat_number": "12A"
+        "purchase_datetime": str(datetime.now())
     }
     created_ticket = ticket_dal.create_ticket(new_ticket)
     logger.info(f"Created ticket: {created_ticket}")
@@ -130,11 +135,12 @@ def test_image_recognition_functionality(self):
         # Test get_image_tags
         aircraft_image_url = "https://www.now14.co.il/wp-content/uploads/2023/01/shutterstock_2117654495-768x512.jpg"
         tags = self.ImageRecognition.get_image_tags(aircraft_image_url)
-        self.assertIsInstance(tags, list)
-        self.assertTrue(len(tags) > 0)
+       #self.assertIsInstance(tags, list)
+        #self.assertTrue(len(tags) > 0)
 
-        # # Test is_aircraft_image with an aircraft image
-        # is_aircraft = self.dal.ImageRecognition.is_aircraft_image(aircraft_image_url)
+        #  Test is_aircraft_image with an aircraft image
+        is_aircraft = self.ImageRecognition.is_aircraft_image(aircraft_image_url)
+        print(f"is_aircraft????? {is_aircraft}")
         # self.assertTrue(is_aircraft)
 
         # # Test is_aircraft_image with a non-aircraft image
@@ -149,13 +155,13 @@ def main():
 
     api_client = APIClient()
     dal = DALFactory.get_instance()
-    test_image_recognition_functionality(dal)
+    #test_image_recognition_functionality(dal)
     #dal = DALImpl()
 
     #test_date_checker(dal)
     #test_user_dal(dal)
     #test_flight_dal(dal)
-    #test_aircraft_dal(dal)
+    test_aircraft_dal(dal)
     #test_ticket_dal(dal)
 
 

@@ -9,8 +9,8 @@ class DateDetailsDAL(IDateDetailsDAL):
 
     def get_date_details(self, date: datetime, location: str) -> DateDetails:
         response = self.api_client.get(
-            "date_type_info",
-            params={"date": date.isoformat(), "location": location}
+            "times/checkdate",
+            data={"date": date.isoformat(), "location": location}
         )
         return DateDetails(
             gregorian_date=datetime.fromisoformat(response['gregorian_date']),

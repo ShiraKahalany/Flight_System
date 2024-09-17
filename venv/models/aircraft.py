@@ -5,3 +5,5 @@ class Aircraft:
         self.nickname = nickname
         self.year_of_manufacture = year_of_manufacture
         self.image_url = image_url
+
+        

@@ -8,33 +8,23 @@ class APIClient:
     def get(self, endpoint, params=None):
         response = requests.get(f"{self.base_url}/{endpoint}", params=params)
         response.raise_for_status()
-        return response.json()
+        return response
 
-    #def post(self, endpoint, data):
-        # headers = {'Content-Type': 'application/json'}
-        # response = requests.post(f"{self.base_url}/{endpoint}", json=data, headers=headers)
-        # response.raise_for_status()
-        # return response.json()
     def post(self, endpoint, data):
-        url = f"{self.base_url}/{endpoint}"
-        headers = {'Content-Type': 'application/json'}
-        print(f"Sending POST request to {url}")
-        print(f"Headers: {headers}")
-        print(f"Data: {data}")
-        response = requests.post(url, json=data, headers=headers)
+        response = requests.post(f"{self.base_url}/{endpoint}", json=data)
         response.raise_for_status()
-        return response.json()
+        return response
 
 
     def put(self, endpoint, data):
         response = requests.put(f"{self.base_url}/{endpoint}", json=data)
         response.raise_for_status()
-        return response.json()
+        return response
 
     def delete(self, endpoint):
         response = requests.delete(f"{self.base_url}/{endpoint}")
         response.raise_for_status()
-        return response.json()
+        return response
 
 
 
