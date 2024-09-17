@@ -1,14 +1,15 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QLineEdit, QPushButton
-from mock_data import aircrafts
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QLineEdit, QPushButton, QLabel
 
 class AddAircraftView(QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self, controller=None):
+        super().__init__()
+        self.controller = controller  # Reference to the AdminController
         layout = QVBoxLayout()
 
         # "Go Back" Button
         self.back_button = QPushButton("← Go Back", self)
-        self.back_button.clicked.connect(self.parent().go_back)
+        self.back_button.setStyleSheet("background-color: #3498db; color: white; padding: 10px; border-radius: 5px;")
+        self.back_button.clicked.connect(self.controller.go_back)
         layout.addWidget(self.back_button)
 
         # Create a form for adding new aircraft
@@ -27,19 +28,27 @@ class AddAircraftView(QWidget):
 
         # Submit button
         self.submit_button = QPushButton("Add Aircraft", self)
-        self.submit_button.clicked.connect(self.add_aircraft)
+        self.submit_button.setStyleSheet("background-color: #27ae60; color: white; padding: 10px;")
+        self.submit_button.clicked.connect(self.submit_aircraft)
         layout.addWidget(self.submit_button)
+
+        # Message label for errors or success
+        self.message_label = QLabel("")
+        layout.addWidget(self.message_label)
 
         self.setLayout(layout)
 
-    def add_aircraft(self):
-        # Logic to add a new aircraft to mock_data (simulated here)
-        new_aircraft = {
-            'id': len(aircrafts) + 1,
-            'manufacturer': self.manufacturer_input.text(),
-            'nickname': self.nickname_input.text(),
-            'year_of_manufacture': int(self.year_input.text()),
-            'image_url': self.image_url_input.text()
-        }
-        aircrafts.append(new_aircraft)
-        print("New aircraft added:", new_aircraft)
+    def submit_aircraft(self):
+        """Handle the submission of the aircraft form."""
+        manufacturer = self.manufacturer_input.text().strip()
+        nickname = self.nickname_input.text().strip()
+        year_of_manufacture = self.year_input.text().strip()
+        image_url = self.image_url_input.text().strip()
+
+        if not manufacturer or not nickname or not year_of_manufacture or not image_url:
+            self.message_label.setText("All fields are required.")
+            self.message_label.setStyleSheet("color: red;")
+            return
+
+        # Pass the aircraft data to the controller to save
+        self.controller.save_aircraft(manufacturer, nickname, year_of_manufacture, image_url)
