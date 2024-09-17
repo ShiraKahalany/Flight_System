@@ -13,16 +13,19 @@ public class MyDate
 
     public bool IsHoliday { get; set; }
 
+    public string HolidayName { get; set; }
+
     public DateTime NextShabbatStart { get; set; }
 
     public DateTime NextShabbatEnd { get; set; }
+
 
     public DateTime? HolidayStart { get; set; }
 
     public DateTime? HolidayEnd { get; set; }
 
     // Constructor
-    public MyDate(string hebrewDate, DateTime gregorianDate, DayOfWeek dayOfWeek, string parsha, bool isHoliday,
+    public MyDate(string hebrewDate, DateTime gregorianDate, DayOfWeek dayOfWeek, string parsha, bool isHoliday,string holidayName,
                   DateTime nextShabbatStart, DateTime nextShabbatEnd, DateTime? holidayStart = null, DateTime? holidayEnd = null)
     {
         HebrewDate = hebrewDate;
@@ -30,6 +33,7 @@ public class MyDate
         DayOfWeek = dayOfWeek;
         Parsha = parsha;
         IsHoliday = isHoliday;
+        HolidayName = HolidayName;
         NextShabbatStart = nextShabbatStart;
         NextShabbatEnd = nextShabbatEnd;
         HolidayStart = holidayStart;
