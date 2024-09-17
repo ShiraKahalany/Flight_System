@@ -14,7 +14,7 @@ __pycache__/
 #all csproj files
 *.csproj.*
 .dtbcache.v2
-
+*.pyc
 # Generated files
 *.cshtml.css
 *.csproj.user
@@ -80,3 +80,13 @@ venv/Flight_View/__pycache__/mock_data.cpython-311.pyc
 venv/Flight_View/__pycache__/my_flights_view.cpython-311.pyc
 venv/Flight_View/__pycache__/passenger_view.cpython-311.pyc
 venv/models/__pycache__/flight.cpython-311.pyc
+AppServer/.vs/AppServer/DesignTimeBuild/.dtbcache.v2
+AppServer/AppServer/obj/Debug/net8.0/AppServer.csproj.CoreCompileInputs.cache
+AppServer/AppServer/obj/Debug/net8.0/AppServer.csproj.CoreCompileInputs.cache
+venv/models/__pycache__/user.cpython-311.pyc
+venv/models/__pycache__/user.cpython-311.pyc
+venv/models/__pycache__/ticket.cpython-311.pyc
+venv/models/__pycache__/aircraft.cpython-311.pyc
+AppServer/.vs/AppServer/DesignTimeBuild/.dtbcache.v2
+venv/Flight_View/__pycache__/flights_view.cpython-311.pyc
+venv/Flight_View/__pycache__/mock_data.cpython-311.pyc
