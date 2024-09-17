@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QMessageBox
 from Flight_View.manager_view import ManagerView
 from Flight_View.add_aircraft_view import AddAircraftView
 from Flight_View.mock_data import aircrafts
-from models.aircraft import Aircraft  # Import the Aircraft class
+from models.aircraft import Aircraft
 
 class AdminController:
     def __init__(self, main_controller):
@@ -34,6 +34,7 @@ class AdminController:
                 year_of_manufacture=year,
                 image_url=image_url
             )
+
 
             # Add the aircraft to the mock data
             aircrafts.append(new_aircraft)
