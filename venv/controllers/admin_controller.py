@@ -2,11 +2,13 @@ from PySide6.QtWidgets import QMessageBox
 from Flight_View.manager_view import ManagerView
 from Flight_View.add_aircraft_view import AddAircraftView
 from Flight_View.mock_data import aircrafts
-from models.aircraft import Aircraft  # Import the Aircraft class
+from models.aircraft import Aircraft
+from dal.interfaces.idal import IDAL
 
 class AdminController:
-    def __init__(self, main_controller):
+    def __init__(self, main_controller, dal: IDAL):
         self.main_controller = main_controller
+        self.dal=dal
 
     def show_admin_view(self):
         # Recreate ManagerView each time it's needed
@@ -28,12 +30,23 @@ class AdminController:
             year = int(year_of_manufacture)
 
             # Create new aircraft object
-            new_aircraft = Aircraft(
-                manufacturer=manufacturer,
-                nickname=nickname,
-                year_of_manufacture=year,
-                image_url=image_url
-            )
+            # new_aircraft = Aircraft(
+            #     manufacturer=manufacturer,
+            #     nickname=nickname,
+            #     year_of_manufacture=year,
+            #     image_url=image_url
+            # )
+
+            new_aircraft = {
+                "manufacturer": manufacturer,
+                "nickname": nickname,
+                "YearOfManufacture": year_of_manufacture,
+                "ImageUrl": image_url,
+                "NumberOfChairs": 400
+            }
+
+            self.dal.Aircraft.create_aircraft(new_aircraft)
+
 
             # Add the aircraft to the mock data
             aircrafts.append(new_aircraft)

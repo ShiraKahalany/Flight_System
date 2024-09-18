@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QScrollArea, QFrame, QHBoxLayout, QPushButton
 from PySide6.QtGui import QPixmap, QFont
 from PySide6.QtCore import Qt
-from mock_data import tickets, flights
+from Flight_View.mock_data import tickets, flights
 
 
 class MyFlightsView(QWidget):

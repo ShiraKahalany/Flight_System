@@ -1,12 +1,12 @@
-from interfaces.idal import IDAL
-from implementations.user_dal import UserDAL
-from implementations.flight_dal import FlightDAL
-from implementations.aircraft_dal import AircraftDAL
-from implementations.ticket_dal import TicketDAL
-from implementations.date_details_dal import DateDetailsDAL
-from implementations.image_recognition_dal import ImageRecognitionDAL
-from interfaces.iimage_recognition_dal import IImageRecognitionDAL
-from api_client import APIClient
+from dal.interfaces.idal import IDAL
+from dal.implementations.user_dal import UserDAL
+from dal.implementations.flight_dal import FlightDAL
+from dal.implementations.aircraft_dal import AircraftDAL
+from dal.implementations.ticket_dal import TicketDAL
+from dal.implementations.date_details_dal import DateDetailsDAL
+from dal.implementations.image_recognition_dal import ImageRecognitionDAL
+from dal.interfaces.iimage_recognition_dal import IImageRecognitionDAL
+from dal.api_client import APIClient
 
 class DALImpl(IDAL):
     def __init__(self):

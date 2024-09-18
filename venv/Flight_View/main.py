@@ -6,20 +6,21 @@ from PySide6.QtWidgets import QApplication, QMainWindow
 from controllers.login_controller import LoginController
 from controllers.admin_controller import AdminController
 from controllers.passenger_controller import PassengerController
+from dal.interfaces.idal import IDAL
 
 class MainApp(QMainWindow):
-    def __init__(self):
+    def __init__(self, dal: IDAL):
         super().__init__()
         self.setWindowTitle("Flight System")
         self.setGeometry(100, 100, 800, 600)
         self.view_history = []  # Stack to track navigation history
 
         # Initialize AdminController and PassengerController
-        self.admin_controller = AdminController(self)
-        self.passenger_controller = PassengerController(self)
+        self.admin_controller = AdminController(self, dal)
+        self.passenger_controller = PassengerController(self, dal)
 
         # Pass both controllers to LoginController
-        self.login_controller = LoginController(self, self.admin_controller, self.passenger_controller)
+        self.login_controller = LoginController(self, self.admin_controller, self.passenger_controller, dal)
 
         # Show login view on start
         self.show_login()

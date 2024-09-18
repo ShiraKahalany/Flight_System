@@ -14,7 +14,10 @@ __pycache__/
 #all csproj files
 *.csproj.*
 .dtbcache.v2
-
+*.pyc
+*.pdb
+*.cache
+*.suo
 # Generated files
 *.cshtml.css
 *.csproj.user
@@ -25,7 +28,7 @@ AppServer.assets.cache
 AppServer.csproj.AssemblyReference.cache
 AppServer.GeneratedMSBuildEditorConfig.editorconfig
 AppServer.genruntimeconfig.cache
-
+*.vsidx
 # Other
 appsettings.json
 appsettings.Development.json
@@ -65,5 +68,27 @@ staticwebassets.*
 /AppServer/.vs/AppServer/FileContentIndex/586ca867-1e0c-4a84-8bf8-185eb31af597.vsidx
 /AppServer/.vs/AppServer/FileContentIndex/c8ab8694-51a7-4a6c-9dbb-63a4811b4b93.vsidx
 /AppServer/.vs/AppServer/FileContentIndex/1fb45e52-cdd3-473d-b9c7-799500bc82b6.vsidx
+venv/models/__pycache__/user.cpython-311.pyc
+venv/models/__pycache__/user.cpython-311.pyc
+venv/models/__pycache__/aircraft.cpython-311.pyc
+venv/Flight_View/__pycache__/mock_data.cpython-311.pyc
+venv/Flight_View/__pycache__/manager_view.cpython-311.pyc
+venv/Flight_View/__pycache__/mock_data.cpython-311.pyc
+venv/Flight_View/__pycache__/my_flights_view.cpython-311.pyc
+venv/Flight_View/__pycache__/passenger_view.cpython-311.pyc
+venv/models/__pycache__/flight.cpython-311.pyc
+AppServer/.vs/AppServer/DesignTimeBuild/.dtbcache.v2
+AppServer/AppServer/obj/Debug/net8.0/AppServer.csproj.CoreCompileInputs.cache
+AppServer/AppServer/obj/Debug/net8.0/AppServer.csproj.CoreCompileInputs.cache
+venv/models/__pycache__/user.cpython-311.pyc
+venv/models/__pycache__/user.cpython-311.pyc
+venv/models/__pycache__/ticket.cpython-311.pyc
+venv/models/__pycache__/aircraft.cpython-311.pyc
+AppServer/.vs/AppServer/DesignTimeBuild/.dtbcache.v2
+venv/Flight_View/__pycache__/flights_view.cpython-311.pyc
+venv/Flight_View/__pycache__/mock_data.cpython-311.pyc
+AppServer/.vs/AppServer/FileContentIndex/24d1027b-4ac3-465c-8f48-da93a1437f54.vsidx
+AppServer/.vs/AppServer/FileContentIndex/aef4ea93-345d-40cf-927b-7971a468c38c.vsidx
 AppServer/.vs/AppServer/FileContentIndex/28b537c5-b392-4919-acc2-3e11ecc185c9.vsidx
 /AppServer/.vs/AppServer/FileContentIndex/f69e8125-75da-4811-8985-0f2780713bcb.vsidx
+

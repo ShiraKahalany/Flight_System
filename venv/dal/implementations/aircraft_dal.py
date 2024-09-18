@@ -13,7 +13,7 @@ class AircraftDAL(IAircraftDAL):
 
     def create_aircraft(self, aircraft_data):
         self.api_client.post("aircraft/add", aircraft_data)
-        #return Aircraft(**(data.json()))
+        # return Aircraft(**(data.json()))
         return
 
     # def update_aircraft(self, aircraft_id, aircraft_data):
