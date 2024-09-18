@@ -220,6 +220,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "TicketController",
+    "Method": "GetTicketsByUserId",
+    "RelativePath": "api/ticket/getbyuser/{userId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "AppServer.API.HebcalController",
     "Method": "GetHebcalData",
     "RelativePath": "api/times/checkdate",
