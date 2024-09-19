@@ -7,9 +7,8 @@ class ImageRecognitionDAL(IImageRecognitionDAL):
 
     def get_image_tags(self, image_url: str) -> List[str]:
         response = self.api_client.post("image/analyze", data={"imageUrl": image_url})
+        print(f'response.text: {response.text}')
         return response.text
-        
-
 
     def is_aircraft_image(self, image_url: str) -> bool:
         desc = self.get_image_tags(image_url)

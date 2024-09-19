@@ -6,6 +6,8 @@ from dal.dal_factory import DALFactory
 from datetime import datetime, timedelta
 import logging
 from dal.api_client import APIClient
+from models.aircraft import Aircraft
+from models.flight import Flight
 
 # Set up logging - this will print to the console
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -66,8 +68,17 @@ def test_flight_dal(dal):
         "landing_datetime": str(datetime.now() + timedelta(days=1, hours=12)),
         "delayed_landing_time": ""
     }
+
+    new_flight = Flight(
+        aircraft_id=1022, 
+        source="Tel Aviv", 
+        destination="New York",
+        departure_datetime=datetime.now() + timedelta(days=1),
+        landing_datetime=datetime.now() + timedelta(days=1, hours=12),
+        delayed_landing_time=""
+    )   
     created_flight = flight_dal.create_flight(new_flight)
-    logger.info(f"Created flight: {created_flight}")
+    logger.info(f"Created flight id: {created_flight.id}, created flight des: {created_flight.destination}")
 
     # flight = flight_dal.get_flight(created_flight['id'])
     # logger.info(f"Retrieved flight: {flight}")
@@ -93,7 +104,7 @@ def test_aircraft_dal(dal):
     }
 
     aircraft_dal.create_aircraft(new_aircraft)
-    
+
     # logger.info(f"Created aircraft")
 
     aircraft = aircraft_dal.get_aircraft(1023)
@@ -135,7 +146,8 @@ def test_image_recognition_functionality(self):
         # Test get_image_tags
         aircraft_image_url = "https://www.now14.co.il/wp-content/uploads/2023/01/shutterstock_2117654495-768x512.jpg"
         tags = self.ImageRecognition.get_image_tags(aircraft_image_url)
-       #self.assertIsInstance(tags, list)
+        print(f"tags: {tags}")
+        #self.assertIsInstance(tags, list)
         #self.assertTrue(len(tags) > 0)
 
         #  Test is_aircraft_image with an aircraft image
@@ -160,8 +172,8 @@ def main():
 
     #test_date_checker(dal)
     #test_user_dal(dal)
-    #test_flight_dal(dal)
-    test_aircraft_dal(dal)
+    test_flight_dal(dal)
+    #test_aircraft_dal(dal)
     #test_ticket_dal(dal)
 
 

@@ -8,19 +8,5 @@ class DateDetailsDAL(IDateDetailsDAL):
         self.api_client = api_client
 
     def get_date_details(self, date: datetime, location: str) -> DateDetails:
-        response = self.api_client.get(
-            "times/checkdate",
-            data={"date": date.isoformat(), "location": location}
-        )
-        return DateDetails(
-            gregorian_date=datetime.fromisoformat(response['gregorian_date']),
-            hebrew_date=response['hebrew_date'],
-            day_of_week=response['day_of_week'],
-            is_holiday=response['is_holiday'],
-            parasha=response.get('parasha'),
-            holiday_name=response.get('holiday_name'),
-            shabbat_start=datetime.fromisoformat(response['shabbat_start']),
-            shabbat_end=datetime.fromisoformat(response['shabbat_end']),
-            holiday_start=datetime.fromisoformat(response['holiday_start']) if response.get('holiday_start') else None,
-            holiday_end=datetime.fromisoformat(response['holiday_end']) if response.get('holiday_end') else None
-        )
+        res=self.api_client.get("times/checkdate", {"date": date.isoformat(), "location": location})
+        return DateDetails.to_client_format(res.json())

@@ -5,10 +5,10 @@ from models.user import User
 from models.ticket import Ticket
 
 # Mock aircrafts data
-aircrafts = [
-    Aircraft(id=1, manufacturer='Boeing', nickname='SkyKing', year_of_manufacture=2010, image_url='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDYCs6gNkh3kzGGdSfF5ew9eB72d_Qt5LIUA&s', number_of_chairs=300),
-    Aircraft(id=2, manufacturer='Airbus', nickname='CloudMaster', year_of_manufacture=2015, image_url='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDYCs6gNkh3kzGGdSfF5ew9eB72d_Qt5LIUA&s', number_of_chairs=250),
-]
+# aircrafts = [
+#     Aircraft(id=1, manufacturer='Boeing', nickname='SkyKing', year_of_manufacture=2010, image_url='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDYCs6gNkh3kzGGdSfF5ew9eB72d_Qt5LIUA&s', number_of_chairs=300),
+#     Aircraft(id=2, manufacturer='Airbus', nickname='CloudMaster', year_of_manufacture=2015, image_url='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDYCs6gNkh3kzGGdSfF5ew9eB72d_Qt5LIUA&s', number_of_chairs=250),
+# ]
 
 from datetime import datetime, timedelta
 

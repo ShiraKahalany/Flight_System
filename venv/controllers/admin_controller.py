@@ -1,7 +1,8 @@
 from PySide6.QtWidgets import QMessageBox
+from pydantic import ValidationError
 from Flight_View.manager_view import ManagerView
 from Flight_View.add_aircraft_view import AddAircraftView
-from Flight_View.mock_data import aircrafts
+#from Flight_View.mock_data import aircrafts
 from models.aircraft import Aircraft
 from dal.interfaces.idal import IDAL
 
@@ -29,27 +30,29 @@ class AdminController:
             # Validate year of manufacture
             year = int(year_of_manufacture)
 
-            # Create new aircraft object
-            # new_aircraft = Aircraft(
-            #     manufacturer=manufacturer,
-            #     nickname=nickname,
-            #     year_of_manufacture=year,
-            #     image_url=image_url
-            # )
+            #Create new aircraft object
+            new_aircraft = Aircraft(
+                manufacturer=manufacturer,
+                nickname=nickname,
+                year_of_manufacture=year,
+                image_url=image_url,
+                number_of_chairs=400
+            )
 
-            new_aircraft = {
-                "manufacturer": manufacturer,
-                "nickname": nickname,
-                "YearOfManufacture": year_of_manufacture,
-                "ImageUrl": image_url,
+            new_aircraft2 = {
+                "manufacturer": "aaa",
+                "nickname": "bbb",
+                "YearOfManufacture": 2020,
+                "ImageUrl": "https://ksp.co.il/shop/items/512/280711.jpg",
                 "NumberOfChairs": 400
             }
 
-            self.dal.Aircraft.create_aircraft(new_aircraft)
-
+            
+            newAir=self.dal.Aircraft.create_aircraft(new_aircraft)
+            print(f'The newAir: {newAir}, the Type: {type(newAir)}')    
 
             # Add the aircraft to the mock data
-            aircrafts.append(new_aircraft)
+            #aircrafts.append(new_aircraft)
 
             # Print the newly created Aircraft object
             print(f"New aircraft created: {new_aircraft}")
@@ -57,7 +60,10 @@ class AdminController:
             # Show success message in an alert
             self.show_success_message(f"Aircraft added successfully!\n{new_aircraft}")
         except ValueError:
-            print("Invalid input for the year of manufacture.")
+            #print the error message
+            print(f'the error is {ValueError}')
+
+
 
     def show_success_message(self, message):
         """Show a pop-up success message."""
