@@ -77,23 +77,13 @@ public class FlightService : IFlightService
     public async Task<List<Flight>> GetFlightsByUserIdAsync(int userId)
     {
         // Step 1: Retrieve all tickets for the given user
-        var tickets = await _context.Tickets
-            .Where(t => t.UserId == userId)
-            .ToListAsync();
-
-        if (!tickets.Any())  // If the user has no tickets, return an empty list
-        {
-            return new List<Flight>();
-        }
-
-        // Step 2: Extract the flight IDs from the tickets
-        var flightIds = tickets.Select(t => t.FlightId).ToList();
-
-        // Step 3: Retrieve the flight details for each flight ID
-        var flights = await _context.Flights
-            .Where(f => flightIds.Contains(f.Id))
-            .ToListAsync();
+        var flights = await (from ticket in _context.Tickets
+                             join flight in _context.Flights
+                             on ticket.FlightId equals flight.Id
+                             where ticket.UserId == userId
+                             select flight).ToListAsync();
 
         return flights;
+
     }
 }
