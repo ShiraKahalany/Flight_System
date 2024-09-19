@@ -9,6 +9,14 @@ class FlightDAL(IFlightDAL):
     def create_flight(self, flight):
         res = self.api_client.post("flight/add", flight.to_server_format())
         return Flight.to_client_format(res.json())
+    
+    def get_flights(self):
+        res = self.api_client.get("flight/get/all")
+        return [Flight.to_client_format(flight_data) for flight_data in res.json()]
+
+    def get_flights_of_user(self, user_id):
+        res = self.api_client.get(f"flight/getbyuser/{user_id}")
+        return [Flight.to_client_format(flight_data) for flight_data in res.json()]
 
     # def update_flight(self, flight_id, flight_data):
     #     data = self.api_client.put(f"flight/{flight_id}", flight_data)

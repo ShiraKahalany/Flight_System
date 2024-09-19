@@ -65,10 +65,10 @@ def test_user_dal(dal):
     # user_dal.delete_user(created_user['id'])
     # logger.info("User deleted")
 
-    username = "urivera"
-    password = "O0Ib0nUt&*"
+    username = "johnsonmary"
+    password = "k9GzyQXp^9"
     user = user_dal.login_user(username, password)
-    logger.info(f"Logged in user: {user}")
+    logger.info(f"Logged in user: {user.role}")
 
 def test_flight_dal(dal):
     logger.info("Testing FlightDAL")
@@ -93,8 +93,8 @@ def test_flight_dal(dal):
         landing_datetime=datetime.now() + timedelta(days=1, hours=12),
         delayed_landing_time=""
     )   
-    created_flight = flight_dal.create_flight(new_flight)
-    logger.info(f"Created flight id: {created_flight.id}, created flight des: {created_flight.destination}")
+    # created_flight = flight_dal.create_flight(new_flight)
+    # logger.info(f"Created flight id: {created_flight.id}, created flight des: {created_flight.destination}")
 
     # flight = flight_dal.get_flight(created_flight['id'])
     # logger.info(f"Retrieved flight: {flight}")
@@ -105,6 +105,11 @@ def test_flight_dal(dal):
 
     # flight_dal.delete_flight(created_flight['id'])
     # logger.info("Flight deleted")
+
+    all_user_flights = flight_dal.get_flights_of_user("322361362")
+    #print each flight
+    for flight in all_user_flights:
+        logger.info(f"Retrieved flight: {flight.destination}")  
 
 def test_aircraft_dal(dal):
     logger.info("Testing AircraftDAL")
@@ -185,8 +190,8 @@ def main():
     #dal = DALImpl()
 
     #test_date_checker(dal)
-    test_user_dal(dal)
-    #test_flight_dal(dal)
+    #test_user_dal(dal)
+    test_flight_dal(dal)
     #test_aircraft_dal(dal)
     #test_ticket_dal(dal)
 
