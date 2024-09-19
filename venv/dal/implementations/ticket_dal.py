@@ -6,20 +6,20 @@ class TicketDAL(ITicketDAL):
         self.api_client = api_client
 
     # def get_ticket(self, ticket_id):
-    #     data = self.api_client.get(f"tickets/{ticket_id}")
+    #     data = self.api_client.get(f"ticket/{ticket_id}")
     #     return Ticket(**(data.json()))
 
-    def create_ticket(self, ticket_data):
-        data = self.api_client.post("tickets", ticket_data)
-        return Ticket(**(data.json()))
+    def create_ticket(self, ticket):
+        data = self.api_client.post("ticket/add", ticket.to_server_format())    
+        return Ticket.to_client_format(data.json())
 
     # def update_ticket(self, ticket_id, ticket_data):
-    #     data = self.api_client.put(f"tickets/{ticket_id}", ticket_data)
+    #     data = self.api_client.put(f"ticket/{ticket_id}", ticket_data)
     #     return Ticket(**data)
 
     # def delete_ticket(self, ticket_id):
-    #     self.api_client.delete(f"tickets/{ticket_id}")
+    #     self.api_client.delete(f"ticket/{ticket_id}")
 
-    def get_user_tickets(self, user_id):
-        data = self.api_client.get(f"users/{user_id}/tickets")
-        return [Ticket(**ticket_data) for ticket_data in data]
+    # def get_user_tickets(self, user_id):
+    #     data = self.api_client.get(f"user/{user_id}/tickets")
+    #     return [Ticket(**ticket_data) for ticket_data in data]

@@ -9,20 +9,29 @@ class Ticket:
         self.purchase_datetime = purchase_datetime
 
     def to_server_format(self):
+            
+        def format_datetime(dt):
+            return dt.strftime("%Y-%m-%dT%H:%M:%S") if dt else None
+        
         return {
             #"Id": str(self.id),
-            "UserId": str(self.user_id),
-            "FlightId": str(self.flight_id),
-            "PurchaseDatetime": self.purchase_datetime.isoformat()
+            "UserId": int(self.user_id),
+            "FlightId": int(self.flight_id),
+            "PurchaseDatetime": format_datetime(self.purchase_datetime)
         }
+
 
     @classmethod
     def to_client_format(cls, server_dict):
+                
+        def parse_datetime(dt_str):
+            return datetime.strptime(dt_str, "%Y-%m-%dT%H:%M:%S") if dt_str else None
+
         return cls(
             id=int(server_dict["id"]),
             flight_id=int(server_dict["flightId"]),
             user_id=int(server_dict["userId"]),
-            purchase_datetime=datetime.fromisoformat(server_dict["PurchaseDateTime"])
+            purchase_datetime=parse_datetime(server_dict["purchaseDatetime"])
         )
 
 

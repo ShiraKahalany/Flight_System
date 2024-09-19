@@ -18,6 +18,6 @@ class ITicketDAL(ABC):
     # def delete_ticket(self, ticket_id):
     #     pass
 
-    @abstractmethod
-    def get_user_tickets(self, user_id):
-        pass
+    # @abstractmethod
+    # def get_user_tickets(self, user_id):
+    #     pass

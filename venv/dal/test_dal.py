@@ -9,6 +9,8 @@ from dal.api_client import APIClient
 from models.aircraft import Aircraft
 from models.hebrew_times import DateDetails
 from models.flight import Flight
+from models.user import User
+from models.ticket import Ticket
 #import Utils
 from controllers.utils import Utils
 
@@ -23,11 +25,14 @@ def test_date_checker(dal):
     location = 293397
     departure = datetime.now()
     arrival = departure + timedelta(hours=5)
-    departure_location = "Tel Aviv"
-    arrival_location = "New York"
+    departure_location = 293397
+    arrival_location = 293397
 
     date_details = date_checker.get_date_details(date, location)
     logger.info(f"Date parasha: {date_details.parasha}. is shabbat? {date_details.day_of_week==6}",)
+    is_flight_allowed = Utils().is_flight_during_shabbat_or_holiday(departure, arrival, departure_location)
+    logger.info(f"Is flight allowed? {is_flight_allowed}")
+
     # logger.info(date_checker.get_date_details(date, location))
     # logger.info(date_checker.is_flight_allowed(departure, arrival, departure_location, arrival_location))
     # logger.info(date_checker.get_flight_warnings(departure, arrival, departure_location, arrival_location))
@@ -36,27 +41,29 @@ def test_date_checker(dal):
 
 
 def test_user_dal(dal):
-    logger.info("Testing UserDAL")
     user_dal = dal.User
 
     # Assuming these methods exist. Adjust as necessary.
-    new_user = {
-        "username": "testuser",
-        "email": "testuser@example.com",
-        "password": "password123"
-    }
+    new_user = User(
+        username= "testus8er4556",
+        role= "passenger",
+        first_name= "Avi",
+        last_name= "Cohen",
+        email= "testuser@example.com",
+        password= "password123"
+    )
     created_user = user_dal.create_user(new_user)
-    logger.info(f"Created user: {created_user}")
+    logger.info(f"Created user: {created_user}. type: {type(created_user)}")    
 
-    user = user_dal.get_user(created_user['id'])
-    logger.info(f"Retrieved user: {user}")
+    # user = user_dal.get_user(created_user['id'])
+    # logger.info(f"Retrieved user: {user}")
 
-    user_dal.update_user(created_user['id'], {"email": "newemail@example.com"})
-    updated_user = user_dal.get_user(created_user['id'])
-    logger.info(f"Updated user: {updated_user}")
+    # user_dal.update_user(created_user['id'], {"email": "newemail@example.com"})
+    # updated_user = user_dal.get_user(created_user['id'])
+    # logger.info(f"Updated user: {updated_user}")
 
-    user_dal.delete_user(created_user['id'])
-    logger.info("User deleted")
+    # user_dal.delete_user(created_user['id'])
+    # logger.info("User deleted")
 
 def test_flight_dal(dal):
     logger.info("Testing FlightDAL")
@@ -122,16 +129,14 @@ def test_aircraft_dal(dal):
     # logger.info("Aircraft deleted")
 
 def test_ticket_dal(dal):
-    logger.info("Testing TicketDAL")
     ticket_dal = dal.Ticket
 
     # Assuming these methods exist. Adjust as necessary.
-    new_ticket = {
-        "Id": "FL123",
-        "flight_id": "FL123",
-        "user_id": "USER456",
-        "purchase_datetime": str(datetime.now())
-    }
+    new_ticket = Ticket(
+        flight_id= "345",
+        user_id= "322361361",
+        purchase_datetime= datetime.now()
+    )
     created_ticket = ticket_dal.create_ticket(new_ticket)
     logger.info(f"Created ticket: {created_ticket}")
 
@@ -174,11 +179,11 @@ def main():
     #test_image_recognition_functionality(dal)
     #dal = DALImpl()
 
-    test_date_checker(dal)
+    #test_date_checker(dal)
     #test_user_dal(dal)
     #test_flight_dal(dal)
     #test_aircraft_dal(dal)
-    #test_ticket_dal(dal)
+    test_ticket_dal(dal)
 
 
 

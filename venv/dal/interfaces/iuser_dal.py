@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 class IUserDAL(ABC):
-    
+
     @abstractmethod
     def get_user_by_username(self, user_id):
         pass
@@ -9,6 +9,8 @@ class IUserDAL(ABC):
     @abstractmethod
     def create_user(self, user_data):
         pass
+
+    
 
     # @abstractmethod
     # def update_user(self, user_id, user_data):

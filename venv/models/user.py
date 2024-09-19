@@ -12,7 +12,7 @@ class User:
 
     def to_server_format(self):
         return {
-            #"Id": str(self.id),
+            #"Id": int(self.id),
             "Username": str(self.username),
             "Password": str(self.password),
             "Role": str(self.role),
