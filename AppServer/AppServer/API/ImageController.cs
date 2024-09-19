@@ -22,7 +22,7 @@ namespace AppServer.API
             public string ImageUrl { get; set; }
         }
 
-        [HttpPost("analyze")]
+        [HttpGet("analyze")]
         public async Task<IActionResult> AnalyzeImage([FromBody] ImageRequest request)
         {
             if (string.IsNullOrEmpty(request.ImageUrl))
