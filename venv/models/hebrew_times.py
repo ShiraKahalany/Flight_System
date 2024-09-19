@@ -18,31 +18,21 @@ class DateDetails:
         self.holiday_start = holiday_start
         self.holiday_end = holiday_end
 
-    def to_server_format(self):
-        return {
-            "hebrewDate": self.hebrew_date,
-            "gregorianDate": self.gregorian_date.isoformat(),
-            "dayOfWeek": self.day_of_week,
-            "parsha": self.parasha,
-            "isHoliday": self.is_holiday,
-            "holidayName": self.holiday_name,
-            "nextShabbatStart": self.shabbat_start.isoformat(),
-            "nextShabbatEnd": self.shabbat_end.isoformat(),
-            "holidayStart": self.holiday_start.isoformat() if self.holiday_start else None,
-            "HolidayEnd": self.holiday_end.isoformat() if self.holiday_end else None
-        }
-
     @classmethod
     def to_client_format(cls, server_dict):
+        
+        def parse_datetime(dt_str):
+            return datetime.strptime(dt_str, "%Y-%m-%dT%H:%M:%S") if dt_str else None
+  
         return cls(
-            gregorian_date=datetime.fromisoformat(server_dict["gregorianDate"]),
+            gregorian_date=parse_datetime(server_dict["gregorianDate"]),
             hebrew_date=server_dict["hebrewDate"],
             day_of_week=server_dict["dayOfWeek"],
             is_holiday=server_dict["isHoliday"],
-            shabbat_start=datetime.fromisoformat(server_dict["nextShabbatStart"]),
-            shabbat_end=datetime.fromisoformat(server_dict["nextShabbatEnd"]),
+            shabbat_start=parse_datetime(server_dict["nextShabbatStart"]),
+            shabbat_end=parse_datetime(server_dict["nextShabbatEnd"]),
             parasha=server_dict["parsha"],
-            holiday_name=server_dict.get("holidayName"),
-            holiday_start=datetime.fromisoformat(server_dict["holidayStart"]) if server_dict.get("holidayStart") else None,
-            holiday_end=datetime.fromisoformat(server_dict["holidayEnd"]) if server_dict.get("HolidayEnd") else None
+            holiday_name=server_dict.get("holidayName") if server_dict.get("holidayName") else None,
+            holiday_start=parse_datetime(server_dict["holidayStart"]) if server_dict.get("holidayStart") else None,
+            holiday_end=parse_datetime(server_dict["holidayEnd"]) if server_dict.get("HolidayEnd") else None
         )

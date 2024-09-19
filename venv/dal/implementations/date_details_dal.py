@@ -8,5 +8,7 @@ class DateDetailsDAL(IDateDetailsDAL):
         self.api_client = api_client
 
     def get_date_details(self, date: datetime, location: str) -> DateDetails:
-        res=self.api_client.get("times/checkdate", {"date": date.isoformat(), "location": location})
+        print(f'the date: {date} and location: {location}')
+        date=date.strftime("%Y-%m-%dT%H:%M:%S")
+        res=self.api_client.post("times/checkdate", {"date": date, "location": location})
         return DateDetails.to_client_format(res.json())

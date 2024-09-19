@@ -1,6 +1,5 @@
 from datetime import datetime
 from dal.dal_factory import DALFactory
-from models.hebrew_times import ShabbatHolidayInfo
 from models.hebrew_times import DateDetails
 
 class Utils:
@@ -20,5 +19,5 @@ class Utils:
         departure_info = self.get_date_info(departure, location)
         arrival_info = self.get_date_info(arrival, location)
 
-        return (departure_info.is_shabbat or arrival_info.is_shabbat or
+        return (departure_info.day_of_week==6 or arrival_info.day_of_week==6 or
                 departure_info.is_holiday or arrival_info.is_holiday)

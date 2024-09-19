@@ -7,28 +7,32 @@ from datetime import datetime, timedelta
 import logging
 from dal.api_client import APIClient
 from models.aircraft import Aircraft
+from models.hebrew_times import DateDetails
 from models.flight import Flight
+#import Utils
+from controllers.utils import Utils
 
 # Set up logging - this will print to the console
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 def test_date_checker(dal):
-    logger.info("Testing DateChecker")
     date_checker = dal.DateDetails
 
     date = datetime.now()
-    location = "Jerusalem"
+    location = 293397
     departure = datetime.now()
     arrival = departure + timedelta(hours=5)
     departure_location = "Tel Aviv"
     arrival_location = "New York"
 
-    logger.info(date_checker.get_date_details(date, location))
-    logger.info(date_checker.is_flight_allowed(departure, arrival, departure_location, arrival_location))
-    logger.info(date_checker.get_flight_warnings(departure, arrival, departure_location, arrival_location))
-    logger.info(date_checker.get_shabbat_times(date, location))
-    logger.info(date_checker.get_parasha(date, location))
+    date_details = date_checker.get_date_details(date, location)
+    logger.info(f"Date parasha: {date_details.parasha}. is shabbat? {date_details.day_of_week==6}",)
+    # logger.info(date_checker.get_date_details(date, location))
+    # logger.info(date_checker.is_flight_allowed(departure, arrival, departure_location, arrival_location))
+    # logger.info(date_checker.get_flight_warnings(departure, arrival, departure_location, arrival_location))
+    # logger.info(date_checker.get_shabbat_times(date, location))
+    # logger.info(date_checker.get_parasha(date, location))
 
 
 def test_user_dal(dal):
@@ -170,9 +174,9 @@ def main():
     #test_image_recognition_functionality(dal)
     #dal = DALImpl()
 
-    #test_date_checker(dal)
+    test_date_checker(dal)
     #test_user_dal(dal)
-    test_flight_dal(dal)
+    #test_flight_dal(dal)
     #test_aircraft_dal(dal)
     #test_ticket_dal(dal)
 

@@ -1,6 +1,8 @@
+from typing import Optional
+
 class User:
-    def __init__(self, id, username, role, first_name, last_name, email, password):
-        self.id = id
+    def __init__(self, username, role, first_name, last_name, email, password, id=None):
+        self.id: Optional[int] = id
         self.username = username
         self.password = password
         self.role = role
@@ -10,13 +12,13 @@ class User:
 
     def to_server_format(self):
         return {
-            "Id": str(self.id),
+            #"Id": str(self.id),
             "Username": str(self.username),
+            "Password": str(self.password),
             "Role": str(self.role),
             "FirstName": str(self.first_name),
             "LastName": str(self.last_name),
-            "Email": str(self.email),
-            "Password": str(self.password)
+            "Email": str(self.email)
         }
 
     @classmethod

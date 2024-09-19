@@ -1,18 +1,19 @@
 from datetime import datetime
+from typing import Optional
 
 class Ticket:
-    def __init__(self, id, flight_id, user_id, purchase_datetime):
-        self.id = id
+    def __init__(self, flight_id, user_id, purchase_datetime, id=None):
+        self.id: Optional[int] = id
         self.flight_id = flight_id
         self.user_id = user_id
         self.purchase_datetime = purchase_datetime
 
     def to_server_format(self):
         return {
-            "Id": str(self.id),
-            "FlightId": str(self.flight_id),
+            #"Id": str(self.id),
             "UserId": str(self.user_id),
-            "PurchaseDateTime": self.purchase_datetime.isoformat()
+            "FlightId": str(self.flight_id),
+            "PurchaseDatetime": self.purchase_datetime.isoformat()
         }
 
     @classmethod
