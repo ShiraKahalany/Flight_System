@@ -70,7 +70,7 @@ public class FlightService : IFlightService
 
         // Query to fetch flights departing in the next 5 hours
         return await _context.Flights
-            .Where(f =>f.Destination=="Tel-Aviv" && f.LandingDatetime >= currentTime && f.LandingDatetime <= endTime)
+            .Where(f =>f.Destination=="Tel Aviv" && f.LandingDatetime >= currentTime && f.LandingDatetime <= endTime)
             .ToListAsync();
     }
 
