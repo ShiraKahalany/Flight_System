@@ -5,23 +5,22 @@ from models.flight import Flight
 class AircraftDAL(IAircraftDAL):
     def __init__(self, api_client):
         self.api_client = api_client
-
-    def get_aircraft(self, aircraft_id):
-        data = self.api_client.get(f"aircraft/get/{aircraft_id}")
-        print(f'the dataaaa:  {data.json()}')
-        return Aircraft(**(data.json()))
-
-    def create_aircraft(self, aircraft_data):
-        self.api_client.post("aircraft/add", aircraft_data)
-        # return Aircraft(**(data.json()))
-        return
+    
+    def create_aircraft(self, aircraft):
+        res=self.api_client.post("aircraft/add", aircraft.to_server_format())
+        return Aircraft.to_client_format(res.json())
+    
+    # def get_aircraft(self, aircraft_id):
+    #     data = self.api_client.get(f"aircraft/get/{aircraft_id}")
+    #     print(f'the dataaaa:  {data.json()}')
+    #     return Aircraft(**(data.json()))
 
     # def update_aircraft(self, aircraft_id, aircraft_data):
     #     data = self.api_client.put(f"aircraft/{aircraft_id}", aircraft_data)
     #     return Aircraft(**data)
 
-    def delete_aircraft(self, aircraft_id):
-        self.api_client.delete(f"aircraft/delete/{aircraft_id}")
+    # def delete_aircraft(self, aircraft_id):
+    #     self.api_client.delete(f"aircraft/delete/{aircraft_id}")
 
     # def get_aircraft_flights(self, aircraft_id):
     #     data = self.api_client.get(f"aircraft/{aircraft_id}/flights")

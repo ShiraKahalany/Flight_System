@@ -5,7 +5,7 @@ from Flight_View.passenger_view import PassengerView
 from Flight_View.flights_view import FlightsView
 from Flight_View.flight_entry_view import FlightEntryView
 from Flight_View.landings_view import LandingsView  # Import the LandingsView
-from Flight_View.mock_data import flights, tickets, aircrafts
+from Flight_View.mock_data import flights, tickets
 from models.aircraft import Aircraft  # Ensure you import the Aircraft model
 from datetime import datetime, timedelta
 from models.ticket import Ticket
@@ -94,10 +94,10 @@ class PassengerController:
         filtered_flights = [f for f in flights if f.destination == "Ben Gurion Airport" and now <= f.landing_datetime <= future_time]
         return filtered_flights
 
-    def get_aircraft_by_id(self, aircraft_id):
-        """Retrieve aircraft by its ID."""
-        aircraft = next((a for a in aircrafts if a.id == aircraft_id), None)
-        return aircraft
+    # def get_aircraft_by_id(self, aircraft_id):
+    #     """Retrieve aircraft by its ID."""
+    #     aircraft = next((a for a in aircrafts if a.id == aircraft_id), None)
+    #     return aircraft
 
     def download_image(self, url):
         """Download the image from the given URL and return its binary content."""

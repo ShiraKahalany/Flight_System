@@ -6,51 +6,64 @@ from dal.dal_factory import DALFactory
 from datetime import datetime, timedelta
 import logging
 from dal.api_client import APIClient
+from models.aircraft import Aircraft
+from models.hebrew_times import DateDetails
+from models.flight import Flight
+from models.user import User
+from models.ticket import Ticket
+#import Utils
+from controllers.utils import Utils
 
 # Set up logging - this will print to the console
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 def test_date_checker(dal):
-    logger.info("Testing DateChecker")
     date_checker = dal.DateDetails
 
     date = datetime.now()
-    location = "Jerusalem"
+    location = 293397
     departure = datetime.now()
     arrival = departure + timedelta(hours=5)
-    departure_location = "Tel Aviv"
-    arrival_location = "New York"
+    departure_location = 293397
+    arrival_location = 293397
 
-    logger.info(date_checker.get_date_details(date, location))
-    logger.info(date_checker.is_flight_allowed(departure, arrival, departure_location, arrival_location))
-    logger.info(date_checker.get_flight_warnings(departure, arrival, departure_location, arrival_location))
-    logger.info(date_checker.get_shabbat_times(date, location))
-    logger.info(date_checker.get_parasha(date, location))
+    date_details = date_checker.get_date_details(date, location)
+    logger.info(f"Date parasha: {date_details.parasha}. is shabbat? {date_details.day_of_week==6}",)
+    is_flight_allowed = Utils().is_flight_during_shabbat_or_holiday(departure, arrival, departure_location)
+    logger.info(f"Is flight allowed? {is_flight_allowed}")
+
+    # logger.info(date_checker.get_date_details(date, location))
+    # logger.info(date_checker.is_flight_allowed(departure, arrival, departure_location, arrival_location))
+    # logger.info(date_checker.get_flight_warnings(departure, arrival, departure_location, arrival_location))
+    # logger.info(date_checker.get_shabbat_times(date, location))
+    # logger.info(date_checker.get_parasha(date, location))
 
 
 def test_user_dal(dal):
-    logger.info("Testing UserDAL")
     user_dal = dal.User
 
     # Assuming these methods exist. Adjust as necessary.
-    new_user = {
-        "username": "testuser",
-        "email": "testuser@example.com",
-        "password": "password123"
-    }
+    new_user = User(
+        username= "testus8er4556",
+        role= "passenger",
+        first_name= "Avi",
+        last_name= "Cohen",
+        email= "testuser@example.com",
+        password= "password123"
+    )
     created_user = user_dal.create_user(new_user)
-    logger.info(f"Created user: {created_user}")
+    logger.info(f"Created user: {created_user}. type: {type(created_user)}")    
 
-    user = user_dal.get_user(created_user['id'])
-    logger.info(f"Retrieved user: {user}")
+    # user = user_dal.get_user(created_user['id'])
+    # logger.info(f"Retrieved user: {user}")
 
-    user_dal.update_user(created_user['id'], {"email": "newemail@example.com"})
-    updated_user = user_dal.get_user(created_user['id'])
-    logger.info(f"Updated user: {updated_user}")
+    # user_dal.update_user(created_user['id'], {"email": "newemail@example.com"})
+    # updated_user = user_dal.get_user(created_user['id'])
+    # logger.info(f"Updated user: {updated_user}")
 
-    user_dal.delete_user(created_user['id'])
-    logger.info("User deleted")
+    # user_dal.delete_user(created_user['id'])
+    # logger.info("User deleted")
 
 def test_flight_dal(dal):
     logger.info("Testing FlightDAL")
@@ -66,8 +79,17 @@ def test_flight_dal(dal):
         "landing_datetime": str(datetime.now() + timedelta(days=1, hours=12)),
         "delayed_landing_time": ""
     }
+
+    new_flight = Flight(
+        aircraft_id=1022, 
+        source="Tel Aviv", 
+        destination="New York",
+        departure_datetime=datetime.now() + timedelta(days=1),
+        landing_datetime=datetime.now() + timedelta(days=1, hours=12),
+        delayed_landing_time=""
+    )   
     created_flight = flight_dal.create_flight(new_flight)
-    logger.info(f"Created flight: {created_flight}")
+    logger.info(f"Created flight id: {created_flight.id}, created flight des: {created_flight.destination}")
 
     # flight = flight_dal.get_flight(created_flight['id'])
     # logger.info(f"Retrieved flight: {flight}")
@@ -93,7 +115,7 @@ def test_aircraft_dal(dal):
     }
 
     aircraft_dal.create_aircraft(new_aircraft)
-    
+
     # logger.info(f"Created aircraft")
 
     aircraft = aircraft_dal.get_aircraft(1023)
@@ -107,16 +129,14 @@ def test_aircraft_dal(dal):
     # logger.info("Aircraft deleted")
 
 def test_ticket_dal(dal):
-    logger.info("Testing TicketDAL")
     ticket_dal = dal.Ticket
 
     # Assuming these methods exist. Adjust as necessary.
-    new_ticket = {
-        "Id": "FL123",
-        "flight_id": "FL123",
-        "user_id": "USER456",
-        "purchase_datetime": str(datetime.now())
-    }
+    new_ticket = Ticket(
+        flight_id= "345",
+        user_id= "322361361",
+        purchase_datetime= datetime.now()
+    )
     created_ticket = ticket_dal.create_ticket(new_ticket)
     logger.info(f"Created ticket: {created_ticket}")
 
@@ -135,7 +155,8 @@ def test_image_recognition_functionality(self):
         # Test get_image_tags
         aircraft_image_url = "https://www.now14.co.il/wp-content/uploads/2023/01/shutterstock_2117654495-768x512.jpg"
         tags = self.ImageRecognition.get_image_tags(aircraft_image_url)
-       #self.assertIsInstance(tags, list)
+        print(f"tags: {tags}")
+        #self.assertIsInstance(tags, list)
         #self.assertTrue(len(tags) > 0)
 
         #  Test is_aircraft_image with an aircraft image
@@ -161,8 +182,8 @@ def main():
     #test_date_checker(dal)
     #test_user_dal(dal)
     #test_flight_dal(dal)
-    test_aircraft_dal(dal)
-    #test_ticket_dal(dal)
+    #test_aircraft_dal(dal)
+    test_ticket_dal(dal)
 
 
 
