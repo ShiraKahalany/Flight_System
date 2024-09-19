@@ -22,11 +22,11 @@ def test_date_checker(dal):
     date_checker = dal.DateDetails
 
     date = datetime.now()
-    location = 293397
+    location = "Tel Aviv"
     departure = datetime.now()
     arrival = departure + timedelta(hours=5)
-    departure_location = 293397
-    arrival_location = 293397
+    departure_location = "Tel Aviv"
+    arrival_location = "Tel Aviv"
 
     date_details = date_checker.get_date_details(date, location)
     logger.info(f"Date parasha: {date_details.parasha}. is shabbat? {date_details.day_of_week==6}",)
@@ -65,13 +65,13 @@ def test_user_dal(dal):
     # user_dal.delete_user(created_user['id'])
     # logger.info("User deleted")
 
-    username = "urivera"
-    password = "O0Ib0nUt&*"
+    username = "johnsonmary"
+    password = "k9GzyQXp^9"
     user = user_dal.login_user(username, password)
-    logger.info(f"Logged in user: {user}")
+    logger.info(f"Logged in user: {user.role}")
 
 def test_flight_dal(dal):
-    logger.info("Testing FlightDAL")
+    # logger.info("Testing FlightDAL")
     flight_dal = dal.Flight
 
     # Assuming these methods exist. Adjust as necessary.
@@ -94,7 +94,7 @@ def test_flight_dal(dal):
         delayed_landing_time=""
     )   
     created_flight = flight_dal.create_flight(new_flight)
-    logger.info(f"Created flight id: {created_flight.id}, created flight des: {created_flight.destination}")
+    # logger.info(f"Created flight id: {created_flight.id}, created flight des: {created_flight.destination}")
 
     # flight = flight_dal.get_flight(created_flight['id'])
     # logger.info(f"Retrieved flight: {flight}")
@@ -105,6 +105,11 @@ def test_flight_dal(dal):
 
     # flight_dal.delete_flight(created_flight['id'])
     # logger.info("Flight deleted")
+
+    flights = flight_dal.get_BGR_lands_next_5_hours()
+    #print each flight
+    for flight in flights:
+        logger.info(f"Retrieved flight: {flight.destination}")  
 
 def test_aircraft_dal(dal):
     logger.info("Testing AircraftDAL")
@@ -184,8 +189,8 @@ def main():
     #test_image_recognition_functionality(dal)
     #dal = DALImpl()
 
-    #test_date_checker(dal)
-    test_user_dal(dal)
+    test_date_checker(dal)
+    #test_user_dal(dal)
     #test_flight_dal(dal)
     #test_aircraft_dal(dal)
     #test_ticket_dal(dal)

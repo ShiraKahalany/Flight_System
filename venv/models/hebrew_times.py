@@ -18,6 +18,7 @@ class DateDetails:
         self.holiday_start = holiday_start
         self.holiday_end = holiday_end
 
+
     @classmethod
     def to_client_format(cls, server_dict):
         
