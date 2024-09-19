@@ -136,10 +136,36 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "FlightController",
+    "Method": "GetFlightsByUserId",
+    "RelativePath": "api/flight/getbyuser/{userId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FlightController",
+    "Method": "GetFlightsInNextFiveHours",
+    "RelativePath": "api/flight/next5hours",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "AppServer.API.ImageController",
     "Method": "AnalyzeImage",
     "RelativePath": "api/image/analyze",
-    "HttpMethod": "POST",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -317,6 +343,27 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "UserController",
+    "Method": "GetUserByUsernameAndPassword",
+    "RelativePath": "api/user/login",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "username",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "password",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": []
   }
 ]

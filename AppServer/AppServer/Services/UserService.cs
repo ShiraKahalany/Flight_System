@@ -7,9 +7,11 @@ public interface IUserService
 {
     Task AddUserAsync(User user);
     Task DeleteUserAsync(int id);
-    Task<User> GetUserByIdAsync(int id);
+    Task<User?> GetUserByIdAsync(int id);
     Task<List<User>> GetAllUsersAsync();
-    Task DeleteAllUsersAsync(); 
+    Task DeleteAllUsersAsync();
+    Task<User?> GetUserByUsernameAndPasswordAsync(string username, string password);
+
 }
 
 public class UserService : IUserService
@@ -47,7 +49,7 @@ public class UserService : IUserService
     }
 
     // Get a user by its Id
-    public async Task<User> GetUserByIdAsync(int id)
+    public async Task<User?> GetUserByIdAsync(int id)
     {
         return await _context.Users.FindAsync(id);
     }
@@ -56,5 +58,11 @@ public class UserService : IUserService
     public async Task<List<User>> GetAllUsersAsync()
     {
         return await _context.Users.ToListAsync();
+    }
+    public async Task<User?> GetUserByUsernameAndPasswordAsync(string username, string password)
+    {
+         return await _context.Users
+            .Where(u => u.Username == username && u.Password == password)
+            .FirstOrDefaultAsync();
     }
 }

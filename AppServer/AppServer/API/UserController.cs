@@ -56,4 +56,18 @@ public class UserController : ControllerBase
         var users = await _userService.GetAllUsersAsync();
         return Ok(users);
     }
+
+
+    // GET: api/user/login?username={username}&password={password}
+    [HttpGet("login")]
+    public async Task<IActionResult> GetUserByUsernameAndPassword([FromQuery] string username, [FromQuery] string password)
+    {
+        var user = await _userService.GetUserByUsernameAndPasswordAsync(username, password);
+        if (user == null)
+        {
+            return NotFound("User not found or incorrect credentials.");
+        }
+
+        return Ok(user);
+    }
 }

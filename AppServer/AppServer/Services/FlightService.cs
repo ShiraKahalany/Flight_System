@@ -9,8 +9,10 @@ public interface IFlightService
 {
     Task AddFlightAsync(Flight flight);
     Task DeleteFlightAsync(int id);
-    Task<Flight> GetFlightByIdAsync(int id);
+    Task<Flight?> GetFlightByIdAsync(int id);
     Task<List<Flight>> GetAllFlightsAsync();
+    Task<List<Flight>> GetFlightsInNextFiveHoursAsync();
+    Task<List<Flight>> GetFlightsByUserIdAsync(int userId);
     Task DeleteAllFlightsAsync();
 }
 
@@ -50,7 +52,7 @@ public class FlightService : IFlightService
     }
 
     // Get a flight by its Id
-    public async Task<Flight> GetFlightByIdAsync(int id)
+    public async Task<Flight?> GetFlightByIdAsync(int id)
     {
         return await _context.Flights.FindAsync(id);
     }
@@ -58,6 +60,40 @@ public class FlightService : IFlightService
     // Get all flights
     public async Task<List<Flight>> GetAllFlightsAsync()
     {
-        return await _context.Flights.ToListAsync();
+        return await _context.Flights.Where(f => f.LandingDatetime>DateTime.Now).ToListAsync();
+    }
+    //get flights from next 5 hours
+    public async Task<List<Flight>> GetFlightsInNextFiveHoursAsync()
+    {
+        DateTime currentTime = DateTime.Now;
+        DateTime endTime = currentTime.AddHours(5);
+
+        // Query to fetch flights departing in the next 5 hours
+        return await _context.Flights
+            .Where(f =>f.Destination=="Tel-Aviv" && f.LandingDatetime >= currentTime && f.LandingDatetime <= endTime)
+            .ToListAsync();
+    }
+
+    public async Task<List<Flight>> GetFlightsByUserIdAsync(int userId)
+    {
+        // Step 1: Retrieve all tickets for the given user
+        var tickets = await _context.Tickets
+            .Where(t => t.UserId == userId)
+            .ToListAsync();
+
+        if (!tickets.Any())  // If the user has no tickets, return an empty list
+        {
+            return new List<Flight>();
+        }
+
+        // Step 2: Extract the flight IDs from the tickets
+        var flightIds = tickets.Select(t => t.FlightId).ToList();
+
+        // Step 3: Retrieve the flight details for each flight ID
+        var flights = await _context.Flights
+            .Where(f => flightIds.Contains(f.Id))
+            .ToListAsync();
+
+        return flights;
     }
 }

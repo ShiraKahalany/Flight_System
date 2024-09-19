@@ -7,7 +7,7 @@ public interface ITicketService
 {
     Task AddTicketAsync(Ticket ticket);
     Task DeleteTicketAsync(int id);
-    Task<Ticket> GetTicketByIdAsync(int id);
+    Task<Ticket?> GetTicketByIdAsync(int id);
     Task<List<Ticket>> GetAllTicketsAsync();
     Task DeleteAllTicketsAsync();
     Task<IEnumerable<Ticket>> GetTicketsByUserIdAsync(int userId);
@@ -49,7 +49,7 @@ public class TicketService : ITicketService
     }
 
     // Get a ticket by its Id
-    public async Task<Ticket> GetTicketByIdAsync(int id)
+    public async Task<Ticket?> GetTicketByIdAsync(int id)
     {
         return await _context.Tickets.FindAsync(id);  // Find the ticket by Id
     }
