@@ -26,10 +26,10 @@ namespace AppServer.API
         {
             if (request?.Date == null)
                 return BadRequest("Date is required.");
-
+            
             // Step 1: Call the CheckDate function in the service to get the Hebcal data
-            var TimesData = await _hebcalService.CheckDate(request.Date,0);
-            var DateData = await _hebcalService.CheckDate(request.Date,1);
+            var TimesData = await _hebcalService.CheckDate(request.Date,0,request.Location);
+            var DateData = await _hebcalService.CheckDate(request.Date,1,request.Location);
             //return Ok(TimesData);
             // Step 2: Deserialize the JSON response
             var jsonDate = JsonConvert.DeserializeObject<dynamic>(DateData);
@@ -124,5 +124,6 @@ namespace AppServer.API
     public class DateRequest
     {
         public DateTime Date { get; set; }
+        public int Location {  get; set; }
     }
 }

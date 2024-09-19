@@ -9,8 +9,9 @@ public interface ITicketService
     Task DeleteTicketAsync(int id);
     Task<Ticket> GetTicketByIdAsync(int id);
     Task<List<Ticket>> GetAllTicketsAsync();
-
     Task DeleteAllTicketsAsync();
+    Task<IEnumerable<Ticket>> GetTicketsByUserIdAsync(int userId);
+
 }
 
 public class TicketService : ITicketService
@@ -57,5 +58,10 @@ public class TicketService : ITicketService
     public async Task<List<Ticket>> GetAllTicketsAsync()
     {
         return await _context.Tickets.ToListAsync();
+    }
+    //get all tickets by user id
+    public async Task<IEnumerable<Ticket>> GetTicketsByUserIdAsync(int userId)
+    {
+        return await _context.Tickets.Where(t => t.UserId == userId).ToListAsync();  // Query to get tickets by userId
     }
 }

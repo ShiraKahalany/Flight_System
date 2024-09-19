@@ -54,4 +54,15 @@ public class TicketController : ControllerBase
         var flights = await _ticketService.GetAllTicketsAsync();
         return Ok(flights);
     }
+    // GET: api/ticket/getbyuser/{userId}
+    [HttpGet("getbyuser/{userId}")]
+    public async Task<IActionResult> GetTicketsByUserId(int userId)
+    {
+        var tickets = await _ticketService.GetTicketsByUserIdAsync(userId);
+        if (tickets == null || !tickets.Any())
+        {
+            return NotFound();
+        }
+        return Ok(tickets);
+    }
 }
