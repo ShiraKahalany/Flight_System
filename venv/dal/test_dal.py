@@ -44,16 +44,16 @@ def test_user_dal(dal):
     user_dal = dal.User
 
     # Assuming these methods exist. Adjust as necessary.
-    new_user = User(
-        username= "testus8er4556",
-        role= "passenger",
-        first_name= "Avi",
-        last_name= "Cohen",
-        email= "testuser@example.com",
-        password= "password123"
-    )
-    created_user = user_dal.create_user(new_user)
-    logger.info(f"Created user: {created_user}. type: {type(created_user)}")    
+    # new_user = User(
+    #     username= "testus8er4556",
+    #     role= "passenger",
+    #     first_name= "Avi",
+    #     last_name= "Cohen",
+    #     email= "testuser@example.com",
+    #     password= "password123"
+    # )
+    # created_user = user_dal.create_user(new_user)
+    # logger.info(f"Created user: {created_user}. type: {type(created_user)}")    
 
     # user = user_dal.get_user(created_user['id'])
     # logger.info(f"Retrieved user: {user}")
@@ -64,6 +64,11 @@ def test_user_dal(dal):
 
     # user_dal.delete_user(created_user['id'])
     # logger.info("User deleted")
+
+    username = "urivera"
+    password = "O0Ib0nUt&*"
+    user = user_dal.login_user(username, password)
+    logger.info(f"Logged in user: {user}")
 
 def test_flight_dal(dal):
     logger.info("Testing FlightDAL")
@@ -180,10 +185,10 @@ def main():
     #dal = DALImpl()
 
     #test_date_checker(dal)
-    #test_user_dal(dal)
+    test_user_dal(dal)
     #test_flight_dal(dal)
     #test_aircraft_dal(dal)
-    test_ticket_dal(dal)
+    #test_ticket_dal(dal)
 
 
 

@@ -8,8 +8,8 @@ class UserDAL(IUserDAL):
     def __init__(self, api_client):
         self.api_client = api_client
 
-    def login_user(self, user_id):
-        data = self.api_client.get(f"user/get{user_id}")
+    def login_user(self, username, password):
+        data = self.api_client.get(f"user/login?username={username}&password={password}")
         return User.to_client_format(data.json())
 
     def create_user(self, user):
