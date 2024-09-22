@@ -18,9 +18,9 @@ class IFlightDAL(ABC):
     def get_BGR_lands_next_5_hours(self):
         pass
 
-    # @abstractmethod
-    # def get_flight(self, flight_id):
-    #     pass
+    @abstractmethod
+    def get_flight_by_id(self, flight_id):
+        pass
 
     # @abstractmethod
     # def update_flight(self, flight_id, flight_data):
