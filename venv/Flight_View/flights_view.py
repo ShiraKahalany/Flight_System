@@ -17,8 +17,8 @@ class FlightsView(QWidget):
         # Create a table to display flights
         self.table = QTableWidget(self)
         self.table.setRowCount(len(self.flights))
-        self.table.setColumnCount(8)  # Add one more column for the Aircraft Image
-        self.table.setHorizontalHeaderLabels(["Aircraft Image", "ID", "Aircraft", "Source", "Destination", "Departure", "Landing", "Action"])
+        self.table.setColumnCount(9)  # Add one more column for the Price
+        self.table.setHorizontalHeaderLabels(["Aircraft Image", "ID", "Aircraft", "Source", "Destination", "Departure", "Landing", "Price", "Action"])
 
         # Set column width to make it wider
         self.table.setColumnWidth(0, 100)  # Aircraft Image
@@ -28,7 +28,8 @@ class FlightsView(QWidget):
         self.table.setColumnWidth(4, 120)  # Destination
         self.table.setColumnWidth(5, 120)  # Departure
         self.table.setColumnWidth(6, 120)  # Landing
-        self.table.setColumnWidth(7, 60)   # Action
+        self.table.setColumnWidth(7, 80)   # Price
+        self.table.setColumnWidth(8, 60)   # Action
 
         # Populate the table with flight data and add "Watch" buttons
         for row, flight in enumerate(self.flights):
@@ -51,6 +52,21 @@ class FlightsView(QWidget):
             self.table.setItem(row, 4, QTableWidgetItem(flight.destination))
             self.table.setItem(row, 5, QTableWidgetItem(flight.departure_datetime.strftime('%Y-%m-%d %H:%M')))
             self.table.setItem(row, 6, QTableWidgetItem(flight.landing_datetime.strftime('%Y-%m-%d %H:%M')))
+            self.table.setItem(row, 7, QTableWidgetItem(f"${flight.price}"))  # Display the price
 
             # Add the "Watch" button
             watch_button = QPushButton("Watch", self)
+            watch_button.clicked.connect(lambda _, f=flight: self.watch_flight(f))
+            self.table.setCellWidget(row, 8, watch_button)
+
+        layout.addWidget(self.table)
+        self.setLayout(layout)
+
+    def watch_flight(self, flight):
+        """ Call the controller to show flight details """
+        self.controller.show_flight_details(flight.id)
+
+    def go_back(self):
+        """ Calls go_back from the main application window """
+        if self.parent() and hasattr(self.parent(), 'go_back'):
+            self.parent().go_back()

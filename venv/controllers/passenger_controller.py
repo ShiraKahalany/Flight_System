@@ -9,6 +9,7 @@ from models.ticket import Ticket
 from Flight_View.my_flights_view import MyFlightsView
 from dal.interfaces.idal import IDAL
 from datetime import datetime, timedelta
+from models.aircraft import Aircraft
 
 
 class PassengerController:
@@ -61,26 +62,34 @@ class PassengerController:
         try:
             # Fetch flights from the DAL
             future_flights = self.dal.Flight.get_flights()
-
+            print(f"Future Flights: {future_flights}")
+            
             # Fetch corresponding aircraft details for each flight
             for flight in future_flights:
-                flight.aircraft = self.dal.Aircraft.get_aircraft_by_id(flight.aircraft_id)
+                aircraft = self.dal.Aircraft.get_aircraft_by_id(flight.aircraft_id)
+
+                # Attach aircraft to the flight
+                flight.aircraft = aircraft
 
                 # Download aircraft image
-                if flight.aircraft and flight.aircraft.image_url:
-                    flight.aircraft.image_data = self.download_image(flight.aircraft.image_url)
+                if aircraft and aircraft.image_url:
+                    aircraft.image_data = self.download_image(aircraft.image_url)
 
-            # Pass flights (with aircraft data) to the view
+            # Pass flights (with aircraft data and price) to the view
             self.flights_view = FlightsView(controller=self, flights=future_flights)
             self.main_controller.set_view(self.flights_view)
 
         except Exception as e:
             self.show_error_message(f"Error loading flights: {e}")
 
+
+
     def download_image(self, url):
         """Download the image from the given URL and return its binary content."""
+        headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
         try:
-            response = requests.get(url)
+            response = requests.get(url, headers=headers)
             response.raise_for_status()  # Raise an exception for bad responses
             return response.content  # Return image data as bytes
         except Exception as e:
@@ -110,7 +119,7 @@ class PassengerController:
             flights_in_next_5_hours = self.dal.Flight.get_BGR_lands_next_5_hours()
 
             # Pass the landings to the LandingsView
-            self.landings_view = LandingsView(controller=self, flights=flights_in_next_5_hours)
+            self.landings_view = LandingsView(controller=self)
             self.main_controller.set_view(self.landings_view)
 
         except Exception as e:

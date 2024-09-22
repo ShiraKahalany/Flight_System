@@ -16,7 +16,9 @@ class AircraftDAL(IAircraftDAL):
     
     def get_aircraft_by_id(self, aircraft_id):
         res = self.api_client.get(f"aircraft/get/{aircraft_id}")
-        return Aircraft.to_client_format(res.json())
+        x=res.json()
+        y= Aircraft.to_client_format(x)
+        return y
     
     # def get_aircraft(self, aircraft_id):
     #     data = self.api_client.get(f"aircraft/get/{aircraft_id}")

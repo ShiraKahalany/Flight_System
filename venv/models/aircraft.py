@@ -4,16 +4,15 @@ from pydantic import BaseModel, Field
 import json
 
 class Aircraft:
-    def __init__(self, manufacturer, nickname, price, year_of_manufacture, image_url, number_of_chairs, id=None, is_delayed=None):
+    def __init__(self, manufacturer, nickname, year_of_manufacture, image_url, number_of_chairs, id=None):
         #None if id not provided
         self.id: Optional[int]=id
         self.manufacturer = manufacturer
         self.nickname = nickname
-        self.price = price
         self.year_of_manufacture = year_of_manufacture
         self.image_url = image_url
         self.number_of_chairs = number_of_chairs
-        self.is_delayed: Optional[bool] = is_delayed
+
 
     def to_server_format(self):
         """Convert the object to JSON for sending to the server."""
@@ -24,8 +23,6 @@ class Aircraft:
             'YearOfManufacture': int(self.year_of_manufacture),
             'ImageUrl': str(self.image_url),
             'NumberOfChairs': int(self.number_of_chairs),
-            'Price': float(self.price),
-            'IsDelayed': bool(self.is_delay)
         }
         return server_dict
 
@@ -40,8 +37,6 @@ class Aircraft:
             year_of_manufacture=int(server_dict["yearOfManufacture"]),
             image_url=server_dict["imageUrl"],
             number_of_chairs=int(server_dict["numberOfChairs"]),
-            price=float(server_dict["price"]),
-            is_delayed=bool(server_dict["isDelayed"]) if "isDelayed" in server_dict else None
         )
     
     def __repr__(self):
