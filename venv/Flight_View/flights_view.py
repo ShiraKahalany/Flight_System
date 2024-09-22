@@ -2,12 +2,12 @@ import requests  # For downloading images from the internet
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, QPushButton, QLabel
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt
-from Flight_View.mock_data import flights
 
 class FlightsView(QWidget):
-    def __init__(self, controller=None):
+    def __init__(self, controller=None, flights=None):
         super().__init__()
         self.controller = controller
+        self.flights = flights
         layout = QVBoxLayout()
 
         # "Go Back" Button
@@ -17,7 +17,7 @@ class FlightsView(QWidget):
 
         # Create a table to display flights
         self.table = QTableWidget(self)
-        self.table.setRowCount(len(flights))
+        self.table.setRowCount(len(self.flights))
         self.table.setColumnCount(8)  # Add one more column for the Aircraft Image
         self.table.setHorizontalHeaderLabels(["Aircraft Image", "ID", "Aircraft", "Source", "Destination", "Departure", "Landing", "Action"])
 
@@ -32,8 +32,8 @@ class FlightsView(QWidget):
         self.table.setColumnWidth(7, 60)   # Action
 
         # Populate the table with flight data and add "Watch" buttons
-        for row, flight in enumerate(flights):
-            aircraft = self.controller.get_aircraft_by_id(flight.aircraft_id)
+        for row, flight in enumerate(self.flights):
+            aircraft = self.controller.dal.Aircraft.get_aircraft_by_id(flight.aircraft_id)
             if aircraft:
                 # Add image to the first column
                 image_label = QLabel()

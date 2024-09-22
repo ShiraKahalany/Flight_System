@@ -4,18 +4,16 @@ from PySide6.QtWidgets import QMessageBox
 from Flight_View.passenger_view import PassengerView
 from Flight_View.flights_view import FlightsView
 from Flight_View.flight_entry_view import FlightEntryView
-from Flight_View.landings_view import LandingsView  # Import the LandingsView
-from Flight_View.mock_data import flights, tickets
-from models.aircraft import Aircraft  # Ensure you import the Aircraft model
-from datetime import datetime, timedelta
+from Flight_View.landings_view import LandingsView
 from models.ticket import Ticket
 from Flight_View.my_flights_view import MyFlightsView
 from dal.interfaces.idal import IDAL
-
+from datetime import datetime, timedelta
 
 class PassengerController:
     def __init__(self, main_controller, dal: IDAL):
         self.main_controller = main_controller
+        self.dal = dal
         self.passenger_view = None
         self.current_user_id = None  # Set this when the user logs in
 
@@ -27,28 +25,20 @@ class PassengerController:
         self.main_controller.go_back()
 
     def book_flight(self, flight_id):
+        """Functionality to book a flight."""
         try:
-            flight = next((f for f in flights if f.id == flight_id), None)
-            if not flight:
-                raise ValueError("Flight not found")
-
+            # Create new ticket
             new_ticket = Ticket(
-                id=len(tickets) + 1,
                 flight_id=flight_id,
                 user_id=self.current_user_id,
                 purchase_datetime=datetime.now()
             )
-            tickets.append(new_ticket)
 
-            # Print the newly created ticket
+            # Call DAL to create the ticket
+            self.dal.Ticket.create_ticket(new_ticket.to_server_format())
             print(f"New Ticket Created: {new_ticket}")
 
-            # Print the updated tickets list
-            print("Updated Tickets List:")
-            for ticket in tickets:
-                print(ticket)
-
-            # Show success message in a pop-up alert
+            # Show success message
             self.show_success_message("Flight booked successfully!")
 
         except ValueError as ve:
@@ -57,7 +47,7 @@ class PassengerController:
             self.passenger_view.show_error(f"Error booking flight: {str(e)}")
 
     def show_success_message(self, message):
-        """Show a pop-up alert message"""
+        """Show a pop-up alert message."""
         msg_box = QMessageBox()
         msg_box.setIcon(QMessageBox.Information)
         msg_box.setText(message)
@@ -66,17 +56,27 @@ class PassengerController:
         msg_box.exec()
 
     def show_flights(self):
-        self.flights_view = FlightsView(controller=self)
-        self.main_controller.set_view(self.flights_view)
+        """Shows all available future flights to the user."""
+        try:
+            # Fetch flights from the DAL
+            future_flights = self.dal.Flight.get_flights()
+            self.flights_view = FlightsView(controller=self, flights=future_flights)
+            self.main_controller.set_view(self.flights_view)
+        except Exception as e:
+            self.show_error_message(f"Error loading flights: {e}")
 
     def show_flight_details(self, flight_id):
-        flight = next((f for f in flights if f.id == flight_id), None)
-        if flight:
-            self.flight_entry_view = FlightEntryView(controller=self, flight=flight)
-            self.main_controller.set_view(self.flight_entry_view)
+        """Shows the details of the selected flight."""
+        try:
+            flight = self.dal.Flight.get_flight_by_id(flight_id)
+            if flight:
+                self.flight_entry_view = FlightEntryView(controller=self, flight=flight)
+                self.main_controller.set_view(self.flight_entry_view)
+        except Exception as e:
+            self.show_error_message(f"Error loading flight details: {e}")
 
     def purchase_ticket(self, flight_id):
-        """Calls the booking method to purchase a flight"""
+        """Calls the booking method to purchase a flight."""
         self.book_flight(flight_id)
         self.main_controller.go_back()  # After purchase, go back to the previous screen
 
@@ -87,29 +87,34 @@ class PassengerController:
 
     def get_upcoming_landings(self, hours_ahead):
         """Filter the landings happening within the next given hours."""
-        now = datetime.now()
-        future_time = now + timedelta(hours=hours_ahead)
-
-        # Filter flights landing at Ben Gurion Airport within the time window
-        filtered_flights = [f for f in flights if f.destination == "Ben Gurion Airport" and now <= f.landing_datetime <= future_time]
-        return filtered_flights
-
-    # def get_aircraft_by_id(self, aircraft_id):
-    #     """Retrieve aircraft by its ID."""
-    #     aircraft = next((a for a in aircrafts if a.id == aircraft_id), None)
-    #     return aircraft
-
-    def download_image(self, url):
-        """Download the image from the given URL and return its binary content."""
         try:
-            response = requests.get(url)
-            response.raise_for_status()  # Raise an exception for bad responses
-            return response.content  # Return image data as bytes
+            flights_in_next_5_hours = self.dal.Flight.get_BGR_lands_next_5_hours()
+
+            now = datetime.now()
+            future_time = now + timedelta(hours=hours_ahead)
+
+            # Filter flights landing within the requested time window
+            filtered_flights = [f for f in flights_in_next_5_hours if now <= f.landing_datetime <= future_time]
+            return filtered_flights
+
         except Exception as e:
-            print(f"Error downloading image: {e}")
-            return None
+            print(f"Error fetching upcoming landings: {e}")
+            return []
 
     def show_my_flights(self):
         """Shows the view of flights that the current user has booked."""
-        self.my_flights_view = MyFlightsView(controller=self, user_id=self.current_user_id)
-        self.main_controller.set_view(self.my_flights_view)
+        try:
+            flights = self.dal.Flight.get_flights_of_user(self.current_user_id)
+            self.my_flights_view = MyFlightsView(controller=self, flights=flights)
+            self.main_controller.set_view(self.my_flights_view)
+        except Exception as e:
+            self.show_error_message(f"Error loading my flights: {e}")
+
+    def show_error_message(self, message):
+        """Show a pop-up error message."""
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Critical)
+        msg_box.setText(message)
+        msg_box.setWindowTitle("Error")
+        msg_box.setStandardButtons(QMessageBox.Ok)
+        msg_box.exec()
