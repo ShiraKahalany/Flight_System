@@ -44,16 +44,16 @@ def test_user_dal(dal):
     user_dal = dal.User
 
     # Assuming these methods exist. Adjust as necessary.
-    # new_user = User(
-    #     username= "testus8er4556",
-    #     role= "passenger",
-    #     first_name= "Avi",
-    #     last_name= "Cohen",
-    #     email= "testuser@example.com",
-    #     password= "password123"
-    # )
-    # created_user = user_dal.create_user(new_user)
-    # logger.info(f"Created user: {created_user}. type: {type(created_user)}")    
+    new_user = User(
+        username= "testus8er4556",
+        role= "passenger",
+        first_name= "Avi",
+        last_name= "Cohen",
+        email= "testuser@example.com",
+        password= "password123"
+    )
+    created_user = user_dal.create_user(new_user)
+    logger.info(f"Created user: {created_user}. type: {type(created_user)}")    
 
     # user = user_dal.get_user(created_user['id'])
     # logger.info(f"Retrieved user: {user}")
@@ -189,8 +189,8 @@ def main():
     #test_image_recognition_functionality(dal)
     #dal = DALImpl()
 
-    test_date_checker(dal)
-    #test_user_dal(dal)
+    #test_date_checker(dal)
+    test_user_dal(dal)
     #test_flight_dal(dal)
     #test_aircraft_dal(dal)
     #test_ticket_dal(dal)
