@@ -6,9 +6,13 @@ class IAircraftDAL(ABC):
     def create_aircraft(self, aircraft_data):
         pass
 
-    # @abstractmethod
-    # def get_aircraft(self, aircraft_id):
-    #     pass
+    @abstractmethod
+    def get_aircrafts(self):
+        pass    
+
+    @abstractmethod
+    def get_aircraft_by_id(self, aircraft_id):
+        pass
 
     # @abstractmethod
     # def update_aircraft(self, aircraft_id, aircraft_data):

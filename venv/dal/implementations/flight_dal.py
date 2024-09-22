@@ -21,6 +21,10 @@ class FlightDAL(IFlightDAL):
     def get_BGR_lands_next_5_hours(self):
         res = self.api_client.get("flight/next5hours")
         return [Flight.to_client_format(flight_data) for flight_data in res.json()]
+    
+    def get_flight_by_id(self, flight_id):
+        res = self.api_client.get(f"flight/get/{flight_id}")
+        return Flight.to_client_format(res.json())
 
     # def update_flight(self, flight_id, flight_data):
     #     data = self.api_client.put(f"flight/{flight_id}", flight_data)
