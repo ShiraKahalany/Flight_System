@@ -43,12 +43,12 @@ def predict_delay(flight_data):
 if __name__ == "__main__":
     # Example flight data input (should match the format of your dataset)
     new_flight = {
-    "Season": "Summer",
-    "FlightDistance": 1200,                  # Arbitrary distance
-    "FlightDuration": 180,                   # Arbitrary duration
+    "Season": "Winter",
+    "FlightDistance": 6000,                  # Arbitrary distance
+    "FlightDuration": 1800,                   # Arbitrary duration
     "DepartureAirportCongestion": 10,        # Moderate congestion
     "ArrivalAirportCongestion": 8,           # Moderate congestion
-    "DayOfWeek": "Monday",                   # Arbitrary day of the week
+    "DayOfWeek": "Friday",                   # Arbitrary day of the week
     "TimeOfFlight": "14:00:00",              # Arbitrary time of flight
     "ScheduledDepartureTime": "2024-07-15 14:00",
     "ActualDepartureTime": "2024-07-15 14:00", # Departure on time
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     "Temperature": 25.0,                     # Moderate temperature
     "Visibility": 10000,                     # Good visibility
     "WindSpeed": 5,                          # Low wind speed
-    "WeatherEvent": "Clear"                  # Clear weather
+    "WeatherEvent": "Adverse"                  # Clear weather
 }
 
 
