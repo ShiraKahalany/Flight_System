@@ -2,15 +2,15 @@ from datetime import datetime
 from typing import Optional
 
 class Flight:
-    def __init__(self, aircraft_id, source, destination, departure_datetime, landing_datetime, id=None, delayed_landing_time=None):
+    def __init__(self, aircraft_id, source, destination, departure_datetime, landing_datetime, price, id=None, is_delay=None):
         self.id: Optional[int]=id
         self.aircraft_id = aircraft_id
         self.source = source
         self.destination = destination
         self.departure_datetime: datetime = departure_datetime
         self.landing_datetime: datetime = landing_datetime
-        self.delayed_landing_time: Optional[datetime] = delayed_landing_time
-
+        self.is_delay: Optional[bool] = is_delay
+        self.price= price
 
 
     def to_server_format(self):
@@ -25,7 +25,8 @@ class Flight:
             "Destination": self.destination,
             "DepartureDatetime": format_datetime(self.departure_datetime),
             "LandingDatetime": format_datetime(self.landing_datetime),
-            "DelayedLandingTime": format_datetime(self.delayed_landing_time) if self.delayed_landing_time else None
+            "IsDelay": self.is_delay if self.is_delay else None,
+            "Price": self.price
         }
 
     @classmethod
@@ -40,5 +41,6 @@ class Flight:
             destination=server_dict["destination"],
             departure_datetime=parse_datetime(server_dict["departureDatetime"]),
             landing_datetime=parse_datetime(server_dict["landingDatetime"]),
-            delayed_landing_time=parse_datetime(server_dict["delayedLandingTime"]) if server_dict["delayedLandingTime"] else None
+            is_delay=server_dict["isDelay"] if server_dict["isDelay"] else None,
+            price=server_dict["price"]
         )

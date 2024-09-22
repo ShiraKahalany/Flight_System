@@ -10,6 +10,10 @@ class AircraftDAL(IAircraftDAL):
         res=self.api_client.post("aircraft/add", aircraft.to_server_format())
         return Aircraft.to_client_format(res.json())
     
+    def get_aircrafts(self):
+        res = self.api_client.get("aircraft/get/all")
+        return [Aircraft.to_client_format(aircraft_data) for aircraft_data in res.json()]
+    
     # def get_aircraft(self, aircraft_id):
     #     data = self.api_client.get(f"aircraft/get/{aircraft_id}")
     #     print(f'the dataaaa:  {data.json()}')
