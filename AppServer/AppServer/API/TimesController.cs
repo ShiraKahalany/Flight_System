@@ -26,16 +26,16 @@ namespace AppServer.API
         {
             if (request?.Date == null)
                 return BadRequest("Date is required.");
-            
+
             // Step 1: Call the CheckDate function in the service to get the Hebcal data
-            var TimesData = await _hebcalService.CheckDate(request.Date,0,request.Location);
-            var DateData = await _hebcalService.CheckDate(request.Date,1,request.Location);
+            var TimesData = await _hebcalService.CheckDate(request.Date, 0, request.Location);
+            var DateData = await _hebcalService.CheckDate(request.Date, 1, request.Location);
             //return Ok(TimesData);
             // Step 2: Deserialize the JSON response
             var jsonDate = JsonConvert.DeserializeObject<dynamic>(DateData);
             var jsonTimes = JsonConvert.DeserializeObject<dynamic>(TimesData);
 
-            if (jsonDate == null|| jsonTimes==null)
+            if (jsonDate == null || jsonTimes == null)
                 return BadRequest("Invalid data from Hebcal API.");
 
             // Step 3: Extract the relevant fields from the JSON
@@ -44,7 +44,7 @@ namespace AppServer.API
             string candleLighting = null;
             string havdalah = null;
             bool isHoliday = false;
-            DateTime currentDate=DateTime.Now;
+            DateTime currentDate = DateTime.Now;
 
             // Cast jsonData["items"] to a JArray to handle it as a strongly typed collection
             JArray itemsArray = jsonTimes["items"] as JArray;
@@ -52,8 +52,7 @@ namespace AppServer.API
             DateTime nextShabbatStart = DateTime.MinValue;
             DateTime nextShabbatEnd = DateTime.MinValue;
 
-            string format = "MM/dd/yyyy HH:mm:ss";
-
+            string[] formats = { "yyyy-MM-dd", "MM/dd/yyyy HH:mm:ss" };
             if (itemsArray != null)
             {
                 // Loop through the items to find relevant data
@@ -61,12 +60,17 @@ namespace AppServer.API
                 {
                     string title = (string)item["title"];
 
+                    string datetime = (string)item["date"];
+                    if (DateTime.TryParseExact(datetime, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
+                    {
+                        currentDate = parsedDate;
+                    }
                     // Check for candle lighting time
                     if (title.Contains("Candle lighting:"))
                     {
                         candleLighting = (string)item["date"]; // Candle lighting time (Shabbat start)
 
-                        if (DateTime.TryParseExact(candleLighting, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDateStart))
+                        if (DateTime.TryParseExact(candleLighting, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDateStart))
                         {
                             nextShabbatStart = parsedDateStart; // Successfully parsed date
                         }
@@ -76,19 +80,13 @@ namespace AppServer.API
                     {
                         havdalah = (string)item["date"]; // Havdalah time (Shabbat end)
 
-                        if (DateTime.TryParseExact(havdalah, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDateEnd))
+                        if (DateTime.TryParseExact(havdalah, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDateEnd))
                         {
                             nextShabbatEnd = parsedDateEnd;
                         }
-                       
+
                     }
                     //check if holiday
-                    string datetime = (string)item["date"];
-                    
-                    if (DateTime.TryParseExact(datetime, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
-                    {
-                        currentDate = parsedDate;
-                    }
                     else if (item["yomtov"] != null && (bool)item["yomtov"] == true && currentDate.Date == request.Date.Date)
                     {
                         isHoliday = true; // Set IsHoliday to true if yomtov is present and true
@@ -124,6 +122,6 @@ namespace AppServer.API
     public class DateRequest
     {
         public DateTime Date { get; set; }
-        public int Location {  get; set; }
+        public int Location { get; set; }
     }
 }
