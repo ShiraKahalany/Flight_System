@@ -1,4 +1,3 @@
-import requests  # For downloading images from the internet
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, QPushButton, QLabel
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt
@@ -33,16 +32,12 @@ class FlightsView(QWidget):
 
         # Populate the table with flight data and add "Watch" buttons
         for row, flight in enumerate(self.flights):
-            aircraft = self.controller.dal.Aircraft.get_aircraft_by_id(flight.aircraft_id)
-            if aircraft:
+            if flight.aircraft:
                 # Add image to the first column
                 image_label = QLabel()
-
-                # Download image from URL
-                image_data = self.download_image(aircraft.image_url)
-                if image_data:
+                if flight.aircraft.image_data:
                     pixmap = QPixmap()
-                    pixmap.loadFromData(image_data)
+                    pixmap.loadFromData(flight.aircraft.image_data)
                     pixmap = pixmap.scaled(80, 80, Qt.KeepAspectRatio)  # Scale the image
                     image_label.setPixmap(pixmap)
                 else:
@@ -51,7 +46,7 @@ class FlightsView(QWidget):
                 self.table.setCellWidget(row, 0, image_label)
 
             self.table.setItem(row, 1, QTableWidgetItem(str(flight.id)))
-            self.table.setItem(row, 2, QTableWidgetItem(aircraft.nickname if aircraft else "Unknown"))
+            self.table.setItem(row, 2, QTableWidgetItem(flight.aircraft.nickname if flight.aircraft else "Unknown"))
             self.table.setItem(row, 3, QTableWidgetItem(flight.source))
             self.table.setItem(row, 4, QTableWidgetItem(flight.destination))
             self.table.setItem(row, 5, QTableWidgetItem(flight.departure_datetime.strftime('%Y-%m-%d %H:%M')))
@@ -59,27 +54,3 @@ class FlightsView(QWidget):
 
             # Add the "Watch" button
             watch_button = QPushButton("Watch", self)
-            watch_button.clicked.connect(lambda _, f=flight: self.watch_flight(f))
-            self.table.setCellWidget(row, 7, watch_button)
-
-        layout.addWidget(self.table)
-        self.setLayout(layout)
-
-    def download_image(self, url):
-        """Download the image from the given URL and return its binary content."""
-        try:
-            response = requests.get(url)
-            response.raise_for_status()  # Raise an exception for bad responses
-            return response.content  # Return image data as bytes
-        except Exception as e:
-            print(f"Error downloading image: {e}")
-            return None
-
-    def watch_flight(self, flight):
-        """ Call the controller to show flight details """
-        self.controller.show_flight_details(flight.id)
-
-    def go_back(self):
-        """ Calls go_back from the main application window """
-        if self.parent() and hasattr(self.parent(), 'go_back'):
-            self.parent().go_back()
