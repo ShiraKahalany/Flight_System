@@ -31,7 +31,7 @@ namespace AppServer.Services
             else
             {
                 //hebrew date
-                string dateString = date.ToString("yyyy-MM-dd");
+                string dateString = date.ToString("yyyy-MM-ddTHH:mm:ss");
                 hebcalApiUrl = $"https://www.hebcal.com/converter?cfg=json&date={dateString}&g2h=1&strict=1";
             }
             // Send the GET request to Hebcal API
