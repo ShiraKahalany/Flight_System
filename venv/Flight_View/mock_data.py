@@ -16,32 +16,32 @@ from datetime import datetime, timedelta
 flights = [
     # Landing in 1 hour
     Flight(id=1, aircraft_id=1, source='New York', destination='Ben Gurion Airport',
-           departure_datetime=datetime(2024, 9, 17, 6, 30), landing_datetime=datetime.now() + timedelta(hours=1)),
+           departure_datetime=datetime(2024, 9, 17, 6, 30), landing_datetime=datetime.now() + timedelta(hours=1), price=500),  # 2024-09-17 07:30
 
     # Landing in 2 hours
     Flight(id=2, aircraft_id=2, source='London', destination='Ben Gurion Airport',
-           departure_datetime=datetime(2024, 9, 17, 7, 0), landing_datetime=datetime.now() + timedelta(hours=2)),
+           departure_datetime=datetime(2024, 9, 17, 7, 0), landing_datetime=datetime.now() + timedelta(hours=2), price=600),  # 2024-09-17 08:00
 
     # Landing in 3 hours
     Flight(id=3, aircraft_id=1, source='Paris', destination='Ben Gurion Airport',
-           departure_datetime=datetime(2024, 9, 17, 8, 0), landing_datetime=datetime.now() + timedelta(hours=3)),
+           departure_datetime=datetime(2024, 9, 17, 8, 0), landing_datetime=datetime.now() + timedelta(hours=3), price=700),  # 2024-09-17 09:00
 
     # Landing in 4 hours
     Flight(id=4, aircraft_id=2, source='Berlin', destination='Ben Gurion Airport',
-           departure_datetime=datetime(2024, 9, 17, 9, 0), landing_datetime=datetime.now() + timedelta(hours=4)),
+           departure_datetime=datetime(2024, 9, 17, 9, 0), landing_datetime=datetime.now() + timedelta(hours=4), price=800),  # 2024-09-17 10:00
 
     # Landing in 5 hours
     Flight(id=5, aircraft_id=1, source='Los Angeles', destination='Ben Gurion Airport',
-           departure_datetime=datetime(2024, 9, 17, 5, 0), landing_datetime=datetime.now() + timedelta(hours=5)),
+           departure_datetime=datetime(2024, 9, 17, 5, 0), landing_datetime=datetime.now() + timedelta(hours=5), price=900),  # 2024-09-17 06:00
 
     # Flight that lands outside the 5-hour window for testing
     Flight(id=6, aircraft_id=1, source='Berlin', destination='Ben Gurion Airport',
-           departure_datetime=datetime(2024, 9, 17, 1, 0), landing_datetime=datetime.now() + timedelta(hours=7)),
+           departure_datetime=datetime(2024, 9, 17, 1, 0), landing_datetime=datetime.now() + timedelta(hours=7), price=1000),  # 2024-09-17 02:00
 
     # Flight that lands outside Ben Gurion for testing (won't show up)
-    Flight(id=7, aircraft_id=2, source='Berlin', destination='Rome', departure_datetime=datetime(2024, 9, 17, 3, 0), landing_datetime=datetime.now() + timedelta(hours=2)),
-    Flight(id=3, aircraft_id=1, source='Paris', destination='Berlin', departure_datetime=datetime(2024, 9, 17, 9, 0), landing_datetime=datetime(2024, 9, 17, 12, 0)),
-    Flight(id=4, aircraft_id=2, source='Berlin', destination='Rome', departure_datetime=datetime(2024, 9, 18, 11, 0), landing_datetime=datetime(2024, 9, 18, 14, 0))
+    Flight(id=7, aircraft_id=2, source='Berlin', destination='Rome', departure_datetime=datetime(2024, 9, 17, 3, 0), landing_datetime=datetime.now() + timedelta(hours=2), price=1100),  # 2024-09-17 04:00
+    Flight(id=3, aircraft_id=1, source='Paris', destination='Berlin', departure_datetime=datetime(2024, 9, 17, 9, 0), landing_datetime=datetime(2024, 9, 17, 12, 0), price=700),  # 2024-09-17 09:00
+    Flight(id=4, aircraft_id=2, source='Berlin', destination='Rome', departure_datetime=datetime(2024, 9, 18, 11, 0), landing_datetime=datetime(2024, 9, 18, 14, 0), price=800),  # 2024-09-17 10:00
 ]
 
 
