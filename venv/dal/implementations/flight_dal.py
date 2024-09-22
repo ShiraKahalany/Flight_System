@@ -7,7 +7,7 @@ class FlightDAL(IFlightDAL):
         self.api_client = api_client
 
     def create_flight(self, flight):
-        res = self.api_client.post("flight/add", flight.to_server_format())
+        res = self.api_client.post("flight/add", flight)
         return Flight.to_client_format(res.json())
     
     def get_flights(self):

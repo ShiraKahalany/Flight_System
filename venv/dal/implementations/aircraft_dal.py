@@ -7,7 +7,7 @@ class AircraftDAL(IAircraftDAL):
         self.api_client = api_client
     
     def create_aircraft(self, aircraft):
-        res=self.api_client.post("aircraft/add", aircraft.to_server_format())
+        res=self.api_client.post("aircraft/add", aircraft)
         return Aircraft.to_client_format(res.json())
     
     def get_aircrafts(self):

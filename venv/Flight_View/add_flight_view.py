@@ -20,7 +20,8 @@ class AddFlightView(QWidget):
         # Dropdown to select aircraft
         self.aircraft_dropdown = QComboBox(self)
         for aircraft in self.aircrafts:
-            self.aircraft_dropdown.addItem(f"{aircraft['nickname']} ({aircraft['manufacturer']})", aircraft["id"])
+            # Access Aircraft object attributes using dot notation
+            self.aircraft_dropdown.addItem(f"{aircraft.nickname} ({aircraft.manufacturer})", aircraft.id)
         self.form_layout.addRow("Aircraft", self.aircraft_dropdown)
 
         # Source and destination input fields

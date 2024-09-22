@@ -11,7 +11,10 @@ class APIClient:
         return response
 
     def post(self, endpoint, data):
-        response = requests.post(f"{self.base_url}/{endpoint}", json=data)
+        headers = {'Content-Type': 'application/json'}
+        serv_data = data.to_server_format()
+
+        response = requests.post(f"{self.base_url}/{endpoint}", json=serv_data, headers=headers)
         response.raise_for_status()
         return response
 
