@@ -1,102 +1,85 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QFrame, QApplication
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QSpacerItem, QSizePolicy
+from PySide6.QtCore import Qt
 
 class PassengerView(QWidget):
-    def __init__(self, controller=None):
+    def __init__(self, controller=None, user=None):
         super().__init__(parent=None)
         self.controller = controller
-        self.error_label = QLabel("", self)  # A label to show errors and success messages
-        layout = QVBoxLayout()
+        self.user = user  # Store user information
 
-        # "Go Back" Button
+        main_layout = QVBoxLayout()
+
+        # Top layout for "Go Back" button aligned to the left
+        top_layout = QHBoxLayout()
         self.back_button = QPushButton("← Go Back", self)
-        self.back_button.clicked.connect(self.go_back_and_hide_loading)  # Hide loading when going back
-        layout.addWidget(self.back_button)
+        self.back_button.setStyleSheet("""
+            background-color: #3498db; 
+            color: white; 
+            padding: 10px; 
+            font-size: 14px; 
+            border-radius: 5px;
+        """)
+        self.back_button.clicked.connect(self.controller.go_back)
+        top_layout.addWidget(self.back_button)
+        top_layout.addStretch()  # Pushes the button to the left
+
+        main_layout.addLayout(top_layout)
+
+        # Greeting the user with "Hello {user.firstname}"
+        self.greeting_label = QLabel(f"Welcome back!", self)
+        self.greeting_label.setAlignment(Qt.AlignCenter)
+        self.greeting_label.setStyleSheet("""
+            font-size: 50px; 
+            font-weight: bold; 
+            color: #2c3e50;
+            background-color: #f2f2f2;
+            padding: 20px;
+        """)
+        main_layout.addWidget(self.greeting_label)
+
+        # Buttons section
+        buttons_layout = QVBoxLayout()
+        buttons_layout.setSpacing(10)
+        buttons_layout.setContentsMargins(20, 0, 20, 0)
 
         # Button to view available flights
-        self.flights_button = QPushButton("Flights", self)
-        self.flights_button.clicked.connect(self.show_loading_and_fetch_flights)
-        layout.addWidget(self.flights_button)
+        self.flights_button = self.create_button("Flights", self.controller.show_flights)
+        buttons_layout.addWidget(self.flights_button)
 
         # Button to view upcoming landings
-        self.landings_button = QPushButton("Watch Landings", self)
-        self.landings_button.clicked.connect(self.controller.watch_landings)  # Logic in controller
-        layout.addWidget(self.landings_button)
+        self.landings_button = self.create_button("Watch Landings", self.controller.watch_landings)
+        buttons_layout.addWidget(self.landings_button)
 
         # Button to view booked flights
-        self.my_flights_button = QPushButton("My Flights", self)
-        self.my_flights_button.clicked.connect(self.controller.show_my_flights)
-        layout.addWidget(self.my_flights_button)
+        self.my_flights_button = self.create_button("My Flights", self.controller.show_my_flights)
+        buttons_layout.addWidget(self.my_flights_button)
 
-        # Add error/success label to the layout
-        layout.addWidget(self.error_label)
+        main_layout.addLayout(buttons_layout)
+        
+        # Adding a spacer to push buttons up
+        main_layout.addSpacerItem(QSpacerItem(20, 100, QSizePolicy.Minimum, QSizePolicy.Expanding))
 
-        # Add loading square (Initially hidden)
-        self.loading_square = self.create_loading_square()
-        layout.addWidget(self.loading_square)
-        self.loading_square.hide()  # Hide the loading square initially
+        self.setLayout(main_layout)
+        self.setStyleSheet("background-color: #f2f2f2;")  # Light gray background
 
-        self.setLayout(layout)
-
-    def create_loading_square(self):
-        """Creates a small loading square to show while data is loading."""
-        loading_frame = QFrame(self)
-        loading_frame.setStyleSheet("background-color: lightgray; border: 2px solid gray;")
-        loading_frame.setFixedSize(200, 100)  # Small square
-        loading_layout = QVBoxLayout()
-
-        loading_label = QLabel("Please wait...\nLoading flights...", self)
-        loading_label.setAlignment(Qt.AlignCenter)  # Center the text within the label
-        loading_layout.addWidget(loading_label)
-        loading_frame.setLayout(loading_layout)
-
-        return loading_frame
-
-    def show_loading_and_fetch_flights(self):
-        """ Show the loading square, force UI refresh, and fetch flights """
-        self.show_loading_square()  # Show the loading square
-
-        # Force UI refresh
-        QApplication.processEvents()
-
-        # Simulate delay before showing flights (optional)
-        QTimer.singleShot(500, self.fetch_flights)
-
-    def fetch_flights(self):
-        """ Fetch flights and hide loading after switching view """
-        self.controller.show_flights()  # Call the controller to fetch flights
-        self.hide_loading_square()  # Ensure the loading square is hidden when flights are shown
-
-    def show_loading_square(self):
-        """ Show the loading square widget in the center of the page """
-        self.loading_square.show()
-
-        # Dynamically center the loading square
-        window_width = self.width()
-        window_height = self.height()
-        square_width = self.loading_square.width()
-        square_height = self.loading_square.height()
-
-        self.loading_square.move(
-            (window_width - square_width) // 2,
-            (window_height - square_height) // 2
-        )
-
-    def hide_loading_square(self):
-        """ Hide the loading square widget """
-        self.loading_square.hide()
-
-    def go_back_and_hide_loading(self):
-        """ Go back and hide the loading square """
-        self.hide_loading_square()  # Ensure loading square is hidden when going back
-        self.controller.go_back()
+    def create_button(self, text, callback):
+        """Helper function to create consistent styled buttons."""
+        button = QPushButton(text, self)
+        button.setStyleSheet("""
+            background-color: #3498db;
+            color: white;
+            padding: 15px;
+            font-size: 16px;
+            border-radius: 8px;
+        """)
+        button.setMinimumHeight(50)  # Make buttons taller
+        button.clicked.connect(callback)
+        return button
 
     def show_error(self, message):
-        """ Display an error message in the error_label """
-        self.error_label.setText(message)
-        self.error_label.setStyleSheet("color: red;")  # Set the text color to red to indicate an error
+        """ Display an error message in red """
+        self.error_label = QLabel(message, self)
+        self.error_label.setStyleSheet("color: red;")
+        self.error_label.setAlignment(Qt.AlignCenter)
+        self.layout().addWidget(self.error_label)
 
-    def show_success(self, message):
-        """ Display a success message in the error_label """
-        self.error_label.setText(message)
-        self.error_label.setStyleSheet("color: green;")  # Set the text color to green to indicate success
