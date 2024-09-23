@@ -41,6 +41,10 @@ class LoginView(QWidget):
         self.password_input.setStyleSheet("padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #bdc3c7;")
         layout.addWidget(self.password_input)
 
+        # Connect returnPressed signal to the login function
+        self.username_input.returnPressed.connect(self.login)
+        self.password_input.returnPressed.connect(self.login)
+
         # Login button
         self.login_button = QPushButton("Login", self)
         self.login_button.setStyleSheet(
