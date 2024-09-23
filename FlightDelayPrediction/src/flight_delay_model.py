@@ -46,25 +46,32 @@ print("Classification Report:\n", classification_report_rf_test)
 
 # Function to predict if the flight will be delayed (0 or 1)
 def predict_flight_delay(new_data):
+    # Convert new_data to DataFrame (wrap it in a list to ensure it's 2D)
+    new_data_df = pd.DataFrame([new_data])
+
     # Preprocess the new data: encoding and scaling
     for column in categorical_columns:
-        # Extend the classes in the LabelEncoder to include the new data
-        le = label_encoders[column]
-        le_classes = le.classes_
+        if column in new_data_df:
+            le = label_encoders[column]
+            le_classes = le.classes_
 
-        # Find unseen labels in the new_data and extend the classes
-        unseen_labels = set(new_data[column]) - set(le_classes)
-        if unseen_labels:
-            print(f"Unseen labels detected in column '{column}': {unseen_labels}. Extending label encoder.")
-            le.classes_ = np.concatenate([le_classes, list(unseen_labels)])
-        
-        # Transform using the extended label encoder
-        new_data[column] = le.transform(new_data[column])
+            # Find unseen labels in the new_data and extend the classes
+            unseen_labels = set(new_data_df[column]) - set(le_classes)
+            if unseen_labels:
+                print(f"Unseen labels detected in column '{column}': {unseen_labels}. Extending label encoder.")
+                le.classes_ = np.concatenate([le_classes, list(unseen_labels)])
 
-    new_data_scaled = scaler.transform(new_data)
+            # Transform using the extended label encoder
+            new_data_df[column] = le.transform(new_data_df[column])
 
-    # Predict and return 0 or 1
-    return rf_classifier.predict(new_data_scaled)
+    # Scale the data
+    new_data_scaled = scaler.transform(new_data_df)
+
+    # Predict and return the result (0 or 1)
+    prediction = rf_classifier.predict(new_data_scaled)
+
+    return prediction[0]  # Since we predict a single sample, return the first (and only) result
+
 
 
 # Example usage: predicting for new landing data
