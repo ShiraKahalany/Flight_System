@@ -12,7 +12,7 @@ class LoginView(QWidget):
         self.logo_label = QLabel(self)
 
         # Ensure correct path for the image file
-        logo_path = "logo.jpg"  # Adjust this to the correct file path if it's not in the current directory
+        logo_path = "venv/Flight_View/logo.jpg"  # Adjust this to the correct file path if it's not in the current directory
 
         # Check if the pixmap loads the image correctly
         pixmap = QPixmap(logo_path)
