@@ -161,7 +161,7 @@ def test_ticket_dal(dal):
     # Assuming these methods exist. Adjust as necessary.
     new_ticket = Ticket(
         flight_id= "345",
-        user_id= "322361361",
+        user_id= "322361373",
         purchase_datetime= datetime.now()
     )
     created_ticket = ticket_dal.create_ticket(new_ticket)
@@ -207,10 +207,10 @@ def main():
     #dal = DALImpl()
 
     #test_date_checker(dal)
-    test_user_dal(dal)
+    #test_user_dal(dal)
     #test_flight_dal(dal)
     #test_aircraft_dal(dal)
-    #test_ticket_dal(dal)
+    test_ticket_dal(dal)
 
 
 
