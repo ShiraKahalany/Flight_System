@@ -57,9 +57,10 @@ def test_user_dal(dal):
     # logger.info(f"Created user: {created_user}. type: {type(created_user)}")
 
     try:
-        username = "johnsonmary"
-        password = "k9GzyQXp^9"
-        user = user_dal.login_user(username, password)
+        username = "danush"
+        password = "password123"
+        #user = user_dal.login_user(username, password)
+        created_user = user_dal.create_user(new_user)
     except UserNotFoundException:
         print('error: User not found')
     except InvalidCredentialsException:

@@ -7,13 +7,13 @@ class UserDAL(IUserDAL):
     def __init__(self, api_client):
         self.api_client = api_client
 
-    def create_user(self, user):
+    def create_user(self, user: User):
         try:
             print(f'create user: {user.to_server_format()}')
             data = self.api_client.post("user/add", user.to_server_format())   
             return User.to_client_format(data.json())
         except requests.exceptions.HTTPError as e:
-            if e.response.status_code == 409:  # Assuming 409 is used for "Conflict" (user already exists)
+            if e.response.status_code == 409: # Conflict
                 raise UserAlreadyExistsException(f"User with username '{user.username}' already exists")
             elif e.response.status_code == 400:
                 raise UserCreationException(f"Invalid user data: {e.response.text}")

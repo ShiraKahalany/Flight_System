@@ -7,7 +7,7 @@ class TicketDAL(ITicketDAL):
     def __init__(self, api_client):
         self.api_client = api_client
 
-    def create_ticket(self, ticket):
+    def create_ticket(self, ticket: Ticket):
         try:
             data = self.api_client.post("ticket/add", ticket.to_server_format())    
             return Ticket.to_client_format(data.json())

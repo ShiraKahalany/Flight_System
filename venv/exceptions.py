@@ -4,11 +4,12 @@ class BaseCustomException(Exception):
     """Base class for custom exceptions"""
     pass
 
+# User-related exceptions
+
 class UserAlreadyExistsException(BaseCustomException):
     """Raised when attempting to create a user with an existing username."""
     pass
 
-# User-related exceptions
 class UserNotFoundException(BaseCustomException):
     """Raised when a user is not found."""
     pass
