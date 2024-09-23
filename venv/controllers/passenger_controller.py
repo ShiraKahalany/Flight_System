@@ -37,7 +37,7 @@ class PassengerController:
             )
 
             # Call DAL to create the ticket
-            self.dal.Ticket.create_ticket(new_ticket.to_server_format())
+            self.dal.Ticket.create_ticket(new_ticket)
             print(f"New Ticket Created: {new_ticket}")
 
             # Show success message
