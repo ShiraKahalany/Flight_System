@@ -13,6 +13,7 @@ class Aircraft:
         self.image_url = image_url
         self.number_of_chairs = number_of_chairs
 
+
     def to_server_format(self):
         """Convert the object to JSON for sending to the server."""
         server_dict = {

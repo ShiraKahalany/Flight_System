@@ -52,7 +52,8 @@ class LandingsView(QWidget):
 
         # Populate the table with filtered flight data and images
         for row, flight in enumerate(filtered_flights):
-            aircraft = self.controller.get_aircraft_by_id(flight.aircraft_id)
+            # Fetch aircraft data from the DAL through the controller
+            aircraft = self.controller.dal.Aircraft.get_aircraft_by_id(flight.aircraft_id)
             if aircraft:
                 # Add image to the first column
                 image_label = QLabel()

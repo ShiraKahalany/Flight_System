@@ -9,6 +9,8 @@ from models.ticket import Ticket
 from Flight_View.my_flights_view import MyFlightsView
 from dal.interfaces.idal import IDAL
 from datetime import datetime, timedelta
+from models.aircraft import Aircraft
+
 
 class PassengerController:
     def __init__(self, main_controller, dal: IDAL):
@@ -56,20 +58,50 @@ class PassengerController:
         msg_box.exec()
 
     def show_flights(self):
-        """Shows all available future flights to the user."""
+        """Fetch and show all available future flights."""
         try:
             # Fetch flights from the DAL
             future_flights = self.dal.Flight.get_flights()
+            print(f"Future Flights: {future_flights}")
+            
+            # Fetch corresponding aircraft details for each flight
+            for flight in future_flights:
+                aircraft = self.dal.Aircraft.get_aircraft_by_id(flight.aircraft_id)
+
+                # Attach aircraft to the flight
+                flight.aircraft = aircraft
+
+                # Download aircraft image
+                if aircraft and aircraft.image_url:
+                    aircraft.image_data = self.download_image(aircraft.image_url)
+
+            # Pass flights (with aircraft data and price) to the view
             self.flights_view = FlightsView(controller=self, flights=future_flights)
             self.main_controller.set_view(self.flights_view)
+
         except Exception as e:
             self.show_error_message(f"Error loading flights: {e}")
+
+
+
+    def download_image(self, url):
+        """Download the image from the given URL and return its binary content."""
+        headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
+        try:
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()  # Raise an exception for bad responses
+            return response.content  # Return image data as bytes
+        except Exception as e:
+            print(f"Error downloading image: {e}")
+            return None
 
     def show_flight_details(self, flight_id):
         """Shows the details of the selected flight."""
         try:
             flight = self.dal.Flight.get_flight_by_id(flight_id)
             if flight:
+                flight.aircraft = self.dal.Aircraft.get_aircraft_by_id(flight.aircraft_id)
                 self.flight_entry_view = FlightEntryView(controller=self, flight=flight)
                 self.main_controller.set_view(self.flight_entry_view)
         except Exception as e:
@@ -81,9 +113,17 @@ class PassengerController:
         self.main_controller.go_back()  # After purchase, go back to the previous screen
 
     def watch_landings(self):
-        """Show the LandingsView and pass the controller."""
-        self.landings_view = LandingsView(controller=self)
-        self.main_controller.set_view(self.landings_view)
+        """Fetch and show landings in Ben Gurion Airport within the next 5 hours."""
+        try:
+            # Fetch landings in the next 5 hours from the DAL
+            flights_in_next_5_hours = self.dal.Flight.get_BGR_lands_next_5_hours()
+
+            # Pass the landings to the LandingsView
+            self.landings_view = LandingsView(controller=self)
+            self.main_controller.set_view(self.landings_view)
+
+        except Exception as e:
+            self.show_error_message(f"Error fetching landings: {e}")
 
     def get_upcoming_landings(self, hours_ahead):
         """Filter the landings happening within the next given hours."""

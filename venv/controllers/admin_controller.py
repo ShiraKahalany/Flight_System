@@ -6,6 +6,7 @@ from Flight_View.add_flight_view import AddFlightView  # New view for adding fli
 from models.flight import Flight
 from dal.interfaces.idal import IDAL
 from datetime import datetime
+from models.aircraft import Aircraft
 
 class AdminController:
     def __init__(self, main_controller, dal: IDAL):
@@ -27,9 +28,50 @@ class AdminController:
 
     def add_flight(self):
         """Show the AddFlightView for adding a new flight."""
-        aircrafts = self.dal.Aircraft.getAircrafts()  # Fetch available aircrafts from DAL
+        aircrafts = self.dal.Aircraft.get_aircrafts()  # Fetch available aircrafts from DAL
         self.add_flight_view = AddFlightView(controller=self, aircrafts=aircrafts)
         self.main_controller.set_view(self.add_flight_view)
+    
+    def save_aircraft(self, manufacturer, nickname, year_of_manufacture, image_url, number_of_chairs):
+        """Save new aircraft data."""
+        try:
+            # Validate the inputs
+            if int(year_of_manufacture) > datetime.now().year:
+                raise ValueError("Year of manufacture cannot be in the future.")
+
+            if int(number_of_chairs) <= 0:
+                raise ValueError("Number of chairs must be greater than zero.")
+
+            # Create the new aircraft object
+            new_aircraft = Aircraft(
+                manufacturer=manufacturer,
+                nickname=nickname,
+                year_of_manufacture=year_of_manufacture,
+                image_url=image_url,
+                number_of_chairs=number_of_chairs
+            )
+
+            # Ensure it's an Aircraft object and not a dict
+            if not isinstance(new_aircraft, Aircraft):
+                raise TypeError(f"Expected Aircraft object, got {type(new_aircraft)}")
+
+            # Debugging line: Print the new aircraft object
+            print(f"Created Aircraft object: {new_aircraft}")
+
+            # Add the aircraft using the DAL
+
+            created_aircraft = self.dal.Aircraft.create_aircraft(new_aircraft)
+            print(f"New aircraft created: {created_aircraft}")
+
+            # Show success message
+            self.show_success_message(f"Aircraft added successfully!\n{created_aircraft}")
+
+        except ValueError as ve:
+            self.show_error_message(f"Error: {ve}")
+        except Exception as e:
+            self.show_error_message(f"Unexpected error: {e}")
+
+
 
     def save_flight(self, aircraft_id, source, destination, departure_datetime, landing_datetime, price):
         """Save new flight data."""
@@ -52,19 +94,21 @@ class AdminController:
                 price=price
             )
 
-            # Add the flight using the DAL
-            new_flight_data = new_flight.to_server_format()
-            created_flight = self.dal.Flight.create_flight(new_flight_data)
+            # Debugging line: Ensure that the Flight object is created correctly
+            print(f"Type of new_flight: {type(new_flight)}")
+            print(f"New Flight object: {new_flight}")
 
-            print(f"New flight created: {created_flight}")
+            # Send the flight data to the DAL for saving
+            created_flight = self.dal.Flight.create_flight(new_flight)
 
-            # Show success message
-            self.show_success_message(f"Flight added successfully!\n{created_flight}")
+            # Show success message to the user
+            self.show_success_message(f"Flight added successfully! {created_flight}")
 
         except ValueError as ve:
             self.show_error_message(f"Error: {ve}")
         except Exception as e:
             self.show_error_message(f"Unexpected error: {e}")
+
 
     def show_success_message(self, message):
         """Show a pop-up success message."""

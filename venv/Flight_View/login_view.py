@@ -25,9 +25,12 @@ class LoginView(QWidget):
         self.setLayout(layout)
 
     def login(self):
+        """Handles the login button click event."""
         username = self.username_input.text()
         password = self.password_input.text()
         self.controller.login(username, password)  # Delegate logic to controller
 
     def show_error(self, message):
+        """Displays error messages to the user."""
         self.label.setText(message)
+        self.label.setStyleSheet("color: red;")

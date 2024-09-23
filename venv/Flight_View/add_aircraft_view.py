@@ -18,11 +18,13 @@ class AddAircraftView(QWidget):
         self.nickname_input = QLineEdit(self)
         self.year_input = QLineEdit(self)
         self.image_url_input = QLineEdit(self)
+        self.number_of_chairs_input = QLineEdit(self)
 
         self.form_layout.addRow("Manufacturer", self.manufacturer_input)
         self.form_layout.addRow("Nickname", self.nickname_input)
         self.form_layout.addRow("Year of Manufacture", self.year_input)
         self.form_layout.addRow("Image URL", self.image_url_input)
+        self.form_layout.addRow("Number Of Chairs", self.number_of_chairs_input)
 
         layout.addLayout(self.form_layout)
 
@@ -44,6 +46,7 @@ class AddAircraftView(QWidget):
         nickname = self.nickname_input.text().strip()
         year_of_manufacture = self.year_input.text().strip()
         image_url = self.image_url_input.text().strip()
+        number_of_chairs=self.number_of_chairs_input.text().strip()
 
         if not manufacturer or not nickname or not year_of_manufacture or not image_url:
             self.message_label.setText("All fields are required.")
@@ -51,4 +54,4 @@ class AddAircraftView(QWidget):
             return
 
         # Pass the aircraft data to the controller to save
-        self.controller.save_aircraft(manufacturer, nickname, year_of_manufacture, image_url)
+        self.controller.save_aircraft(manufacturer, nickname, year_of_manufacture, image_url,number_of_chairs)
