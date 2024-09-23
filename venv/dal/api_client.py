@@ -6,7 +6,7 @@ class APIClient:
     def __init__(self):
         self.base_url = API_BASE_URL
 
-    def _make_request(self, method, endpoint, params=None, data=None):
+    def _make_request(self, method, endpoint, params=None, data=None, headers=None):
         url = f"{self.base_url}/{endpoint}"
         try:
             if method == 'GET':
@@ -39,10 +39,10 @@ class APIClient:
 
     def post(self, endpoint, data):
         headers = {'Content-Type': 'application/json'}
-        return self._make_request('POST', endpoint, json=data, headers=headers)
+        return self._make_request('POST', endpoint, data=data, headers=headers)
 
     def put(self, endpoint, data):
-        return self._make_request('PUT', endpoint, json=data)
+        return self._make_request('PUT', endpoint, data=data)
 
     def delete(self, endpoint):
         return self._make_request('DELETE', endpoint)
