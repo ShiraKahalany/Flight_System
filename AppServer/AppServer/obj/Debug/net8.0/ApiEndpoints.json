@@ -253,7 +253,7 @@
   },
   {
     "ContainingType": "TicketController",
-    "Method": "GetAllFlights",
+    "Method": "GetAllTickets",
     "RelativePath": "api/ticket/get/all",
     "HttpMethod": "GET",
     "IsController": true,

@@ -62,7 +62,6 @@ class PassengerController:
         try:
             # Fetch flights from the DAL
             future_flights = self.dal.Flight.get_flights()
-            print(f"Future Flights: {future_flights}")
             
             # Fetch corresponding aircraft details for each flight
             for flight in future_flights:

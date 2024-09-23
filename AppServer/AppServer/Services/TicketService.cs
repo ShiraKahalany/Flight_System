@@ -1,6 +1,7 @@
 ﻿using AppServer.Models;
 using AppServer.Data;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
 public interface ITicketService
@@ -11,7 +12,6 @@ public interface ITicketService
     Task<List<Ticket>> GetAllTicketsAsync();
     Task DeleteAllTicketsAsync();
     Task<IEnumerable<Ticket>> GetTicketsByUserIdAsync(int userId);
-
 }
 
 public class TicketService : ITicketService
@@ -26,42 +26,77 @@ public class TicketService : ITicketService
     // Add a new ticket
     public async Task AddTicketAsync(Ticket ticket)
     {
-        _context.Tickets.Add(ticket);  // Add the ticket to the DbSet
-        await _context.SaveChangesAsync();  // Save changes to the database
+        try
+        {
+            _context.Tickets.Add(ticket);
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new Exception("Database error while adding the ticket.", ex);
+        }
     }
 
     // Delete a ticket by its Id
     public async Task DeleteTicketAsync(int id)
     {
-        var ticket = await _context.Tickets.FindAsync(id);  // Find the ticket by Id
-        if (ticket != null)
+        var ticket = await _context.Tickets.FindAsync(id);
+        if (ticket == null)
         {
-            _context.Tickets.Remove(ticket);  // Mark the ticket for deletion
-            await _context.SaveChangesAsync();  // Commit the changes to the database
+            throw new KeyNotFoundException($"Ticket with id {id} not found.");
+        }
+
+        try
+        {
+            _context.Tickets.Remove(ticket);
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new Exception("Database error while deleting the ticket.", ex);
         }
     }
-    //delete all tickets
+
+    // Delete all tickets
     public async Task DeleteAllTicketsAsync()
     {
-        var tickets = _context.Tickets.ToList();
-        _context.Tickets.RemoveRange(tickets);
-        await _context.SaveChangesAsync();
+        var tickets = await _context.Tickets.ToListAsync();
+        if (!tickets.Any())
+        {
+            throw new KeyNotFoundException("No tickets found.");
+        }
+
+        try
+        {
+            _context.Tickets.RemoveRange(tickets);
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new Exception("Database error while deleting tickets.", ex);
+        }
     }
 
     // Get a ticket by its Id
     public async Task<Ticket?> GetTicketByIdAsync(int id)
     {
-        return await _context.Tickets.FindAsync(id);  // Find the ticket by Id
+        return await _context.Tickets.FindAsync(id);
     }
 
-    //Get all Tickets
+    // Get all tickets
     public async Task<List<Ticket>> GetAllTicketsAsync()
     {
         return await _context.Tickets.ToListAsync();
     }
-    //get all tickets by user id
+
+    // Get all tickets by user Id
     public async Task<IEnumerable<Ticket>> GetTicketsByUserIdAsync(int userId)
     {
-        return await _context.Tickets.Where(t => t.UserId == userId).ToListAsync();  // Query to get tickets by userId
+        var tickets = await _context.Tickets.Where(t => t.UserId == userId).ToListAsync();
+        if (!tickets.Any())
+        {
+            throw new KeyNotFoundException($"No tickets found for user {userId}.");
+        }
+        return tickets;
     }
 }
