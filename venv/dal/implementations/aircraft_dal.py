@@ -1,22 +1,51 @@
 from dal.interfaces.iaircraft_dal import IAircraftDAL
 from models.aircraft import Aircraft
 from models.flight import Flight
+from exceptions import AircraftCreationException, AircraftRetrievalException, AircraftNotFoundException, NetworkException, UnexpectedErrorException
+import requests
 
 class AircraftDAL(IAircraftDAL):
     def __init__(self, api_client):
         self.api_client = api_client
     
     def create_aircraft(self, aircraft):
-        res=self.api_client.post("aircraft/add", aircraft.to_server_format())
-        return Aircraft.to_client_format(res.json())
+        try:
+            res = self.api_client.post("aircraft/add", aircraft.to_server_format())
+            return Aircraft.to_client_format(res.json())
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 400:
+                raise AircraftCreationException(f"Invalid aircraft data: {e.response.text}") from e
+            else:
+                raise AircraftCreationException(f"Aircraft creation failed: {e}") from e
+        except NetworkException as e:
+            raise NetworkException(f"Network error during aircraft creation: {e}") from e
+        except Exception as e:
+            raise UnexpectedErrorException(f"Unexpected error during aircraft creation: {e}") from e
     
     def get_aircrafts(self):
-        res = self.api_client.get("aircraft/get/all")
-        return [Aircraft.to_client_format(aircraft_data) for aircraft_data in res.json()]
-    
+        try:
+            res = self.api_client.get("aircraft/get/all")
+            return [Aircraft.to_client_format(aircraft_data) for aircraft_data in res.json()]
+        except requests.exceptions.HTTPError as e:
+            raise AircraftRetrievalException(f"Failed to retrieve aircrafts: {e}") from e
+        except NetworkException as e:
+            raise NetworkException(f"Network error during aircraft retrieval: {e}") from e
+        except Exception as e:
+            raise UnexpectedErrorException(f"Unexpected error during aircraft retrieval: {e}") from e
+
     def get_aircraft_by_id(self, aircraft_id):
-        res = self.api_client.get(f"aircraft/get/{aircraft_id}")
-        return Aircraft.to_client_format(res.json())
+        try:
+            res = self.api_client.get(f"aircraft/get/{aircraft_id}")
+            return Aircraft.to_client_format(res.json())
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 404:
+                raise AircraftNotFoundException(f"Aircraft with id {aircraft_id} not found") from e
+            else:
+                raise AircraftRetrievalException(f"Failed to retrieve aircraft: {e}") from e
+        except NetworkException as e:
+            raise NetworkException(f"Network error during aircraft retrieval: {e}") from e
+        except Exception as e:
+            raise UnexpectedErrorException(f"Unexpected error during aircraft retrieval: {e}") from e
     
     # def get_aircraft(self, aircraft_id):
     #     data = self.api_client.get(f"aircraft/get/{aircraft_id}")

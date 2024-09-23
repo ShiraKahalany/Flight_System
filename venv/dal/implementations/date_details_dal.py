@@ -1,7 +1,10 @@
 
 from dal.interfaces.idal import IDateDetailsDAL
 from models.hebrew_times import DateDetails
+from exceptions import DateDetailsRetrievalException, InvalidLocationException, NetworkException, UnexpectedErrorException
 from datetime import datetime
+import requests
+
 
 class DateDetailsDAL(IDateDetailsDAL):
     def __init__(self, api_client):
@@ -24,8 +27,20 @@ class DateDetailsDAL(IDateDetailsDAL):
     }
 
     def get_date_details(self, date: datetime, location: str) -> DateDetails:
-        print(f'the date: {date} and location: {location}')
-        date=date.strftime("%Y-%m-%dT%H:%M:%S")
-        location_key = self.locations.get(location)
-        res = self.api_client.post("times/checkdate", {"date": date, "location": location_key})
-        return DateDetails.to_client_format(res.json())
+        try:
+            print(f'the date: {date} and location: {location}')
+            date = date.strftime("%Y-%m-%dT%H:%M:%S")
+            location_key = self.locations.get(location)
+            
+            if location_key is None:
+                raise InvalidLocationException(f"Invalid location: {location}")
+            
+            res = self.api_client.post("times/checkdate", {"date": date, "location": location_key})
+            return DateDetails.to_client_format(res.json())
+        
+        except requests.exceptions.HTTPError as e:
+            raise DateDetailsRetrievalException(f"Failed to retrieve date details: {e}")
+        except NetworkException as e:
+            raise NetworkException(f"Network error during date details retrieval: {e}")
+        except Exception as e:
+            raise UnexpectedErrorException(f"Unexpected error during date details retrieval: {e}")

@@ -13,6 +13,7 @@ from models.user import User
 from models.ticket import Ticket
 #import Utils
 from controllers.utils import Utils
+from exceptions import*
 
 # Set up logging - this will print to the console
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -45,15 +46,30 @@ def test_user_dal(dal):
 
     # Assuming these methods exist. Adjust as necessary.
     new_user = User(
-        username= "testus8er4556",
+        username= "danush",
         role= "passenger",
         first_name= "Avi",
         last_name= "Cohen",
         email= "testuser@example.com",
         password= "password123"
     )
-    created_user = user_dal.create_user(new_user)
-    logger.info(f"Created user: {created_user}. type: {type(created_user)}")    
+    # created_user = user_dal.create_user(new_user)
+    # logger.info(f"Created user: {created_user}. type: {type(created_user)}")
+
+    try:
+        username = "johnsonmary"
+        password = "k9GzyQXp^9"
+        user = user_dal.login_user(username, password)
+    except UserNotFoundException:
+        print('error: User not found')
+    except InvalidCredentialsException:
+        print("error Invalid credentials")
+    except NetworkException as e:
+        logger.error(f"Network error during login: {str(e)}")
+        print("error Network error occurred")
+    except UnexpectedErrorException as e:
+        logger.error(f"Unexpected error during login: {str(e)}")
+        print("error  An unexpected error occurred")
 
     # user = user_dal.get_user(created_user['id'])
     # logger.info(f"Retrieved user: {user}")
@@ -65,10 +81,10 @@ def test_user_dal(dal):
     # user_dal.delete_user(created_user['id'])
     # logger.info("User deleted")
 
-    username = "johnsonmary"
-    password = "k9GzyQXp^9"
-    user = user_dal.login_user(username, password)
-    logger.info(f"Logged in user: {user.role}")
+    # username = "johnsonmary"
+    # password = "k9GzyQXp^9"
+    # user = user_dal.login_user(username, password)
+    # logger.info(f"Logged in user: {user.role}")
 
 def test_flight_dal(dal):
     # logger.info("Testing FlightDAL")

@@ -10,7 +10,7 @@
 #all cpython files
 __pycache__/
 *.pyc
-
+config.py
 #all csproj files
 *.csproj.*
 .dtbcache.v2
@@ -93,3 +93,5 @@ AppServer/.vs/AppServer/FileContentIndex/28b537c5-b392-4919-acc2-3e11ecc185c9.vs
 /AppServer/.vs/AppServer/FileContentIndex/f69e8125-75da-4811-8985-0f2780713bcb.vsidx
 
 AppServer/AppServer/obj/Debug/net8.0/scopedcss/bundle/AppServer.styles.css
+venv/config.py
+venv/config.py

@@ -4,6 +4,10 @@ class BaseCustomException(Exception):
     """Base class for custom exceptions"""
     pass
 
+class UserAlreadyExistsException(BaseCustomException):
+    """Raised when attempting to create a user with an existing username."""
+    pass
+
 # User-related exceptions
 class UserNotFoundException(BaseCustomException):
     """Raised when a user is not found."""
@@ -47,6 +51,19 @@ class AircraftCreationException(BaseCustomException):
 
 class AircraftRetrievalException(BaseCustomException):
     """Raised when there's an error retrieving aircrafts."""
+    pass
+
+class AircraftNotFoundException(BaseCustomException):
+    """Raised when an aircraft is not found."""
+    pass
+
+# Date details-related exceptions
+class DateDetailsRetrievalException(BaseCustomException):
+    """Raised when there's an error retrieving date details."""
+    pass
+
+class InvalidLocationException(BaseCustomException):
+    """Raised when an invalid location is provided."""
     pass
 
 # Generic exceptions
