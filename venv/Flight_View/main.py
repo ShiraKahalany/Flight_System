@@ -12,7 +12,7 @@ class MainApp(QMainWindow):
     def __init__(self, dal: IDAL):
         super().__init__()
         self.setWindowTitle("Flight System")
-        self.setGeometry(100, 100, 800, 600)
+        self.setGeometry(100, 100, 900, 600)
         self.view_history = []  # Stack to track navigation history
 
         # Initialize AdminController and PassengerController

@@ -30,7 +30,7 @@ class LandingsView(QWidget):
 
         # Set initial column widths
         self.table.setColumnWidth(0, 80)  # Image
-        self.table.setColumnWidth(1, 50)  # Flight ID
+        self.table.setColumnWidth(1, 60)  # Flight ID
         self.table.setColumnWidth(2, 100)  # Source
         self.table.setColumnWidth(3, 120)  # Destination
         self.table.setColumnWidth(4, 120)  # Departure

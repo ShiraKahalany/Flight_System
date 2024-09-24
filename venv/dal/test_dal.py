@@ -200,7 +200,7 @@ def test_ticket_dal(dal):
 
 def test_image_recognition_functionality(self):
         # Test get_image_tags
-        aircraft_image_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/4X-EDA_Micha_A.jpg/300px-4X-EDA_Micha_A.jpg"
+        aircraft_image_url = "https://d3m9l0v76dty0.cloudfront.net/system/photos/3169485/large/97e1a7cf208829e35c47b0dac9cfeb9c.jpg"
         tags = self.ImageRecognition.get_image_tags(aircraft_image_url)
         print(f"tags: {tags}")
         #self.assertIsInstance(tags, list)

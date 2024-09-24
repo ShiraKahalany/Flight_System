@@ -10,6 +10,13 @@ class MyFlightsView(QWidget):
 
         # "Go Back" Button
         self.back_button = QPushButton("← Go Back", self)
+        self.back_button.setStyleSheet("""
+            background-color: #3498db; 
+            color: white; 
+            padding: 12px; 
+            font-size: 16px; 
+            border-radius: 8px;
+        """)
         self.back_button.setStyleSheet("background-color: #3498db; color: white; padding: 10px; border-radius: 5px;")
         self.back_button.clicked.connect(self.controller.go_back)
         layout.addWidget(self.back_button)
