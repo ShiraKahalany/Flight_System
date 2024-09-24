@@ -1,3 +1,4 @@
+import pandas as pd
 import requests
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QMessageBox
@@ -10,7 +11,6 @@ from Flight_View.my_flights_view import MyFlightsView
 from dal.interfaces.idal import IDAL
 from datetime import datetime, timedelta
 from models.aircraft import Aircraft
-
 
 class PassengerController:
     def __init__(self, main_controller, dal: IDAL):
@@ -82,8 +82,6 @@ class PassengerController:
         except Exception as e:
             self.show_error_message(f"Error loading flights: {e}")
 
-
-
     def download_image(self, url):
         """Download the image from the given URL and return its binary content."""
         headers = {
@@ -149,6 +147,59 @@ class PassengerController:
             self.main_controller.set_view(self.my_flights_view)
         except Exception as e:
             self.show_error_message(f"Error loading my flights: {e}")
+
+    def predict_landing_delay(self, flight):
+        """Predict if the landing will be delayed for a given flight."""
+        
+        # Sample distances for common destinations
+        distance_map = {
+            "New York": 9160, "London": 3580, "Tokyo": 9920, "Paris": 3310, "Los Angeles": 12070, 
+            "Dubai": 2120, "Singapore": 8130, "Hong Kong": 8050, "Sydney": 13850, "Toronto": 9000,
+            "Berlin": 2920, "Amsterdam": 3320, "Bangkok": 7180, "Istanbul": 1120, "Moscow": 2670,
+            "Mumbai": 4080, "São Paulo": 10100, "Mexico City": 12450, "Johannesburg": 7090, 
+            "Cairo": 410, "Delhi": 4050, "Rome": 2300, "Madrid": 3670, "Frankfurt": 3050, 
+            "Seoul": 8140, "Chicago": 9450, "Kuala Lumpur": 7410, "Beijing": 7050, "Zurich": 3160, 
+            "Vienna": 2500, "Barcelona": 3500, "Miami": 10520, "San Francisco": 12350, "Vancouver": 10380, 
+            "Munich": 2900, "Copenhagen": 3340, "Lisbon": 4300, "Stockholm": 3400, "Athens": 1280, 
+            "Dublin": 4050, "Prague": 2770, "Helsinki": 3380, "Abu Dhabi": 2100, "Doha": 1680, 
+            "Riyadh": 1400, "Warsaw": 2600, "Budapest": 2140, "Brussels": 3300, "Tel Aviv": 0
+        }
+
+        flight_distance = distance_map.get(flight.source, 0)
+        flight_duration = (flight.landing_datetime - flight.departure_datetime).seconds // 60  # in minutes
+
+        # Create the prediction object
+        new_landing_pred = pd.DataFrame({
+            'Season': [self.get_season(flight.landing_datetime)],
+            'FlightDistance': [flight_distance],
+            'FlightDuration': [flight_duration],
+            'DepartureAirportCongestion': [30],  # Randomly setting it to 30 for this example
+            'ArrivalAirportCongestion': [40],  # Randomly setting it to 40 for this example
+            'DayOfWeek': [flight.landing_datetime.strftime('%A')],
+            'TimeOfFlight': [flight.departure_datetime.strftime('%H:%M')],
+            'ScheduledDepartureTime': ['07:30'],  # A placeholder, can be derived more dynamically
+            'ActualDepartureTime': ['07:45'],  # Can be calculated based on delay
+            'DepartureDelay': [15],  # Example delay
+            'Temperature': [18.5],  # Example temperature
+            'Visibility': [10],  # Example visibility
+            'WindSpeed': [12.3],  # Example wind speed
+            'WeatherEvent': ['Clear']  # Example weather event
+        })
+
+        # Call the prediction function and return the result
+        return self.dal.Flight.is_landing_delayed(new_landing_pred)
+
+    def get_season(self, date):
+        """Determine the season from the date."""
+        month = date.month
+        if month in [12, 1, 2]:
+            return "Winter"
+        elif month in [3, 4, 5]:
+            return "Spring"
+        elif month in [6, 7, 8]:
+            return "Summer"
+        else:
+            return "Fall"
 
     def show_error_message(self, message):
         """Show a pop-up error message."""
