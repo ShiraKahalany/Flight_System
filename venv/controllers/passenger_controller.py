@@ -12,14 +12,15 @@ from Flight_View.my_flights_view import MyFlightsView
 from dal.interfaces.idal import IDAL
 from datetime import datetime, timedelta
 from models.aircraft import Aircraft
-from exceptions import TicketCreationException, FlightRetrievalException, AircraftNotFoundException, UnexpectedErrorException, NetworkException, FlightNotFoundException
+from exceptions import TicketCreationException,TicketRetrievalException, FlightRetrievalException, AircraftNotFoundException, UnexpectedErrorException, NetworkException, FlightNotFoundException
 from reportlab.lib.pagesizes import letter
-from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Image
 from reportlab.lib.units import inch
 from PySide6.QtWidgets import QFileDialog
 import os
+
+
 class PassengerController:
     def __init__(self, main_controller, dal: IDAL):
         self.main_controller = main_controller
@@ -157,10 +158,10 @@ class PassengerController:
     def show_my_flights(self):
         """Shows the view of flights that the current user has booked."""
         try:
-            flights = self.dal.Flight.get_flights_of_user(self.current_user_id)
-            self.my_flights_view = MyFlightsView(controller=self, flights=flights)
+            tickets = self.dal.Ticket.get_user_tickets(self.current_user_id)
+            self.my_flights_view = MyFlightsView(controller=self, tickets=tickets)
             self.main_controller.set_view(self.my_flights_view)
-        except FlightRetrievalException as fre:
+        except TicketRetrievalException as fre:
             self.show_error_message(f"Unable to retrieve your flights: {fre}")
         except NetworkException as ne:
             self.show_error_message(f"Network error while fetching your flights: {ne}")
@@ -263,9 +264,7 @@ class PassengerController:
         msg_box.exec()
 
 
-
-
-    def download_ticket_pdf(self, flight):
+    def download_ticket_pdf(self, ticket):
         # Open file dialog to select download location
         options = QFileDialog.Options()
         file_path, _ = QFileDialog.getSaveFileName(
@@ -287,47 +286,50 @@ class PassengerController:
         # Set up the styles
         styles = getSampleStyleSheet()
         title_style = styles['Title']
-        title_style.fontSize = 18
+        title_style.fontSize = 20
         title_style.alignment = 1  # Center alignment
         
-        normal_style = styles['Normal']
-        normal_style.fontSize = 12
+        normal_style = ParagraphStyle(
+            name='Normal',
+            fontSize=12,
+            leading=14,
+            alignment=1  # Centered text
+        )
+
+        label_style = ParagraphStyle(
+            name='Label',
+            fontSize=10,
+            leading=12,
+            textColor='gray',
+            alignment=1  # Centered text
+        )
 
         # Add the flight ticket icon
-        # Using `..` to go up one directory from 'controllers' to 'Flight_View/icons'
         icon_path = os.path.join(os.path.dirname(__file__), '..', 'Flight_View', 'icons', 'ticket.png')
-
-        # Check if the icon file exists
         if os.path.exists(icon_path):
-            content.append(Image(icon_path, 1*inch, 1*inch))  # Adjust size to fit the page
+            content.append(Image(icon_path, 1.5 * inch, 1.5 * inch))  # Ticket icon
         else:
             print(f"Error: Icon file not found at {icon_path}")
 
-        # Add the flight title
-        content.append(Paragraph(f"Flight Ticket: {flight.id}", title_style))
-
-        # Create a table with flight details
-        flight_details = [
-            ["Flight ID", flight.id],
-            ["Source", flight.source],
-            ["Destination", flight.destination],
-            ["Departure", flight.departure_datetime.strftime('%Y-%m-%d %H:%M')],
-            ["Landing", flight.landing_datetime.strftime('%Y-%m-%d %H:%M')],
-            ["Aircraft", self.dal.Aircraft.get_aircraft_by_id(flight.aircraft_id).nickname],
+        # Flight Ticket Header (using Ticket ID)
+        content.append(Paragraph(f"Flight Ticket: {ticket.id}", title_style))
+        content.append(Spacer(1, 12))  # Add space below the title
+        flight=self.dal.Flight.get_flight_by_id(ticket.flight_id)
+        aircraft=self.dal.Aircraft.get_aircraft_by_id(flight.aircraft_id)
+        # Displaying the ticket details (replacing flight ID with ticket details)
+        details = [
+            {"label": "Flight", "value": f"{flight.source} → {flight.destination}"},
+            {"label": "Departure", "value": flight.departure_datetime.strftime('%Y-%m-%d %H:%M')},
+            {"label": "Landing", "value": flight.landing_datetime.strftime('%Y-%m-%d %H:%M')},
+            {"label": "Aircraft", "value": aircraft.nickname},
+            {"label": "purchase time", "value": ticket.purchase_datetime.strftime('%Y-%m-%d %H:%M')}
         ]
 
-        table = Table(flight_details, hAlign='LEFT')
-        table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black)
-        ]))
-
-        content.append(table)
+        # Add the details in a ticket-like format
+        for detail in details:
+            content.append(Paragraph(detail["label"], label_style))
+            content.append(Paragraph(detail["value"], normal_style))
+            content.append(Spacer(1, 10))  # Space between details
 
         # Build the PDF
         pdf.build(content)
@@ -335,3 +337,4 @@ class PassengerController:
         # Notify user or perform post-generation actions
         print(f"PDF saved: {file_path}")
         os.startfile(file_path)  # This will open the file automatically on Windows
+

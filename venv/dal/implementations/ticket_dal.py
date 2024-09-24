@@ -1,6 +1,6 @@
 from dal.interfaces.iticket_dal import ITicketDAL
 from models.ticket import Ticket
-from exceptions import TicketCreationException, NetworkException, UnexpectedErrorException
+from exceptions import TicketCreationException,TicketRetrievalException, NetworkException, UnexpectedErrorException, TicketNotFoundException
 import requests
 
 class TicketDAL(ITicketDAL):
@@ -32,9 +32,9 @@ class TicketDAL(ITicketDAL):
         except Exception as e:
             raise UnexpectedErrorException(f"Unexpected error during ticket retrieval: {e}") from e
     
-    # def get_ticket(self, ticket_id):
-    #     data = self.api_client.get(f"ticket/{ticket_id}")
-    #     return Ticket(**(data.json()))
+    def get_ticket(self, ticket_id):
+        data = self.api_client.get(f"ticket/{ticket_id}")
+        return Ticket(**(data.json()))
 
     # def update_ticket(self, ticket_id, ticket_data):
     #     data = self.api_client.put(f"ticket/{ticket_id}", ticket_data)
@@ -43,6 +43,16 @@ class TicketDAL(ITicketDAL):
     # def delete_ticket(self, ticket_id):
     #     self.api_client.delete(f"ticket/{ticket_id}")
 
-    # def get_user_tickets(self, user_id):
-    #     data = self.api_client.get(f"user/{user_id}/tickets")
-    #     return [Ticket(**ticket_data) for ticket_data in data]
+    def get_user_tickets(self, user_id):
+        try:
+            res = self.api_client.get(f"ticket/getbyuser/{user_id}")
+            return [Ticket.to_client_format(ticket_data) for ticket_data in res.json()]
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 404:
+                raise TicketNotFoundException(f"No flights found for user {user_id}") from e
+            else:
+                raise TicketRetrievalException(f"Failed to retrieve user flights: {e}") from e
+        except NetworkException as e:
+            raise NetworkException(f"Network error during user flight retrieval: {e}") from e
+        except Exception as e:
+            raise UnexpectedErrorException(f"Unexpected error during user flight retrieval: {e}") from e

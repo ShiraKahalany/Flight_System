@@ -66,6 +66,18 @@ class PassengerView(QWidget):
 
         self.setLayout(main_layout)
         self.setStyleSheet("background-color: #f2f2f2;")  # Light gray background
+        self.set_background_image('venv/Flight_View/icons/background-sky.jpg')  # Correct path with forward slashes
+
+    def set_background_image(self, image_path):
+        """Set the background image of the entire widget."""
+        self.setStyleSheet(f"""
+            PassengerView {{
+                background-image: url({image_path});
+                background-position: center;
+                background-repeat: no-repeat;
+                background-color: rgba(255, 255, 255, 150);  
+            }}
+        """)
 
     def create_button(self, text, callback):
         """Helper function to create consistent styled buttons."""

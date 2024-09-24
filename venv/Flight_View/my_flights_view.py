@@ -3,7 +3,7 @@ from PySide6.QtGui import QPixmap, QFont, QIcon
 from PySide6.QtCore import Qt
 
 class MyFlightsView(QWidget):
-    def __init__(self, controller=None, flights=None):
+    def __init__(self, controller=None, tickets=None):
         super().__init__()
         self.controller = controller
         layout = QVBoxLayout()
@@ -26,9 +26,10 @@ class MyFlightsView(QWidget):
         scroll_widget = QWidget()
         scroll_layout = QVBoxLayout()
 
-        for flight in flights:
+        for ticket in tickets:
+            flight= self.controller.dal.Flight.get_flight_by_id(ticket.flight_id)
             aircraft = self.controller.dal.Aircraft.get_aircraft_by_id(flight.aircraft_id)
-            if aircraft:
+            if aircraft and flight:
                 # Create a ticket frame without stylesheet
                 ticket_frame = QFrame(self)
                 ticket_frame.setFrameShape(QFrame.NoFrame)  # No extra frame shape
@@ -72,7 +73,7 @@ class MyFlightsView(QWidget):
                 download_button.setFixedSize(50, 50)  # Directly set size
                 download_button.setStyleSheet("background-color: #2ecc71; border-radius: 25px;")  # Apply only necessary styles
                 
-                download_button.clicked.connect(lambda checked, f=flight: self.controller.download_ticket_pdf(f))
+                download_button.clicked.connect(lambda checked, f=ticket: self.controller.download_ticket_pdf(f))
 
                 # Align the button on the right-bottom side
                 ticket_layout.addWidget(download_button, alignment=Qt.AlignRight | Qt.AlignBottom)
