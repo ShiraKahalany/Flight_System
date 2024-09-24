@@ -92,25 +92,26 @@ def test_flight_dal(dal):
     flight_dal = dal.Flight
 
     # Assuming these methods exist. Adjust as necessary.
-    new_flight = {
-        "id": "123",
-        "aircraft_id": "1054",
-        "source": "Tel Aviv",
-        "destination": "New York",
-        "departure_datetime": str(datetime.now() + timedelta(days=1)),
-        "landing_datetime": str(datetime.now() + timedelta(days=1, hours=12)),
-        "delayed_landing_time": ""
-    }
+    # new_flight = {
+    #     "id": "123",
+    #     "aircraft_id": "1054",
+    #     "source": "Tel Aviv",
+    #     "destination": "New York",
+    #     "departure_datetime": str(datetime.now() + timedelta(days=1)),
+    #     "landing_datetime": str(datetime.now() + timedelta(days=1, hours=12)),
+    #     "delayed_landing_time": ""
+    # }
 
-    new_flight = Flight(
-        aircraft_id=1022, 
-        source="Tel Aviv", 
-        destination="New York",
-        departure_datetime=datetime.now() + timedelta(days=1),
-        landing_datetime=datetime.now() + timedelta(days=1, hours=12),
-        delayed_landing_time=""
-    )   
-    created_flight = flight_dal.create_flight(new_flight)
+    # new_flight = Flight(
+    #     aircraft_id=1022, 
+    #     source="Tel Aviv", 
+    #     destination="New York",
+    #     departure_datetime=datetime.now() + timedelta(days=1),
+    #     landing_datetime=datetime.now() + timedelta(days=1, hours=12),
+    #     delayed_landing_time=""
+    # )   
+    
+    #created_flight = flight_dal.create_flight(new_flight)
     # logger.info(f"Created flight id: {created_flight.id}, created flight des: {created_flight.destination}")
 
     # flight = flight_dal.get_flight(created_flight['id'])
@@ -123,30 +124,44 @@ def test_flight_dal(dal):
     # flight_dal.delete_flight(created_flight['id'])
     # logger.info("Flight deleted")
 
-    flights = flight_dal.get_BGR_lands_next_5_hours()
+    # flights = flight_dal.get_BGR_lands_next_5_hours()
+    # #print each flight
+    # for flight in flights:
+    #     logger.info(f"Retrieved flight: {flight.destination}")  
+
+    flights = flight_dal.get_flights_of_user("322361373")
     #print each flight
     for flight in flights:
-        logger.info(f"Retrieved flight: {flight.destination}")  
+        logger.info(f"Retrieved flight: {flight.id}")
 
 def test_aircraft_dal(dal):
     logger.info("Testing AircraftDAL")
     aircraft_dal = dal.Aircraft
 
     # Assuming these methods exist. Adjust as necessary.
-    new_aircraft = {
-        "manufacturer": "Boeing",
-        "nickname": "Jumbo Jet",
-        "YearOfManufacture": 1998,
-        "ImageUrl": "https://picsum.photos/400/300",
-        "NumberOfChairs": 400
-    }
+    # new_aircraft = {
+    #     "manufacturer": "Boeing",
+    #     "nickname": "Jumbo Jet",
+    #     "YearOfManufacture": 1998,
+    #     "ImageUrl": "https://picsum.photos/400/300",
+    #     "NumberOfChairs": 400
+    # }
+
+    #declare a new aircraft object
+    new_aircraft = Aircraft(
+        manufacturer= "Boeing",
+        nickname= "Jumbo Jet",
+        year_of_manufacture= 1998,
+        image_url= "https://picsum.photos/400/300",
+        number_of_chairs= 400
+    )   
 
     aircraft_dal.create_aircraft(new_aircraft)
 
     # logger.info(f"Created aircraft")
 
-    aircraft = aircraft_dal.get_aircraft(1023)
-    logger.info(f"Retrieved aircraft: {aircraft}")
+    #aircraft = aircraft_dal.get_aircraft(1023)
+    #logger.info(f"Retrieved aircraft: {aircraft}")
 
     # aircraft_dal.update_aircraft(created_aircraft['id'], {"capacity": 400})
     # updated_aircraft = aircraft_dal.get_aircraft(created_aircraft['id'])
@@ -164,23 +179,28 @@ def test_ticket_dal(dal):
         user_id= "322361373",
         purchase_datetime= datetime.now()
     )
-    created_ticket = ticket_dal.create_ticket(new_ticket)
-    logger.info(f"Created ticket: {created_ticket}")
+    # created_ticket = ticket_dal.create_ticket(new_ticket)
+    # logger.info(f"Created ticket: {created_ticket}")
 
-    ticket = ticket_dal.get_ticket(created_ticket['id'])
-    logger.info(f"Retrieved ticket: {ticket}")
+    # ticket = ticket_dal.get_ticket(created_ticket['id'])
+    # logger.info(f"Retrieved ticket: {ticket}")
 
-    ticket_dal.update_ticket(created_ticket['id'], {"seat_number": "14B"})
-    updated_ticket = ticket_dal.get_ticket(created_ticket['id'])
-    logger.info(f"Updated ticket: {updated_ticket}")
+    # ticket_dal.update_ticket(created_ticket['id'], {"seat_number": "14B"})
+    # updated_ticket = ticket_dal.get_ticket(created_ticket['id'])
+    # logger.info(f"Updated ticket: {updated_ticket}")
 
-    ticket_dal.delete_ticket(created_ticket['id'])
-    logger.info("Ticket deleted")
+    # ticket_dal.delete_ticket(created_ticket['id'])
+    # logger.info("Ticket deleted")
+
+    tickets = ticket_dal.get_tickets()
+    #print each ticket
+    for ticket in tickets:
+        logger.info(f"Retrieved ticket: {ticket.id}")
 
 
 def test_image_recognition_functionality(self):
         # Test get_image_tags
-        aircraft_image_url = "https://www.now14.co.il/wp-content/uploads/2023/01/shutterstock_2117654495-768x512.jpg"
+        aircraft_image_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/4X-EDA_Micha_A.jpg/300px-4X-EDA_Micha_A.jpg"
         tags = self.ImageRecognition.get_image_tags(aircraft_image_url)
         print(f"tags: {tags}")
         #self.assertIsInstance(tags, list)
@@ -196,6 +216,7 @@ def test_image_recognition_functionality(self):
         # is_aircraft = self.dal.ImageRecognition.is_aircraft_image(non_aircraft_image_url)
         # self.assertFalse(is_aircraft)
 
+        url = "http://localhost:5001/api/image/analyze"
 
 
 
@@ -203,14 +224,14 @@ def main():
 
     api_client = APIClient()
     dal = DALFactory.get_instance()
-    #test_image_recognition_functionality(dal)
+    test_image_recognition_functionality(dal)
     #dal = DALImpl()
 
     #test_date_checker(dal)
     #test_user_dal(dal)
     #test_flight_dal(dal)
     #test_aircraft_dal(dal)
-    test_ticket_dal(dal)
+    #test_ticket_dal(dal)
 
 
 

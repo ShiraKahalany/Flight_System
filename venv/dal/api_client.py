@@ -10,9 +10,9 @@ class APIClient:
         url = f"{self.base_url}/{endpoint}"
         try:
             if method == 'GET':
-                response = requests.get(url, params=params)
+                response = requests.get(url, json=params)
             elif method == 'POST':
-                response = requests.post(url, json=data)
+                response = requests.post(url, json=data, headers=headers)
             elif method == 'PUT':
                 response = requests.put(url, json=data)
             elif method == 'DELETE':

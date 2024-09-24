@@ -27,10 +27,15 @@ class TicketCreationException(BaseCustomException):
     """Raised when there's an error creating a new ticket."""
     pass
 
+class TicketRetrievalException(BaseCustomException):
+    """Raised when there's an error retrieving tickets."""
+    pass
+
 # Image recognition exceptions
 class ImageAnalysisException(BaseCustomException):
     """Raised when there's an error analyzing an image."""
     pass
+
 
 # Flight-related exceptions
 class FlightCreationException(BaseCustomException):

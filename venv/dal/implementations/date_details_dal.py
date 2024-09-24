@@ -28,7 +28,6 @@ class DateDetailsDAL(IDateDetailsDAL):
 
     def get_date_details(self, date: datetime, location: str) -> DateDetails:
         try:
-            print(f'the date: {date} and location: {location}')
             date = date.strftime("%Y-%m-%dT%H:%M:%S")
             location_key = self.locations.get(location)
             

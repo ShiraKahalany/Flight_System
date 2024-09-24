@@ -11,10 +11,11 @@ class Utils:
     #     valid_tags = ['airplane', 'aircraft', 'plane', 'jet']
     #     return any(tag.lower() in valid_tags for tag in image_tags)
 
+    def check_aircraft_image(self, image_url: str) -> bool:
+        return self.dal.ImageRecognition.is_aircraft_image(image_url)
 
     def get_date_info(self, date: datetime, location: str) -> DateDetails:
         return self.dal.DateDetails.get_date_details(date, location)
-    
     
     def is_flight_during_shabbat_or_holiday(self, departure: datetime, arrival: datetime, location: str) -> bool:
         departure_info = self.get_date_info(departure, location)

@@ -9,8 +9,8 @@ class ImageRecognitionDAL(IImageRecognitionDAL):
 
     def get_image_tags(self, image_url: str) -> List[str]:
         try:
-            response = self.api_client.post("image/analyze", data={"imageUrl": image_url})
-            print(f'response.text: {response.text}')
+            response = self.api_client.get("image/analyze", params={"imageUrl": image_url})
+            #response = requests.get(f"image/analyze/{image_url}")
             return response.text
         except requests.exceptions.HTTPError as e:
             raise ImageAnalysisException(f"Error analyzing image: {e}") from e
