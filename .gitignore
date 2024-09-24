@@ -10,7 +10,7 @@
 #all cpython files
 __pycache__/
 *.pyc
-
+config.py
 #all csproj files
 *.csproj.*
 .dtbcache.v2

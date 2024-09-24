@@ -5,6 +5,11 @@ class BaseCustomException(Exception):
     pass
 
 # User-related exceptions
+
+class UserAlreadyExistsException(BaseCustomException):
+    """Raised when attempting to create a user with an existing username."""
+    pass
+
 class UserNotFoundException(BaseCustomException):
     """Raised when a user is not found."""
     pass
@@ -22,10 +27,15 @@ class TicketCreationException(BaseCustomException):
     """Raised when there's an error creating a new ticket."""
     pass
 
+class TicketRetrievalException(BaseCustomException):
+    """Raised when there's an error retrieving tickets."""
+    pass
+
 # Image recognition exceptions
 class ImageAnalysisException(BaseCustomException):
     """Raised when there's an error analyzing an image."""
     pass
+
 
 # Flight-related exceptions
 class FlightCreationException(BaseCustomException):
@@ -47,6 +57,19 @@ class AircraftCreationException(BaseCustomException):
 
 class AircraftRetrievalException(BaseCustomException):
     """Raised when there's an error retrieving aircrafts."""
+    pass
+
+class AircraftNotFoundException(BaseCustomException):
+    """Raised when an aircraft is not found."""
+    pass
+
+# Date details-related exceptions
+class DateDetailsRetrievalException(BaseCustomException):
+    """Raised when there's an error retrieving date details."""
+    pass
+
+class InvalidLocationException(BaseCustomException):
+    """Raised when an invalid location is provided."""
     pass
 
 # Generic exceptions

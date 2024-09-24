@@ -10,6 +10,10 @@ class ITicketDAL(ABC):
     def create_ticket(self, ticket_data):
         pass
 
+    @abstractmethod
+    def get_tickets(self):
+        pass
+
     # @abstractmethod
     # def update_ticket(self, ticket_id, ticket_data):
     #     pass

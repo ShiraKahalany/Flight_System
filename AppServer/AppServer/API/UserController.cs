@@ -1,5 +1,6 @@
 ﻿using AppServer.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 [Route("api/user")]
 [ApiController]
@@ -16,58 +17,119 @@ public class UserController : ControllerBase
     [HttpPost("add")]
     public async Task<IActionResult> PostUser([FromBody] User user)
     {
-        await _userService.AddUserAsync(user);
-        return Ok(user);
+        if (string.IsNullOrEmpty(user.Username) || string.IsNullOrEmpty(user.Password))
+        {
+            return BadRequest("Username and password are required.");
+        }
+
+        try
+        {
+            var existingUser = await _userService.GetUserByUsernameAsync(user.Username);
+            if (existingUser != null)
+            {
+                return Conflict("A user with this username already exists.");
+            }
+
+            await _userService.AddUserAsync(user);
+            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
     }
 
     // DELETE: api/user/delete/{id}
     [HttpDelete("delete/{id}")]
     public async Task<IActionResult> DeleteUser(int id)
     {
-        await _userService.DeleteUserAsync(id);
-        return Ok("User successfully deleted");
+        try
+        {
+            var user = await _userService.GetUserByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound($"User with id {id} not found.");
+            }
+
+            await _userService.DeleteUserAsync(id);
+            return Ok("User successfully deleted.");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
     }
 
     // DELETE: api/user/delete/all
     [HttpDelete("delete/all")]
     public async Task<IActionResult> DeleteAllUsers()
     {
-        await _userService.DeleteAllUsersAsync();
-        return Ok("All users deleted successfully.");
+        try
+        {
+            await _userService.DeleteAllUsersAsync();
+            return Ok("All users deleted successfully.");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
     }
-
 
     // GET: api/user/get/{id}
     [HttpGet("get/{id}")]
     public async Task<IActionResult> GetUserById(int id)
     {
-        var user = await _userService.GetUserByIdAsync(id);
-        if (user == null)
+        try
         {
-            return NotFound();
+            var user = await _userService.GetUserByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound($"User with id {id} not found.");
+            }
+            return Ok(user);
         }
-        return Ok(user);
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
     }
 
-    // GET: api/user
+    // GET: api/user/get/all
     [HttpGet("get/all")]
     public async Task<IActionResult> GetAllUsers()
     {
-        var users = await _userService.GetAllUsersAsync();
-        return Ok(users);
+        try
+        {
+            var users = await _userService.GetAllUsersAsync();
+            return Ok(users);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
     }
-
 
     // GET: api/user/login?username={username}&password={password}
     [HttpGet("login")]
     public async Task<IActionResult> GetUserByUsernameAndPassword([FromQuery] string username, [FromQuery] string password)
     {
-        var user = await _userService.GetUserByUsernameAndPasswordAsync(username, password);
-        if (user == null)
+        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
         {
-            return NotFound("User not found or incorrect credentials.");
+            return BadRequest("Username and password are required.");
         }
 
-        return Ok(user);
+        try
+        {
+            var user = await _userService.GetUserByUsernameAndPasswordAsync(username, password);
+            if (user == null)
+            {
+                return NotFound("User not found or incorrect credentials.");
+            }
+            return Ok(user);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
     }
 }

@@ -178,6 +178,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "AppServer.API.PredictionController",
+    "Method": "PredictFlightDelay",
+    "RelativePath": "api/prediction",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "flightDetails",
+        "Type": "AppServer.Models.Flight_Details",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "TicketController",
     "Method": "AddTicket",
     "RelativePath": "api/ticket/add",
@@ -237,7 +253,7 @@
   },
   {
     "ContainingType": "TicketController",
-    "Method": "GetAllFlights",
+    "Method": "GetAllTickets",
     "RelativePath": "api/ticket/get/all",
     "HttpMethod": "GET",
     "IsController": true,

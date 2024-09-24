@@ -36,7 +36,7 @@ class Aircraft:
             nickname=server_dict["nickname"],
             year_of_manufacture=int(server_dict["yearOfManufacture"]),
             image_url=server_dict["imageUrl"],
-            number_of_chairs=int(server_dict["numberOfChairs"]),
+            number_of_chairs=int(server_dict["numberOfChairs"])
         )
     
     def __repr__(self):

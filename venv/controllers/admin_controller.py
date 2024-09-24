@@ -7,6 +7,7 @@ from models.flight import Flight
 from dal.interfaces.idal import IDAL
 from datetime import datetime
 from models.aircraft import Aircraft
+from exceptions import AircraftCreationException, AircraftRetrievalException, NetworkException, UnexpectedErrorException, FlightCreationException, ImageAnalysisException
 
 class AdminController:
     def __init__(self, main_controller, dal: IDAL):
@@ -28,86 +29,130 @@ class AdminController:
 
     def add_flight(self):
         """Show the AddFlightView for adding a new flight."""
-        aircrafts = self.dal.Aircraft.get_aircrafts()  # Fetch available aircrafts from DAL
-        self.add_flight_view = AddFlightView(controller=self, aircrafts=aircrafts)
-        self.main_controller.set_view(self.add_flight_view)
+        try:
+            aircrafts = self.dal.Aircraft.get_aircrafts()
+            self.add_flight_view = AddFlightView(controller=self, aircrafts=aircrafts)
+            self.main_controller.set_view(self.add_flight_view)
+        except AircraftRetrievalException:
+            self.show_error_message("Failed to retrieve aircrafts. Please try again later.")
+        except NetworkException:
+            self.show_error_message("Network error occurred. Please check your internet connection and try again.")
+        except Exception as e:
+            self.show_error_message("An unexpected error occurred. Please try again later or contact support.")
+            print(f"Unexpected error in add_flight: {e}")
     
+
+    def validate_aircraft_input(self, manufacturer, nickname, year_of_manufacture, image_url, number_of_chairs):
+        errors = []
+        if not manufacturer or not nickname:
+            errors.append("Manufacturer and nickname are required.")
+        try:
+            year = int(year_of_manufacture)
+            if year > datetime.now().year:
+                errors.append("Year of manufacture cannot be in the future.")
+        except ValueError:
+            errors.append("Year of manufacture must be a valid number.")
+        if not image_url:
+            errors.append("Image URL is required.")
+        try:
+            chairs = int(number_of_chairs)
+            if chairs <= 0:
+                errors.append("Number of chairs must be greater than zero.")
+        except ValueError:
+            errors.append("Number of chairs must be a valid number.")
+        try:
+            is_aircraft = self.dal.ImageRecognition.is_aircraft_image(image_url)
+            if not is_aircraft:
+                errors.append("The provided image does not appear to be an aircraft. Please upload an appropriate image.")
+        except ImageAnalysisException:
+            errors.append("Failed to analyze the image")
+        except NetworkException:
+            self.show_error_message("Network error occurred. Please check your internet connection and try again.")
+        except Exception as e:
+            self.show_error_message("An unexpected error occurred. Please try again later or contact support.")
+        return errors
+
     def save_aircraft(self, manufacturer, nickname, year_of_manufacture, image_url, number_of_chairs):
         """Save new aircraft data."""
+        errors = self.validate_aircraft_input(manufacturer, nickname, year_of_manufacture, image_url, number_of_chairs)
+        if errors:
+            self.show_error_message("\n".join(errors))
+            return
+
         try:
-            # Validate the inputs
-            if int(year_of_manufacture) > datetime.now().year:
-                raise ValueError("Year of manufacture cannot be in the future.")
-
-            if int(number_of_chairs) <= 0:
-                raise ValueError("Number of chairs must be greater than zero.")
-
-            # Create the new aircraft object
             new_aircraft = Aircraft(
                 manufacturer=manufacturer,
                 nickname=nickname,
-                year_of_manufacture=year_of_manufacture,
+                year_of_manufacture=int(year_of_manufacture),
                 image_url=image_url,
-                number_of_chairs=number_of_chairs
+                number_of_chairs=int(number_of_chairs)
             )
 
-            # Ensure it's an Aircraft object and not a dict
-            if not isinstance(new_aircraft, Aircraft):
-                raise TypeError(f"Expected Aircraft object, got {type(new_aircraft)}")
-
-            # Debugging line: Print the new aircraft object
-            print(f"Created Aircraft object: {new_aircraft}")
-
-            # Add the aircraft using the DAL
-
             created_aircraft = self.dal.Aircraft.create_aircraft(new_aircraft)
-            print(f"New aircraft created: {created_aircraft}")
-
-            # Show success message
             self.show_success_message(f"Aircraft added successfully!\n{created_aircraft}")
 
-        except ValueError as ve:
-            self.show_error_message(f"Error: {ve}")
+        except AircraftCreationException:
+            self.show_error_message("Unable to create aircraft. There might be a problem with the server. Please try again later or contact support.")
+        except NetworkException:
+            self.show_error_message("Network error occurred. Please check your internet connection and try again.")
         except Exception as e:
-            self.show_error_message(f"Unexpected error: {e}")
+            self.show_error_message("An unexpected error occurred. Please try again later or contact support.")
+            print(f"Unexpected error in save_aircraft: {e}")
 
 
+
+    def validate_flight_input(self, aircraft_id, source, destination, departure_datetime, landing_datetime, price):
+        errors = []
+        if not aircraft_id or not source or not destination or price=="":
+            errors.append("All fields are required.")
+        try:
+            #dep_time = datetime.strptime(departure_datetime, "%Y-%m-%d %H:%M:%S")
+            #land_time = datetime.strptime(landing_datetime, "%Y-%m-%d %H:%M:%S")
+            if source == destination:
+                errors.append("Departure and arrival locations cannot be the same.")
+            if departure_datetime < datetime.now():
+                errors.append("Departure time must be in the future.")
+            if landing_datetime <= departure_datetime:
+                errors.append("Landing time must be after departure time.")
+        except ValueError:
+            errors.append("Invalid date format. Use YYYY-MM-DD HH:MM:SS.")
+        try:
+            
+            float_price = float(price)
+            if float_price <= 0:
+                errors.append("Price must be greater than zero.")
+        except ValueError:
+            errors.append("Price must be a valid number.")
+            
+        return errors
 
     def save_flight(self, aircraft_id, source, destination, departure_datetime, landing_datetime, price):
         """Save new flight data."""
+        errors = self.validate_flight_input(aircraft_id, source, destination, departure_datetime, landing_datetime, price)
+        if errors:
+            self.show_error_message("\n".join(errors))
+            return
+
         try:
-            # Validate that departure and landing times are in the future
-            if departure_datetime < datetime.now() or landing_datetime < datetime.now():
-                raise ValueError("The departure and landing times must be in the future.")
-
-            # Validate that landing time is after departure time
-            if landing_datetime <= departure_datetime:
-                raise ValueError("The landing time must be after the departure time.")
-
-            # Create the new flight object
             new_flight = Flight(
                 aircraft_id=aircraft_id,
                 source=source,
                 destination=destination,
                 departure_datetime=departure_datetime,
                 landing_datetime=landing_datetime,
-                price=price
+                price=float(price)
             )
 
-            # Debugging line: Ensure that the Flight object is created correctly
-            print(f"Type of new_flight: {type(new_flight)}")
-            print(f"New Flight object: {new_flight}")
-
-            # Send the flight data to the DAL for saving
             created_flight = self.dal.Flight.create_flight(new_flight)
-
-            # Show success message to the user
             self.show_success_message(f"Flight added successfully! {created_flight}")
 
-        except ValueError as ve:
-            self.show_error_message(f"Error: {ve}")
+        except FlightCreationException:
+            self.show_error_message("Unable to create flight. There might be a problem with the server. Please try again later or contact support.")
+        except NetworkException:
+            self.show_error_message("Network error occurred. Please check your internet connection and try again.")
         except Exception as e:
-            self.show_error_message(f"Unexpected error: {e}")
+            self.show_error_message("An unexpected error occurred. Please try again later or contact support.")
+            print(f"Unexpected error in save_flight: {e}")
 
 
     def show_success_message(self, message):
@@ -117,7 +162,7 @@ class AdminController:
         msg_box.setText(message)
         msg_box.setWindowTitle("Success")
         msg_box.setStandardButtons(QMessageBox.Ok)
-        msg_box.buttonClicked.connect(self.go_back)  # Go back to admin view when "OK" is clicked
+        msg_box.buttonClicked.connect(self.go_back)
         msg_box.exec()
 
     def show_error_message(self, message):

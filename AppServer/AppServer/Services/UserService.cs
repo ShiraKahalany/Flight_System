@@ -1,7 +1,9 @@
 ﻿using AppServer.Data;
 using AppServer.Models;
 using Microsoft.EntityFrameworkCore;
-
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public interface IUserService
 {
@@ -11,7 +13,7 @@ public interface IUserService
     Task<List<User>> GetAllUsersAsync();
     Task DeleteAllUsersAsync();
     Task<User?> GetUserByUsernameAndPasswordAsync(string username, string password);
-
+    Task<User?> GetUserByUsernameAsync(string username); // New method to check for duplicate usernames
 }
 
 public class UserService : IUserService
@@ -34,16 +36,18 @@ public class UserService : IUserService
     public async Task DeleteUserAsync(int id)
     {
         var user = await _context.Users.FindAsync(id);
-        if (user != null)
+        if (user == null)
         {
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+            throw new KeyNotFoundException("User not found.");
         }
+        _context.Users.Remove(user);
+        await _context.SaveChangesAsync();
     }
-    //delete all users
+
+    // Delete all users
     public async Task DeleteAllUsersAsync()
     {
-        var users = _context.Users.ToList();
+        var users = await _context.Users.ToListAsync();
         _context.Users.RemoveRange(users);
         await _context.SaveChangesAsync();
     }
@@ -59,10 +63,18 @@ public class UserService : IUserService
     {
         return await _context.Users.ToListAsync();
     }
+
+    // Get a user by username and password
     public async Task<User?> GetUserByUsernameAndPasswordAsync(string username, string password)
     {
-         return await _context.Users
-            .Where(u => u.Username == username && u.Password == password)
-            .FirstOrDefaultAsync();
+        return await _context.Users
+            .FirstOrDefaultAsync(u => u.Username == username && u.Password == password);
+    }
+
+    // Get a user by username (to check for duplicates)
+    public async Task<User?> GetUserByUsernameAsync(string username)
+    {
+        return await _context.Users
+            .FirstOrDefaultAsync(u => u.Username == username);
     }
 }

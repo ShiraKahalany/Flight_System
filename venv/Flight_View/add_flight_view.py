@@ -7,6 +7,16 @@ class AddFlightView(QWidget):
         self.controller = controller
         self.aircrafts = aircrafts
 
+        # Predefined locations for the dropdowns
+        locations = [
+            "Tel Aviv", "New York", "London", "Tokyo", "Paris", "Los Angeles", "Dubai", "Singapore", "Hong Kong", "Sydney", 
+            "Toronto", "Berlin", "Amsterdam", "Bangkok", "Istanbul", "Moscow", "Mumbai", "São Paulo", "Mexico City", 
+            "Johannesburg", "Cairo", "Delhi", "Rome", "Madrid", "Frankfurt", "Seoul", "Chicago", "Kuala Lumpur", 
+            "Beijing", "Zurich", "Vienna", "Barcelona", "Miami", "San Francisco", "Vancouver", "Munich", "Copenhagen", 
+            "Lisbon", "Stockholm", "Athens", "Dublin", "Prague", "Helsinki", "Abu Dhabi", "Doha", "Riyadh", "Warsaw", 
+            "Budapest", "Brussels" 
+        ]
+
         layout = QVBoxLayout()
 
         # "Go Back" Button
@@ -24,12 +34,15 @@ class AddFlightView(QWidget):
             self.aircraft_dropdown.addItem(f"{aircraft.nickname} ({aircraft.manufacturer})", aircraft.id)
         self.form_layout.addRow("Aircraft", self.aircraft_dropdown)
 
-        # Source and destination input fields
-        self.source_input = QLineEdit(self)
-        self.form_layout.addRow("Source", self.source_input)
+        # Dropdown to select source location
+        self.source_dropdown = QComboBox(self)
+        self.source_dropdown.addItems(locations)
+        self.form_layout.addRow("Source", self.source_dropdown)
 
-        self.destination_input = QLineEdit(self)
-        self.form_layout.addRow("Destination", self.destination_input)
+        # Dropdown to select destination location
+        self.destination_dropdown = QComboBox(self)
+        self.destination_dropdown.addItems(locations)
+        self.form_layout.addRow("Destination", self.destination_dropdown)
 
         # DateTime inputs for departure and landing
         self.departure_input = QDateTimeEdit(self)
@@ -59,12 +72,11 @@ class AddFlightView(QWidget):
         """Collect the form data and send to controller for validation and saving."""
         try:
             aircraft_id = self.aircraft_dropdown.currentData()
-            source = self.source_input.text()
-            destination = self.destination_input.text()
+            source = self.source_dropdown.currentText()
+            destination = self.destination_dropdown.currentText()
             departure_datetime = self.departure_input.dateTime().toPython()
             landing_datetime = self.landing_input.dateTime().toPython()
-            price = float(self.price_input.text())
-
+            price = self.price_input.text()
             # Send the collected data to the controller for validation and saving
             self.controller.save_flight(aircraft_id, source, destination, departure_datetime, landing_datetime, price)
 

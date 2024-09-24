@@ -22,10 +22,10 @@ class Ticket:
 
 
     @classmethod
-    def to_client_format(cls, server_dict):
+    def to_client_format(cls, server_dict: dict) -> 'Ticket':
                 
         def parse_datetime(dt_str):
-            return datetime.strptime(dt_str, "%Y-%m-%dT%H:%M:%S") if dt_str else None
+            return datetime.strptime(dt_str.split('.')[0], "%Y-%m-%dT%H:%M:%S") if dt_str else None
 
         return cls(
             id=int(server_dict["id"]),
