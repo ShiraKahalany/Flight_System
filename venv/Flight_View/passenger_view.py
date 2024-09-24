@@ -6,6 +6,7 @@ class PassengerView(QWidget):
         super().__init__(parent=None)
         self.controller = controller
         self.user = user  # Store user information
+        self.set_background_image('Flight_View/icons/background-sky.jpg')  # Correct path with forward slashes
 
         main_layout = QVBoxLayout()
 
@@ -65,8 +66,6 @@ class PassengerView(QWidget):
         self.loading_square.hide()  # Hide the loading square initially
 
         self.setLayout(main_layout)
-        self.setStyleSheet("background-color: #f2f2f2;")  # Light gray background
-        self.set_background_image('venv/Flight_View/icons/background-sky.jpg')  # Correct path with forward slashes
 
     def set_background_image(self, image_path):
         """Set the background image of the entire widget."""
@@ -75,7 +74,6 @@ class PassengerView(QWidget):
                 background-image: url({image_path});
                 background-position: center;
                 background-repeat: no-repeat;
-                background-color: rgba(255, 255, 255, 150);  
             }}
         """)
 

@@ -40,7 +40,7 @@ class MyFlightsView(QWidget):
 
                 # Airplane Icon (left side)
                 airplane_icon_label = QLabel(self)
-                airplane_icon = QPixmap('venv/Flight_View/icons/airplane.png')  # Verify correct path
+                airplane_icon = QPixmap('Flight_View/icons/airplane.png')  # Verify correct path
                 airplane_icon = airplane_icon.scaled(60, 60, Qt.KeepAspectRatio)
                 airplane_icon_label.setPixmap(airplane_icon)
                 ticket_layout.addWidget(airplane_icon_label, alignment=Qt.AlignLeft)
@@ -69,7 +69,7 @@ class MyFlightsView(QWidget):
 
                 # Circular Download PDF Button with Icon (right side)
                 download_button = QPushButton(self)
-                download_button.setIcon(QIcon('venv/Flight_View/icons/download.png'))  # Ensure icon path is correct
+                download_button.setIcon(QIcon('Flight_View/icons/download.png'))  # Ensure icon path is correct
                 download_button.setFixedSize(50, 50)  # Directly set size
                 download_button.setStyleSheet("background-color: #2ecc71; border-radius: 25px;")  # Apply only necessary styles
                 

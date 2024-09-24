@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QApplication
 from controllers.main_controller import MainController
 from dal.api_client import APIClient
 from dal.dal_factory import DALFactory
-from Flight_View.main import MainApp
+from Flight_View.main_app import MainApp
 
 
 
