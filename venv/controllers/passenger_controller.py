@@ -11,7 +11,7 @@ from Flight_View.my_flights_view import MyFlightsView
 from dal.interfaces.idal import IDAL
 from datetime import datetime, timedelta
 from models.aircraft import Aircraft
-
+from exceptions import TicketCreationException , FlightRetrievalException, AircraftNotFoundException, UnexpectedErrorException, NetworkException, FlightNotFoundException
 
 class PassengerController:
     def __init__(self, main_controller, dal: IDAL):
