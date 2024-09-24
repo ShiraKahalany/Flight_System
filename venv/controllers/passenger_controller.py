@@ -63,13 +63,13 @@ class PassengerController:
                         aircraft.image_data = self.download_image(aircraft.image_url)
                 except AircraftNotFoundException:
                     flight.aircraft = None
-                    print(f"Aircraft not found for flight {flight.id}")
+                    print(f"Error loading the flights, sorry")
             self.flights_view = FlightsView(controller=self, flights=future_flights)
             self.main_controller.set_view(self.flights_view)
         except FlightRetrievalException as fre:
-            self.show_error_message(f"Unable to retrieve flights: {fre}")
+            self.show_error_message(f"Unable to retrieve flights")
         except NetworkException as ne:
-            self.show_error_message(f"Network error while fetching flights: {ne}")
+            self.show_error_message(f"Network error while fetching flights")
         except UnexpectedErrorException as uee:
             self.show_error_message("An unexpected error occurred. Please try again later.")
             print(f"Unexpected error in show_flights: {uee}")
