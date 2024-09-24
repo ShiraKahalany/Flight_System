@@ -21,11 +21,11 @@ class LandingsView(QWidget):
         self.time_dropdown.currentIndexChanged.connect(self.update_landings)
         layout.addWidget(self.time_dropdown)
 
-        # Create a table to display landings with images
+        # Create a table to display landings with images and predictions
         self.table = QTableWidget(self)
         self.table.setRowCount(0)
-        self.table.setColumnCount(6)
-        self.table.setHorizontalHeaderLabels(["Image", "Flight ID", "Source", "Destination", "Departure", "Landing"])
+        self.table.setColumnCount(7)  # Add a column for the Landing Prediction
+        self.table.setHorizontalHeaderLabels(["Image", "Flight ID", "Source", "Destination", "Departure", "Landing", "Prediction"])
         layout.addWidget(self.table)
 
         # Set initial column widths
@@ -35,6 +35,7 @@ class LandingsView(QWidget):
         self.table.setColumnWidth(3, 120)  # Destination
         self.table.setColumnWidth(4, 120)  # Departure
         self.table.setColumnWidth(5, 120)  # Landing
+        self.table.setColumnWidth(6, 100)  # Prediction
 
         self.setLayout(layout)
 
@@ -75,6 +76,11 @@ class LandingsView(QWidget):
             self.table.setItem(row, 3, QTableWidgetItem(flight.destination))
             self.table.setItem(row, 4, QTableWidgetItem(flight.departure_datetime.strftime('%Y-%m-%d %H:%M')))
             self.table.setItem(row, 5, QTableWidgetItem(flight.landing_datetime.strftime('%Y-%m-%d %H:%M')))
+
+            # Get prediction for landing delay
+            is_landing_delayed = self.controller.predict_landing_delay(flight)
+            prediction_text = "Delayed" if is_landing_delayed else "On Time"
+            self.table.setItem(row, 6, QTableWidgetItem(prediction_text))
 
     def download_image(self, url):
         """Download the image from the given URL and return its binary content."""

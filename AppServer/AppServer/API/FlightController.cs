@@ -103,11 +103,6 @@ public class FlightController : ControllerBase
         try
         {
             var flights = await _flightService.GetFlightsInNextFiveHoursAsync();
-            if (flights == null || !flights.Any())
-            {
-                return NotFound("No flights departing in the next 5 hours.");
-            }
-
             return Ok(flights);
         }
         catch (Exception ex)
