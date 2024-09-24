@@ -12,7 +12,7 @@ class LoginView(QWidget):
         self.logo_label = QLabel(self)
 
         # Ensure correct path for the image file
-        logo_path = "venv/Flight_View/logo.jpg"  # Adjust this to the correct file path if it's not in the current directory
+        logo_path = "venv/Flight_View/icons/logo.jpg"  # Adjust this to the correct file path if it's not in the current directory
 
         # Check if the pixmap loads the image correctly
         pixmap = QPixmap(logo_path)
@@ -74,7 +74,7 @@ class LoginView(QWidget):
 
     def resizeEvent(self, event):
         """ Override resize event to adjust the logo size when the window is resized. """
-        logo_path = "venv/Flight_View/logo.jpg"  # Adjust this to the correct file path if necessary
+        logo_path = "venv/Flight_View/icons/logo.jpg"  # Adjust this to the correct file path if necessary
         pixmap = QPixmap(logo_path)
         if not pixmap.isNull():
             scaled_pixmap = pixmap.scaled(700, 500, Qt.KeepAspectRatio, Qt.SmoothTransformation)  # Keep the logo size smaller

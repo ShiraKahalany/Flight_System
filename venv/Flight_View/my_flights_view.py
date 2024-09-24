@@ -1,7 +1,6 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QScrollArea, QFrame, QHBoxLayout, QPushButton
-from PySide6.QtGui import QPixmap, QFont
+from PySide6.QtGui import QPixmap, QFont, QIcon
 from PySide6.QtCore import Qt
-
 
 class MyFlightsView(QWidget):
     def __init__(self, controller=None, flights=None):
@@ -23,27 +22,24 @@ class MyFlightsView(QWidget):
         for flight in flights:
             aircraft = self.controller.dal.Aircraft.get_aircraft_by_id(flight.aircraft_id)
             if aircraft:
-                flight_frame = QFrame(self)
-                flight_frame.setFrameShape(QFrame.Box)
-                # Removed 'box-shadow' and used border and padding for a similar effect
-                flight_frame.setStyleSheet(
-                    "background-color: white; border-radius: 10px; padding: 15px; margin-bottom: 15px; "
-                    "border: 2px solid rgba(0, 0, 0, 0.1);")  # Use border for shadow effect
+                # Create a ticket frame without stylesheet
+                ticket_frame = QFrame(self)
+                ticket_frame.setFrameShape(QFrame.NoFrame)  # No extra frame shape
+                ticket_frame.setContentsMargins(10, 10, 10, 10)  # Apply margins directly
+                ticket_frame.setStyleSheet("border-bottom: 1px solid #cccccc;")  # Only minimal stylesheet
                 
-                flight_layout = QHBoxLayout()
+                ticket_layout = QHBoxLayout()
 
-                # Aircraft Image
-                image_label = QLabel(self)
-                image_data = self.controller.download_image(aircraft.image_url)
-                if image_data:
-                    pixmap = QPixmap()
-                    pixmap.loadFromData(image_data)
-                    pixmap = pixmap.scaled(120, 80, Qt.KeepAspectRatio)
-                    image_label.setPixmap(pixmap)
-                flight_layout.addWidget(image_label)
+                # Airplane Icon (left side)
+                airplane_icon_label = QLabel(self)
+                airplane_icon = QPixmap('venv/Flight_View/icons/airplane.png')  # Verify correct path
+                airplane_icon = airplane_icon.scaled(60, 60, Qt.KeepAspectRatio)
+                airplane_icon_label.setPixmap(airplane_icon)
+                ticket_layout.addWidget(airplane_icon_label, alignment=Qt.AlignLeft)
 
-                # Flight and ticket details
+                # Flight and ticket details (center)
                 details_layout = QVBoxLayout()
+                details_layout.setSpacing(3)
 
                 flight_id_label = QLabel(f"Flight ID: {flight.id}", self)
                 flight_id_label.setFont(QFont("Arial", 10, QFont.Bold))
@@ -52,15 +48,30 @@ class MyFlightsView(QWidget):
                 departure_label = QLabel(f"Departure: {flight.departure_datetime.strftime('%Y-%m-%d %H:%M')}", self)
                 landing_label = QLabel(f"Landing: {flight.landing_datetime.strftime('%Y-%m-%d %H:%M')}", self)
 
+                for label in [flight_id_label, source_label, destination_label, departure_label, landing_label]:
+                    label.setStyleSheet("color: #333333; font-size: 12px;")
+
                 details_layout.addWidget(flight_id_label)
                 details_layout.addWidget(source_label)
                 details_layout.addWidget(destination_label)
                 details_layout.addWidget(departure_label)
                 details_layout.addWidget(landing_label)
 
-                flight_layout.addLayout(details_layout)
-                flight_frame.setLayout(flight_layout)
-                scroll_layout.addWidget(flight_frame)
+                ticket_layout.addLayout(details_layout)
+
+                # Circular Download PDF Button with Icon (right side)
+                download_button = QPushButton(self)
+                download_button.setIcon(QIcon('venv/Flight_View/icons/download.png'))  # Ensure icon path is correct
+                download_button.setFixedSize(50, 50)  # Directly set size
+                download_button.setStyleSheet("background-color: #2ecc71; border-radius: 25px;")  # Apply only necessary styles
+                
+                download_button.clicked.connect(lambda checked, f=flight: self.controller.download_ticket_pdf(f))
+
+                # Align the button on the right-bottom side
+                ticket_layout.addWidget(download_button, alignment=Qt.AlignRight | Qt.AlignBottom)
+
+                ticket_frame.setLayout(ticket_layout)
+                scroll_layout.addWidget(ticket_frame)
 
         scroll_widget.setLayout(scroll_layout)
         scroll_area.setWidgetResizable(True)
