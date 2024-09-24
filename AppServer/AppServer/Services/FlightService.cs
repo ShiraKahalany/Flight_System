@@ -82,7 +82,7 @@ public class FlightService : IFlightService
         DateTime endTime = currentTime.AddHours(5);
 
         return await _context.Flights
-            .Where(f => f.LandingDatetime >= currentTime && f.LandingDatetime <= endTime)
+            .Where(f =>f.Destination=="Tel Aviv" && f.LandingDatetime >= currentTime && f.LandingDatetime <= endTime)
             .ToListAsync();
     }
 

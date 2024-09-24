@@ -25,8 +25,11 @@ class MyFlightsView(QWidget):
             if aircraft:
                 flight_frame = QFrame(self)
                 flight_frame.setFrameShape(QFrame.Box)
+                # Removed 'box-shadow' and used border and padding for a similar effect
                 flight_frame.setStyleSheet(
-                    "background-color: white; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);")
+                    "background-color: white; border-radius: 10px; padding: 15px; margin-bottom: 15px; "
+                    "border: 2px solid rgba(0, 0, 0, 0.1);")  # Use border for shadow effect
+                
                 flight_layout = QHBoxLayout()
 
                 # Aircraft Image
