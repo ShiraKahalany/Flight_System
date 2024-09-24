@@ -76,8 +76,7 @@ class AddFlightView(QWidget):
             destination = self.destination_dropdown.currentText()
             departure_datetime = self.departure_input.dateTime().toPython()
             landing_datetime = self.landing_input.dateTime().toPython()
-            price = float(self.price_input.text())
-
+            price = self.price_input.text()
             # Send the collected data to the controller for validation and saving
             self.controller.save_flight(aircraft_id, source, destination, departure_datetime, landing_datetime, price)
 

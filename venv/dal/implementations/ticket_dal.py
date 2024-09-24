@@ -20,6 +20,17 @@ class TicketDAL(ITicketDAL):
             raise NetworkException(f"Network error during ticket creation: {e}") from e
         except Exception as e:
             raise UnexpectedErrorException(f"Unexpected error during ticket creation: {e}") from e
+
+    def get_tickets(self):
+        try:
+            res = self.api_client.get("ticket/get/all")
+            return [Ticket.to_client_format(ticket_data) for ticket_data in res.json()]
+        except requests.exceptions.HTTPError as e:
+            raise TicketRetrievalException(f"Failed to retrieve tickets: {e}") from e
+        except NetworkException as e:
+            raise NetworkException(f"Network error during ticket retrieval: {e}") from e
+        except Exception as e:
+            raise UnexpectedErrorException(f"Unexpected error during ticket retrieval: {e}") from e
     
     # def get_ticket(self, ticket_id):
     #     data = self.api_client.get(f"ticket/{ticket_id}")
