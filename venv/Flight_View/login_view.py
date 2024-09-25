@@ -12,8 +12,8 @@ class LoginView(QWidget):
         # Main layout for the page
         main_layout = QVBoxLayout()
         icon_label = QLabel(self)
-        pixmap = QPixmap(r"Flight_View\icons\logo2.png")  # Use your provided icon path here
-        icon_label.setPixmap(pixmap.scaled(600, 280))  # Adjust icon size
+        pixmap = QPixmap(r"Flight_View\icons\logo3.png")  # Use your provided icon path here
+        icon_label.setPixmap(pixmap.scaled(600, 330))  # Adjust icon size
         icon_label.setAlignment(Qt.AlignCenter)
         icon_label.setStyleSheet("background-color: rgba(255, 255, 255, 0);")  # Fully transparent background
 
@@ -30,7 +30,7 @@ class LoginView(QWidget):
             border-radius: 20px;  /* Rounded corners */
             padding: 20px;
         """)
-        container_layout.addSpacing(10)
+        container_layout.addSpacing(0)
 
         # Username input
         self.username_input = QLineEdit(self)
@@ -52,7 +52,7 @@ class LoginView(QWidget):
         self.login_button.setFixedWidth(250)  # Make the button slightly shorter than the text inputs
         self.login_button.setStyleSheet(
             """
-            background-color: #3498db; 
+            background-color: #212630; 
             color: white; 
             padding: 10px; 
             font-size: 16px; 

@@ -2,8 +2,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QL
 from PySide6.QtGui import QPainter, QPixmap
 from PySide6.QtCore import Qt, QTimer, QCoreApplication
 from PySide6.QtGui import QIcon
-from PySide6.QtCore import QSize  
-
+from PySide6.QtCore import QSize
 
 class PassengerView(QWidget):
     def __init__(self, controller=None, user=None, date_details=None):
@@ -16,9 +15,10 @@ class PassengerView(QWidget):
         main_layout = QVBoxLayout()
         main_layout.setSpacing(20)  # Adjust this value to reduce space
 
-        # Top layout for "Go Back" button aligned to the left
+        # Top layout for "Go Back" button and date details in the same row
         top_layout = QHBoxLayout()
 
+        # "Go Back" button
         self.back_button = QPushButton(self)
         self.back_button.setIcon(QIcon(r"Flight_View\icons\back.png"))  # Replace with the actual path to your icon
         self.back_button.setIconSize(QSize(20, 20))  # Adjust icon size as needed
@@ -36,15 +36,25 @@ class PassengerView(QWidget):
         self.back_button.clicked.connect(self.controller.go_back)
 
         top_layout.addWidget(self.back_button)
-        top_layout.addStretch()  # Pushes the button to the left
 
-        main_layout.addLayout(top_layout)
+        # Add stretch to push the date details to the right
+        top_layout.addStretch()
 
-        # Greeting the user with "Welcome back {user.first_name}!"
-        self.greeting_label = QLabel(f"Welcome back {self.user.first_name}!", self)
+        # Add date details at the top in a row with a semi-transparent white background
+        date_frame = QFrame(self)
+        date_frame.setStyleSheet("""
+            background-color: rgba(255, 255, 255, 0.05);  /* Semi-transparent white */
+            border-radius: 15px;  /* Rounded corners */
+            padding: 5px;  /* Reduced padding */
+        """)
 
+        # Set a fixed height for the frame to remove excess space
+        date_frame.setFixedHeight(50)  # Adjust the height to fit the content
 
-        #!!!!!!!!!!לתמר היקרה
+        date_layout = QHBoxLayout()
+        date_layout.setContentsMargins(5, 5, 5, 5)  # Remove extra margins
+        date_layout.setSpacing(15)  # Adjust spacing between date labels
+
         shabbat_start = self.date_details.shabbat_start.strftime("%H:%M")
         shabbat_end = self.date_details.shabbat_end.strftime("%H:%M")
         parasha = self.date_details.parasha
@@ -52,7 +62,49 @@ class PassengerView(QWidget):
         days_of_week = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"]
         day = days_of_week[self.date_details.day_of_week]
         
-        #!!!!!!!!
+        # Create QLabel for each date detail with style
+        shabbat_start_label = QLabel(f"Shabbat Start: {shabbat_start}", self)
+        shabbat_end_label = QLabel(f"Shabbat End: {shabbat_end}", self)
+        parasha_label = QLabel(f"{parasha}", self)
+        hebrew_date_label = QLabel(f"{hebrew_date}", self)
+        day_label = QLabel(f"{day}", self)
+
+        # Apply consistent styling for readability
+        label_style = """
+            font-size: 16px; 
+            color: #2c3e50;
+            font-weight: bold;
+            background-color: transparent;
+        """
+        
+        shabbat_start_label.setStyleSheet(label_style)
+        shabbat_end_label.setStyleSheet(label_style)
+        parasha_label.setStyleSheet(label_style)
+        hebrew_date_label.setStyleSheet(label_style)
+        day_label.setStyleSheet(label_style)
+
+        # Add labels to the layout (in a row)
+        date_layout.addWidget(shabbat_start_label)
+        date_layout.addSpacing(20)
+        date_layout.addWidget(shabbat_end_label)
+        date_layout.addSpacing(20)
+        date_layout.addWidget(parasha_label)
+        date_layout.addSpacing(20)
+        date_layout.addWidget(hebrew_date_label)
+        date_layout.addSpacing(20)
+        date_layout.addWidget(day_label)
+
+        # Set the date_layout into the date_frame
+        date_frame.setLayout(date_layout)
+
+        # Add the date_frame to the top layout (pushed to the right)
+        top_layout.addWidget(date_frame)
+
+        # Add top layout (containing the back button and date details) to the main layout
+        main_layout.addLayout(top_layout)
+
+        # Greeting the user with "Welcome back {user.first_name}!"
+        self.greeting_label = QLabel(f"Welcome back {self.user.first_name}!", self)
 
         self.greeting_label.setAlignment(Qt.AlignCenter)
         self.greeting_label.setStyleSheet("""

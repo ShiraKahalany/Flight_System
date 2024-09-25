@@ -36,7 +36,7 @@ class LoginController:
                 self.passenger_controller.current_user_id = user.id
 
                 if user.role == 'admin':
-                    self.admin_controller.show_admin_view(user=user)
+                    self.admin_controller.show_admin_view(user=user, date_details=today_details)
                 else:
                     self.passenger_controller.show_passenger_view(user=user, date_details=today_details)
             else:
