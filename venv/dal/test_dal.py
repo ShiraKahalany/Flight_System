@@ -1,5 +1,7 @@
 import sys
 import os
+import json
+import requests
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from dal.dal_factory import DALFactory
 #from interfaces.idal import IDAL 
@@ -218,13 +220,59 @@ def test_image_recognition_functionality(self):
 
         url = "http://localhost:5001/api/image/analyze"
 
+#test prediction dal
+def test_prediction_dal(dal):
+
+    flight_details = {
+    "Season": "Winter",
+    "FlightDistance": 1200,
+    "FlightDuration": 90,
+    "DepartureAirportCongestion": 30,
+    "ArrivalAirportCongestion": 40,
+    "DayOfWeek": "Monday",
+    "TimeOfFlight": "08:00",
+    "ScheduledDepartureTime": "07:30",
+    "ActualDepartureTime": "07:45",
+    "DepartureDelay": 15,
+    "Temperature": 18.5,
+    "Visibility": 10.0,
+    "WindSpeed": 12.3,
+    "WeatherEvent": "Clear"
+    }
+
+    is_delay= dal.Flight.is_landing_delayed(flight_details)
+    logger.info(f"Is flight delayed? {is_delay}")
+
+#     app_server_url = "http://localhost:5001/api/prediction"
+# # Convert the flight details into a JSON payload
+#     headers = {'Content-Type': 'application/json'}
+#     payload = json.dumps(flight_details)
+
+# # Make a POST request to the app server
+#     try:
+#         response = requests.post(app_server_url, data=payload, headers=headers)
+
+#     # Check the response status
+#         if response.status_code == 200:
+#         # Assuming the response is a simple boolean, print the result
+#             is_delayed = response.json()
+#             print("Flight Delay Prediction:", "Yes" if is_delayed else "No")
+#         else:
+#             print(f"Error: Received status code {response.status_code} - {response.text}")
+
+#     except requests.exceptions.RequestException as e:
+#         print(f"Error occurred while contacting the app server: {e}")
+
+
+
+
 
 
 def main():
 
     api_client = APIClient()
     dal = DALFactory.get_instance()
-    test_image_recognition_functionality(dal)
+    #test_image_recognition_functionality(dal)
     #dal = DALImpl()
 
     #test_date_checker(dal)
@@ -232,6 +280,7 @@ def main():
     #test_flight_dal(dal)
     #test_aircraft_dal(dal)
     #test_ticket_dal(dal)
+    test_prediction_dal(dal)
 
 
 

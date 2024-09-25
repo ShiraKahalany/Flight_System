@@ -44,3 +44,41 @@ class Utils:
     #     arrival_info = self.get_date_info(flight.landing_datetime, flight.destination)
     #     return (departure_info.day_of_week!=6 and arrival_info.day_of_week!=6 and
     #             not departure_info.is_holiday and not arrival_info.is_holiday)
+
+
+
+#     flight_details = {
+#     "Season": "Winter",
+#     "FlightDistance": 1200,
+#     "FlightDuration": 90,
+#     "DepartureAirportCongestion": 30,
+#     "ArrivalAirportCongestion": 40,
+#     "DayOfWeek": "Monday",
+#     "TimeOfFlight": "08:00",
+#     "ScheduledDepartureTime": "07:30",
+#     "ActualDepartureTime": "07:45",
+#     "DepartureDelay": 15,
+#     "Temperature": 18.5,
+#     "Visibility": 10.0,
+#     "WindSpeed": 12.3,
+#     "WeatherEvent": "Clear"
+# }
+
+# # Convert the flight details into a JSON payload
+# headers = {'Content-Type': 'application/json'}
+# payload = json.dumps(flight_details)
+
+# # Make a POST request to the app server
+# try:
+#     response = requests.post(app_server_url, data=payload, headers=headers)
+
+#     # Check the response status
+#     if response.status_code == 200:
+#         # Assuming the response is a simple boolean, print the result
+#         is_delayed = response.json()
+#         print("Flight Delay Prediction:", "Yes" if is_delayed else "No")
+#     else:
+#         print(f"Error: Received status code {response.status_code} - {response.text}")
+
+# except requests.exceptions.RequestException as e:
+#     print(f"Error occurred while contacting the app server: {e}")v
