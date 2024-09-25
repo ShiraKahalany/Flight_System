@@ -12,6 +12,9 @@ class LoginController:
         self.passenger_controller = passenger_controller
         self.dal = dal
         self.login_view = LoginView(self)
+        
+    def set_current_user(self, user_id):
+        self.current_user_id = user_id
 
     def validate_login_input(self, username, password):
         errors = []
@@ -34,6 +37,8 @@ class LoginController:
 
             if user:
                 self.passenger_controller.current_user_id = user.id
+                self.passenger_controller.flight_booking_controller.set_current_user(user.id)
+                self.passenger_controller.my_flights_controller.set_current_user(user.id)
 
                 if user.role == 'admin':
                     self.admin_controller.show_admin_view(user=user, date_details=today_details)
