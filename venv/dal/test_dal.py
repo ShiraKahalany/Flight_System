@@ -194,10 +194,13 @@ def test_ticket_dal(dal):
     # ticket_dal.delete_ticket(created_ticket['id'])
     # logger.info("Ticket deleted")
 
-    tickets = ticket_dal.get_tickets()
-    #print each ticket
-    for ticket in tickets:
-        logger.info(f"Retrieved ticket: {ticket.id}")
+    # tickets = ticket_dal.get_tickets()
+    # #print each ticket
+    # for ticket in tickets:
+    #     logger.info(f"Retrieved ticket: {ticket.id}")
+
+    #check delete ticket
+    ticket_dal.delete_ticket("193063")
 
 
 def test_image_recognition_functionality(self):
@@ -241,6 +244,10 @@ def test_prediction_dal(dal):
     }
 
     is_delay= dal.Flight.is_landing_delayed(flight_details)
+    if is_delay:
+        print("Flight Delay Prediction: Yes")
+    if not is_delay:
+        print("Flight Delay Prediction: No")
     logger.info(f"Is flight delayed? {is_delay}")
 
 #     app_server_url = "http://localhost:5001/api/prediction"
@@ -279,8 +286,8 @@ def main():
     #test_user_dal(dal)
     #test_flight_dal(dal)
     #test_aircraft_dal(dal)
-    #test_ticket_dal(dal)
-    test_prediction_dal(dal)
+    test_ticket_dal(dal)
+    #test_prediction_dal(dal)
 
 
 

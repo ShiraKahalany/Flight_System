@@ -36,13 +36,6 @@ class TicketDAL(ITicketDAL):
         data = self.api_client.get(f"ticket/{ticket_id}")
         return Ticket(**(data.json()))
 
-    # def update_ticket(self, ticket_id, ticket_data):
-    #     data = self.api_client.put(f"ticket/{ticket_id}", ticket_data)
-    #     return Ticket(**data)
-
-    # def delete_ticket(self, ticket_id):
-    #     self.api_client.delete(f"ticket/{ticket_id}")
-
     def get_user_tickets(self, user_id):
         try:
             res = self.api_client.get(f"ticket/getbyuser/{user_id}")
@@ -56,3 +49,28 @@ class TicketDAL(ITicketDAL):
             raise NetworkException(f"Network error during user flight retrieval: {e}") from e
         except Exception as e:
             raise UnexpectedErrorException(f"Unexpected error during user flight retrieval: {e}") from e
+
+            
+    def delete_ticket(self, ticket_id):
+        try:
+            self.api_client.delete(f"ticket/delete/{ticket_id}")
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 404:
+                raise TicketNotFoundException(f"Ticket with id {ticket_id} not found") from e
+            else:
+                raise TicketRetrievalException(f"Failed to delete ticket") from e
+        except NetworkException as e:
+            raise NetworkException(f"Network error during ticket deletion: {e}") from e
+        except Exception as e:
+            raise UnexpectedErrorException(f"Unexpected error during ticket deletion: {e}") from e
+        
+   
+   
+   
+   
+    # def update_ticket(self, ticket_id, ticket_data):
+    #     data = self.api_client.put(f"ticket/{ticket_id}", ticket_data)
+    #     return Ticket(**data)
+
+    # def delete_ticket(self, ticket_id):
+    #     self.api_client.delete(f"ticket/{ticket_id}")
