@@ -35,7 +35,7 @@ class LoginController:
                 if user.role == 'admin':
                     self.admin_controller.show_admin_view()
                 else:
-                    self.passenger_controller.show_passenger_view()
+                    self.passenger_controller.show_passenger_view(user=user)
             else:
                 self.login_view.show_error("Invalid username or password.")
 

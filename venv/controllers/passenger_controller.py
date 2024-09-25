@@ -28,8 +28,8 @@ class PassengerController:
         self.passenger_view = None
         self.current_user_id = None  # Set this when the user logs in
 
-    def show_passenger_view(self):
-        self.passenger_view = PassengerView(controller=self)
+    def show_passenger_view(self,user=None):
+        self.passenger_view = PassengerView(controller=self,user=user)
         self.main_controller.set_view(self.passenger_view)
 
     def go_back(self):

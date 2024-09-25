@@ -1,17 +1,25 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QSpacerItem, QSizePolicy, QFrame
 from PySide6.QtCore import Qt, QTimer, QCoreApplication
+from models import user
 
 class PassengerView(QWidget):
     def __init__(self, controller=None, user=None):
         super().__init__(parent=None)
         self.controller = controller
         self.user = user  # Store user information
-        self.set_background_image('Flight_View/icons/background-sky.jpg')  # Correct path with forward slashes
+        print(type(self.user))
+        self.setStyleSheet("""
+            background-image: url(Flight_View/icons/background-sky.jpg);
+            background-repeat: no-repeat;
+            background-position: center;
+        """)
 
         main_layout = QVBoxLayout()
 
         # Top layout for "Go Back" button aligned to the left
+        
         top_layout = QHBoxLayout()
+
         self.back_button = QPushButton("← Go Back", self)
         self.back_button.setStyleSheet("""
             background-color: #3498db; 
@@ -21,21 +29,23 @@ class PassengerView(QWidget):
             border-radius: 5px;
         """)
         self.back_button.clicked.connect(self.controller.go_back)
+
         top_layout.addWidget(self.back_button)
         top_layout.addStretch()  # Pushes the button to the left
 
         main_layout.addLayout(top_layout)
 
         # Greeting the user with "Hello {user.firstname}"
-        self.greeting_label = QLabel(f"Welcome back!", self)
+        self.greeting_label = QLabel(f"Welcome back {user.first_name}!", self)
         self.greeting_label.setAlignment(Qt.AlignCenter)
         self.greeting_label.setStyleSheet("""
             font-size: 50px; 
             font-weight: bold; 
             color: #2c3e50;
-            background-color: #f2f2f2;
+            background-color: #3498db  ;  /* Transparent background */
             padding: 20px;
         """)
+
         main_layout.addWidget(self.greeting_label)
 
         # Buttons section
@@ -67,15 +77,6 @@ class PassengerView(QWidget):
 
         self.setLayout(main_layout)
 
-    def set_background_image(self, image_path):
-        """Set the background image of the entire widget."""
-        self.setStyleSheet(f"""
-            PassengerView {{
-                background-image: url({image_path});
-                background-position: center;
-                background-repeat: no-repeat;
-            }}
-        """)
 
     def create_button(self, text, callback):
         """Helper function to create consistent styled buttons."""
