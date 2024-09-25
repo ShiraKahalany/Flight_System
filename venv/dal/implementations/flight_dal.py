@@ -3,6 +3,7 @@ from models.flight import Flight
 from models.user import User
 from exceptions import FlightCreationException, FlightNotFoundException, FlightRetrievalException, NetworkException, UnexpectedErrorException
 import requests
+import json
 
 class FlightDAL(IFlightDAL):
     def __init__(self, api_client):
@@ -71,6 +72,20 @@ class FlightDAL(IFlightDAL):
             raise NetworkException(f"Network error during flight retrieval: {e}") from e
         except Exception as e:
             raise UnexpectedErrorException(f"Unexpected error during flight retrieval: {e}") from e
+
+    
+    def is_landing_delayed(self, flight_details): 
+        try:
+            #flight_details = json.dumps(flight_details)
+            #headers = {'Content-Type': 'application/json'}
+            res = self.api_client.post(f"prediction/", data=flight_details)
+            return res.json()
+        except requests.exceptions.HTTPError as e:
+            raise FlightRetrievalException(f"Failed to retrieve flight delay status: {e}") from e
+        except NetworkException as e:
+            raise NetworkException(f"Network error during flight delay status retrieval: {e}") from e
+        except Exception as e:
+            raise UnexpectedErrorException(f"Unexpected error during flight delay status retrieval: {e}") from e
 
     # def update_flight(self, flight_id, flight_data):
     #     data = self.api_client.put(f"flight/{flight_id}", flight_data)
