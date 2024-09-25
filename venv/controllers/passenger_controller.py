@@ -1,5 +1,6 @@
 import pandas as pd
 import requests
+import random
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QMessageBox
 from Flight_View.passenger_view import PassengerView
@@ -12,7 +13,15 @@ from dal.interfaces.idal import IDAL
 from datetime import datetime, timedelta
 from controllers.utils import Utils
 from models.aircraft import Aircraft
-from exceptions import TicketCreationException , FlightRetrievalException, AircraftNotFoundException, UnexpectedErrorException, NetworkException, FlightNotFoundException
+from exceptions import TicketCreationException,TicketRetrievalException, FlightRetrievalException, AircraftNotFoundException, UnexpectedErrorException, NetworkException, FlightNotFoundException
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
+from PySide6.QtWidgets import QFileDialog
+import os
+
+
 class PassengerController:
     def __init__(self, main_controller, dal: IDAL):
         self.main_controller = main_controller
@@ -65,20 +74,18 @@ class PassengerController:
                         aircraft.image_data = self.download_image(aircraft.image_url)
                 except AircraftNotFoundException:
                     flight.aircraft = None
-                    print(f"Error loading the flights, sorry")
+                    print(f"Aircraft not found for flight {flight.id}")
             self.flights_view = FlightsView(controller=self, flights=future_flights)
             self.main_controller.set_view(self.flights_view)
         except FlightRetrievalException as fre:
-            self.show_error_message(f"Unable to retrieve flights")
+            self.show_error_message(f"Unable to retrieve flights: {fre}")
         except NetworkException as ne:
-            self.show_error_message(f"Network error while fetching flights")
+            self.show_error_message(f"Network error while fetching flights: {ne}")
         except UnexpectedErrorException as uee:
             self.show_error_message("An unexpected error occurred. Please try again later.")
             print(f"Unexpected error in show_flights: {uee}")
         except Exception as e:
             self.show_error_message(f"Error loading flights: {e}")
-
-
 
     def download_image(self, url):
         """Download the image from the given URL and return its binary content."""
@@ -156,10 +163,10 @@ class PassengerController:
     def show_my_flights(self):
         """Shows the view of flights that the current user has booked."""
         try:
-            flights = self.dal.Flight.get_flights_of_user(self.current_user_id)
-            self.my_flights_view = MyFlightsView(controller=self, flights=flights)
+            tickets = self.dal.Ticket.get_user_tickets(self.current_user_id)
+            self.my_flights_view = MyFlightsView(controller=self, tickets=tickets)
             self.main_controller.set_view(self.my_flights_view)
-        except FlightRetrievalException as fre:
+        except TicketRetrievalException as fre:
             self.show_error_message(f"Unable to retrieve your flights: {fre}")
         except NetworkException as ne:
             self.show_error_message(f"Network error while fetching your flights: {ne}")
@@ -179,46 +186,66 @@ class PassengerController:
         msg_box.setStandardButtons(QMessageBox.Ok)
         msg_box.exec()
 
+    def is_landing_delayed(self, flight):
+        return 0
+    
     def predict_landing_delay(self, flight):
         """Predict if the landing will be delayed for a given flight."""
-        
+
         # Sample distances for common destinations
         distance_map = {
-            "New York": 9160, "London": 3580, "Tokyo": 9920, "Paris": 3310, "Los Angeles": 12070, 
+            "New York": 9160, "London": 3580, "Tokyo": 9920, "Paris": 3310, "Los Angeles": 12070,
             "Dubai": 2120, "Singapore": 8130, "Hong Kong": 8050, "Sydney": 13850, "Toronto": 9000,
             "Berlin": 2920, "Amsterdam": 3320, "Bangkok": 7180, "Istanbul": 1120, "Moscow": 2670,
-            "Mumbai": 4080, "São Paulo": 10100, "Mexico City": 12450, "Johannesburg": 7090, 
-            "Cairo": 410, "Delhi": 4050, "Rome": 2300, "Madrid": 3670, "Frankfurt": 3050, 
-            "Seoul": 8140, "Chicago": 9450, "Kuala Lumpur": 7410, "Beijing": 7050, "Zurich": 3160, 
-            "Vienna": 2500, "Barcelona": 3500, "Miami": 10520, "San Francisco": 12350, "Vancouver": 10380, 
-            "Munich": 2900, "Copenhagen": 3340, "Lisbon": 4300, "Stockholm": 3400, "Athens": 1280, 
-            "Dublin": 4050, "Prague": 2770, "Helsinki": 3380, "Abu Dhabi": 2100, "Doha": 1680, 
+            "Mumbai": 4080, "São Paulo": 10100, "Mexico City": 12450, "Johannesburg": 7090,
+            "Cairo": 410, "Delhi": 4050, "Rome": 2300, "Madrid": 3670, "Frankfurt": 3050,
+            "Seoul": 8140, "Chicago": 9450, "Kuala Lumpur": 7410, "Beijing": 7050, "Zurich": 3160,
+            "Vienna": 2500, "Barcelona": 3500, "Miami": 10520, "San Francisco": 12350, "Vancouver": 10380,
+            "Munich": 2900, "Copenhagen": 3340, "Lisbon": 4300, "Stockholm": 3400, "Athens": 1280,
+            "Dublin": 4050, "Prague": 2770, "Helsinki": 3380, "Abu Dhabi": 2100, "Doha": 1680,
             "Riyadh": 1400, "Warsaw": 2600, "Budapest": 2140, "Brussels": 3300, "Tel Aviv": 0
         }
 
         flight_distance = distance_map.get(flight.source, 0)
         flight_duration = (flight.landing_datetime - flight.departure_datetime).seconds // 60  # in minutes
 
+        # Randomize values based on your ranges
+        departure_congestion = random.randint(10, 50)
+        arrival_congestion = random.randint(10, 50)
+        departure_delay = random.choice([5, 10, 15, 20, 30])
+
+        # Set scheduled departure 30 minutes after time of flight
+        scheduled_departure = flight.departure_datetime + timedelta(minutes=30)
+        actual_departure = scheduled_departure + timedelta(minutes=departure_delay)
+
+        # Random temperature logic based on a simple weather condition (e.g., hot/cold season)
+        season = self.get_season(flight.landing_datetime)
+        temperature = random.uniform(30, 45) if season == "Summer" else random.uniform(0, 15)
+
+        weather_event = "Clear" if random.randint(0, 1) == 0 else "Adverse"
+
         # Create the prediction object
         new_landing_pred = pd.DataFrame({
-            'Season': [self.get_season(flight.landing_datetime)],
+            'Season': [season],
             'FlightDistance': [flight_distance],
             'FlightDuration': [flight_duration],
-            'DepartureAirportCongestion': [30],  # Randomly setting it to 30 for this example
-            'ArrivalAirportCongestion': [40],  # Randomly setting it to 40 for this example
+            'DepartureAirportCongestion': [departure_congestion],
+            'ArrivalAirportCongestion': [arrival_congestion],
             'DayOfWeek': [flight.landing_datetime.strftime('%A')],
             'TimeOfFlight': [flight.departure_datetime.strftime('%H:%M')],
-            'ScheduledDepartureTime': ['07:30'],  # A placeholder, can be derived more dynamically
-            'ActualDepartureTime': ['07:45'],  # Can be calculated based on delay
-            'DepartureDelay': [15],  # Example delay
-            'Temperature': [18.5],  # Example temperature
-            'Visibility': [10],  # Example visibility
-            'WindSpeed': [12.3],  # Example wind speed
-            'WeatherEvent': ['Clear']  # Example weather event
+            'ScheduledDepartureTime': [scheduled_departure.strftime('%H:%M')],
+            'ActualDepartureTime': [actual_departure.strftime('%H:%M')],
+            'DepartureDelay': [departure_delay],
+            'Temperature': [temperature],
+            'Visibility': [random.uniform(5, 10)],
+            'WindSpeed': [random.uniform(5, 20)],
+            'WeatherEvent': [weather_event]
         })
-
+        print ("new_landing_pred: \n",new_landing_pred)
         # Call the prediction function and return the result
-        return self.dal.Flight.is_landing_delayed(new_landing_pred)
+        # return self.dal.Flight.is_landing_delayed(self, new_landing_pred)
+        return self.is_landing_delayed(new_landing_pred)
+
 
     def get_season(self, date):
         """Determine the season from the date."""
@@ -240,3 +267,79 @@ class PassengerController:
         msg_box.setWindowTitle("Error")
         msg_box.setStandardButtons(QMessageBox.Ok)
         msg_box.exec()
+
+
+    def download_ticket_pdf(self, ticket):
+        # Open file dialog to select download location
+        options = QFileDialog.Options()
+        file_path, _ = QFileDialog.getSaveFileName(
+            None, "Save PDF", "", "PDF Files (*.pdf);;All Files (*)", options=options
+        )
+        
+        if not file_path:
+            return  # User canceled the file dialog
+
+        if not file_path.endswith(".pdf"):
+            file_path += ".pdf"
+
+        # Create the PDF document
+        pdf = SimpleDocTemplate(file_path, pagesize=letter)
+
+        # Define a list to hold the content of the PDF
+        content = []
+
+        # Set up the styles
+        styles = getSampleStyleSheet()
+        title_style = styles['Title']
+        title_style.fontSize = 20
+        title_style.alignment = 1  # Center alignment
+        
+        normal_style = ParagraphStyle(
+            name='Normal',
+            fontSize=12,
+            leading=14,
+            alignment=1  # Centered text
+        )
+
+        label_style = ParagraphStyle(
+            name='Label',
+            fontSize=10,
+            leading=12,
+            textColor='gray',
+            alignment=1  # Centered text
+        )
+
+        # Add the flight ticket icon
+        icon_path = os.path.join(os.path.dirname(__file__), '..', 'Flight_View', 'icons', 'ticket.png')
+        if os.path.exists(icon_path):
+            content.append(Image(icon_path, 1.5 * inch, 1.5 * inch))  # Ticket icon
+        else:
+            print(f"Error: Icon file not found at {icon_path}")
+
+        # Flight Ticket Header (using Ticket ID)
+        content.append(Paragraph(f"Flight Ticket: {ticket.id}", title_style))
+        content.append(Spacer(1, 12))  # Add space below the title
+        flight=self.dal.Flight.get_flight_by_id(ticket.flight_id)
+        aircraft=self.dal.Aircraft.get_aircraft_by_id(flight.aircraft_id)
+        # Displaying the ticket details (replacing flight ID with ticket details)
+        details = [
+            {"label": "Flight", "value": f"{flight.source} → {flight.destination}"},
+            {"label": "Departure", "value": flight.departure_datetime.strftime('%Y-%m-%d %H:%M')},
+            {"label": "Landing", "value": flight.landing_datetime.strftime('%Y-%m-%d %H:%M')},
+            {"label": "Aircraft", "value": aircraft.nickname},
+            {"label": "purchase time", "value": ticket.purchase_datetime.strftime('%Y-%m-%d %H:%M')}
+        ]
+
+        # Add the details in a ticket-like format
+        for detail in details:
+            content.append(Paragraph(detail["label"], label_style))
+            content.append(Paragraph(detail["value"], normal_style))
+            content.append(Spacer(1, 10))  # Space between details
+
+        # Build the PDF
+        pdf.build(content)
+
+        # Notify user or perform post-generation actions
+        print(f"PDF saved: {file_path}")
+        os.startfile(file_path)  # This will open the file automatically on Windows
+

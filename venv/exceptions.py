@@ -31,6 +31,10 @@ class TicketRetrievalException(BaseCustomException):
     """Raised when there's an error retrieving tickets."""
     pass
 
+class TicketNotFoundException(BaseCustomException):
+    """Raised when a ticket is not found."""
+    pass
+
 # Image recognition exceptions
 class ImageAnalysisException(BaseCustomException):
     """Raised when there's an error analyzing an image."""

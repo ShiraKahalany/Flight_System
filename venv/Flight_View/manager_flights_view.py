@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QTableWidgetIt
 from PySide6.QtGui import QPixmap
 from PySide6.QtCore import Qt
 
-class FlightsView(QWidget):
+class ManagerFlightsView(QWidget):
     def __init__(self, controller=None, flights=None):
         super().__init__()
         self.controller = controller
@@ -11,15 +11,21 @@ class FlightsView(QWidget):
 
         # "Go Back" Button
         self.back_button = QPushButton("← Go Back", self)
+        self.back_button.setStyleSheet("""
+            background-color: #3498db; 
+            color: white; 
+            padding: 10px; 
+            font-size: 14px; 
+            border-radius: 5px;
+        """)
         self.back_button.clicked.connect(self.go_back)
         layout.addWidget(self.back_button)
-
 
         # Create a table to display flights
         self.table = QTableWidget(self)
         self.table.setRowCount(len(self.flights))
-        self.table.setColumnCount(9)  # Add one more column for the Price
-        self.table.setHorizontalHeaderLabels(["Aircraft Image", "ID", "Aircraft", "Source", "Destination", "Departure", "Landing", "Price", "Action"])
+        self.table.setColumnCount(8)  # 8 columns, without the Action column
+        self.table.setHorizontalHeaderLabels(["Aircraft Image", "ID", "Aircraft", "Source", "Destination", "Departure", "Landing", "Price"])
 
         # Set column width to make it wider
         self.table.setColumnWidth(0, 100)  # Aircraft Image
@@ -30,9 +36,8 @@ class FlightsView(QWidget):
         self.table.setColumnWidth(5, 120)  # Departure
         self.table.setColumnWidth(6, 120)  # Landing
         self.table.setColumnWidth(7, 80)   # Price
-        self.table.setColumnWidth(8, 60)   # Action
 
-        # Populate the table with flight data and add "Watch" buttons
+        # Populate the table with flight data
         for row, flight in enumerate(self.flights):
             if flight.aircraft:
                 # Add image to the first column
@@ -55,17 +60,8 @@ class FlightsView(QWidget):
             self.table.setItem(row, 6, QTableWidgetItem(flight.landing_datetime.strftime('%Y-%m-%d %H:%M')))
             self.table.setItem(row, 7, QTableWidgetItem(f"${flight.price}"))  # Display the price
 
-            # Add the "Watch" button
-            watch_button = QPushButton("Watch", self)
-            watch_button.clicked.connect(lambda _, f=flight: self.watch_flight(f))
-            self.table.setCellWidget(row, 8, watch_button)
-
         layout.addWidget(self.table)
         self.setLayout(layout)
-
-    def watch_flight(self, flight):
-        """ Call the controller to show flight details """
-        self.controller.show_flight_details(flight.id)
 
     def go_back(self):
         """ Calls go_back from the main application window """

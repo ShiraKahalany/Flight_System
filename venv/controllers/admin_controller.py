@@ -1,13 +1,20 @@
 from PySide6.QtWidgets import QMessageBox
 from pydantic import ValidationError
+import requests
 from Flight_View.manager_view import ManagerView
 from Flight_View.add_aircraft_view import AddAircraftView
 from Flight_View.add_flight_view import AddFlightView  # New view for adding flights
+from Flight_View.manager_flights_view import ManagerFlightsView
+from Flight_View.purchase_summary_view import PurchaseSummaryView
 from models.flight import Flight
 from dal.interfaces.idal import IDAL
 from datetime import datetime
 from models.aircraft import Aircraft
-from exceptions import AircraftCreationException, AircraftRetrievalException, NetworkException, UnexpectedErrorException, FlightCreationException, ImageAnalysisException
+from exceptions import FlightRetrievalException,AircraftNotFoundException, AircraftCreationException, AircraftRetrievalException, NetworkException, UnexpectedErrorException, FlightCreationException, ImageAnalysisException
+from collections import defaultdict
+from datetime import timedelta
+from PySide6.QtCore import Qt
+
 
 class AdminController:
     def __init__(self, main_controller, dal: IDAL):
@@ -173,3 +180,77 @@ class AdminController:
         msg_box.setWindowTitle("Error")
         msg_box.setStandardButtons(QMessageBox.Ok)
         msg_box.exec()
+
+
+    def show_all_flights(self):
+        """Fetch and display all upcoming flights for the manager."""
+        try:
+            all_flights = self.dal.Flight.get_flights()  # Retrieve flights from DAL
+            for flight in all_flights:
+                try:
+                    aircraft = self.dal.Aircraft.get_aircraft_by_id(flight.aircraft_id)
+                    flight.aircraft = aircraft
+                    if aircraft and aircraft.image_url:
+                        aircraft.image_data = self.download_image(aircraft.image_url)
+                except AircraftNotFoundException:
+                    flight.aircraft = None
+                    print(f"Aircraft not found for flight {flight.id}")
+            
+            self.manager_flights_view = ManagerFlightsView(controller=self, flights=all_flights)
+            self.main_controller.set_view(self.manager_flights_view)
+        except FlightRetrievalException as fre:
+            self.show_error_message(f"Unable to retrieve flights: {fre}")
+        except NetworkException as ne:
+            self.show_error_message(f"Network error while fetching flights: {ne}")
+        except UnexpectedErrorException as uee:
+            self.show_error_message("An unexpected error occurred. Please try again later.")
+            print(f"Unexpected error in show_all_flights: {uee}")
+        except Exception as e:
+            self.show_error_message(f"Error loading flights: {e}")
+
+    def download_image(self, url):
+        """Download the image from the given URL and return its binary content."""
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+        }
+        try:
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+            return response.content
+        except requests.exceptions.RequestException as e:
+            print(f"Error downloading image: {e}")
+            return None
+        
+    def show_purchase_summary(self):
+        """Show the purchase summary view with a graph for the next 12 months."""
+        try:
+            # Fetch all tickets
+            all_tickets = self.dal.Ticket.get_tickets()
+
+            # Process the tickets by month
+            current_date = datetime.now()
+
+            # Get the months from this month (inclusive) to the next 12 months
+            last_12_months = [(current_date + timedelta(days=30 * i)).strftime('%m') for i in range(12)]
+            purchases_by_month = defaultdict(int)
+
+            for ticket in all_tickets:
+                purchase_date = ticket.purchase_datetime
+                # Get the month in MM format from the purchase date
+                purchase_month = purchase_date.strftime('%m')
+
+                # Only count tickets that are purchased from the current month to the next 12 months
+                if purchase_month in last_12_months:
+                    purchases_by_month[purchase_month] += 1
+
+            # Sort the purchases by the next 12 months
+            sorted_purchases = [purchases_by_month[month] for month in last_12_months]
+
+            # Create the PurchaseSummaryView and plot the data
+            self.purchase_summary_view = PurchaseSummaryView(controller=self)
+            self.purchase_summary_view.plot_graph(last_12_months, sorted_purchases)
+            self.main_controller.set_view(self.purchase_summary_view)
+
+        except Exception as e:
+            self.show_error_message(f"Error loading purchase summary: {e}")
+
