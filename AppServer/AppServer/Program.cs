@@ -19,6 +19,9 @@ builder.Services.AddScoped<IFlightService, FlightService>();
 builder.Services.AddScoped<IAircraftService, AircraftService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 
+builder.Services.AddScoped<PredictionService>(); 
+// Registering PredictionService for DI
+
 // Register DbContext with SQL Server (replace with your actual connection string)
 builder.Services.AddDbContext<DBContext>(options =>
     options.UseSqlServer("workstation id=TSH_FlightDB.mssql.somee.com;packet size=4096;user id=tamar_SQLLogin_2;pwd=qzesmjd7bu;data source=TSH_FlightDB.mssql.somee.com;persist security info=False;initial catalog=TSH_FlightDB;TrustServerCertificate=True"));  // Replace with actual connection string

@@ -5,10 +5,11 @@ from PySide6.QtCore import Qt, QTimer, QCoreApplication
 from PySide6.QtCore import QSize  
 
 class ManagerView(QWidget):
-    def __init__(self, controller=None, user=None):
+    def __init__(self, controller=None, user=None, date_details=None):
         super().__init__(parent=None)
         self.controller = controller
         self.user = user
+        self.date_details = date_details  # Adding date details parameter
 
         # Create the main layout with reduced spacing
         main_layout = QVBoxLayout()
@@ -17,6 +18,7 @@ class ManagerView(QWidget):
         # Top layout for "Go Back" button aligned to the left
         top_layout = QHBoxLayout()
 
+        # "Go Back" button
         self.back_button = QPushButton(self)
         self.back_button.setIcon(QIcon(r"Flight_View\icons\back.png"))  # Replace with the actual path to your icon
         self.back_button.setIconSize(QSize(20, 20))  # Adjust icon size as needed
@@ -36,8 +38,69 @@ class ManagerView(QWidget):
         top_layout.addWidget(self.back_button)
         top_layout.addStretch()  # Pushes the button to the left
 
+        # Add date details at the top in a row with a semi-transparent white background
+        date_frame = QFrame(self)
+        date_frame.setStyleSheet("""
+            background-color: rgba(255, 255, 255, 0.1);  /* Semi-transparent white */
+            border-radius: 15px;  /* Rounded corners */
+            padding: 5px;
+        """)
+        date_frame.setFixedHeight(50)  # Fixed height to reduce extra space
+
+        # Date layout for the actual date details
+        date_layout = QHBoxLayout()
+        date_layout.setContentsMargins(5, 5, 5, 5)
+        date_layout.setSpacing(15)
+
+        shabbat_start = self.date_details.shabbat_start.strftime("%H:%M")
+        shabbat_end = self.date_details.shabbat_end.strftime("%H:%M")
+        parasha = self.date_details.parasha
+        hebrew_date = self.date_details.hebrew_date
+        days_of_week = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"]
+        day = days_of_week[self.date_details.day_of_week]
+        
+        # Create QLabel for each date detail with style
+        shabbat_start_label = QLabel(f"Shabbat Start: {shabbat_start}", self)
+        shabbat_end_label = QLabel(f"Shabbat End: {shabbat_end}", self)
+        parasha_label = QLabel(f"{parasha}", self)
+        hebrew_date_label = QLabel(f"{hebrew_date}", self)
+        day_label = QLabel(f"{day}", self)
+
+        # Apply consistent styling for readability
+        label_style = """
+            font-size: 16px; 
+            color: #2c3e50;
+            font-weight: bold;
+            background-color: transparent;
+        """
+        
+        shabbat_start_label.setStyleSheet(label_style)
+        shabbat_end_label.setStyleSheet(label_style)
+        parasha_label.setStyleSheet(label_style)
+        hebrew_date_label.setStyleSheet(label_style)
+        day_label.setStyleSheet(label_style)
+
+        # Add labels to the layout (in a row)
+        date_layout.addWidget(shabbat_start_label)
+        date_layout.addSpacing(20)
+        date_layout.addWidget(shabbat_end_label)
+        date_layout.addSpacing(20)
+        date_layout.addWidget(parasha_label)
+        date_layout.addSpacing(20)
+        date_layout.addWidget(hebrew_date_label)
+        date_layout.addSpacing(20)
+        date_layout.addWidget(day_label)
+
+        # Set the date_layout into the date_frame
+        date_frame.setLayout(date_layout)
+
+        # Add the date_frame to the top layout (pushed to the right)
+        top_layout.addWidget(date_frame)
+
+        # Add top layout (containing the back button and date details) to the main layout
         main_layout.addLayout(top_layout)
 
+        # Greeting message
         self.greeting_label = QLabel(f"Hi {self.user.first_name}!", self)
         self.greeting_label.setAlignment(Qt.AlignCenter)
         self.greeting_label.setStyleSheet("""
@@ -49,6 +112,7 @@ class ManagerView(QWidget):
         """)
         main_layout.addWidget(self.greeting_label)
 
+        # Question Label
         self.ask_label = QLabel(f"What do you want to do today?", self)
         self.ask_label.setAlignment(Qt.AlignCenter)
         self.ask_label.setStyleSheet("""

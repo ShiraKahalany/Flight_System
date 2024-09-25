@@ -22,9 +22,9 @@ class AdminController:
         self.main_controller = main_controller
         self.dal = dal
 
-    def show_admin_view(self,user=None):
+    def show_admin_view(self,user=None, date_details=None):
         # Recreate ManagerView each time it's needed
-        self.manager_view = ManagerView(controller=self,user=user)
+        self.manager_view = ManagerView(controller=self,user=user,date_details=date_details)
         self.main_controller.set_view(self.manager_view)  # Set the view in the main window
 
     def go_back(self):
