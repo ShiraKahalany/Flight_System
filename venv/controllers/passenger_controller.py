@@ -200,9 +200,7 @@ class PassengerController:
         msg_box.setStandardButtons(QMessageBox.Ok)
         msg_box.exec()
 
-    def is_landing_delayed(self, flight):
-        return 0
-    
+   
     def predict_landing_delay(self, flight):
         """Predict if the landing will be delayed for a given flight."""
 
@@ -257,8 +255,7 @@ class PassengerController:
         })
         print ("new_landing_pred: \n",new_landing_pred)
         # Call the prediction function and return the result
-        # return self.dal.Flight.is_landing_delayed(self, new_landing_pred)
-        return self.is_landing_delayed(new_landing_pred)
+        return self.dal.Flight.is_landing_delayed(new_landing_pred)
 
 
     def get_season(self, date):
