@@ -36,6 +36,18 @@ class PassengerController:
     def go_back(self):
         self.main_controller.go_back()
 
+    def is_flight_during_shabbat_or_holiday(self, flight_id) -> bool:
+        try:
+            flight = self.dal.Flight.get_flight_by_id(flight_id)
+            departure_info= self.dal.DateDetails.get_date_details(flight.departure_datetime, flight.source)
+            arrival_info = self.dal.DateDetails.get_date_details(flight.landing_datetime, flight.destination)
+            return (departure_info.day_of_week==6 or arrival_info.day_of_week==6 or
+                    departure_info.is_holiday or arrival_info.is_holiday)
+        except Exception as e:
+            raise e
+            return false
+    
+
     def book_flight(self, flight_id):
         """Functionality to book a flight."""
         try:
@@ -44,7 +56,7 @@ class PassengerController:
                 user_id=self.current_user_id,
                 purchase_datetime=datetime.now()
             )
-            if not Utils.is_flight_allowed(flight_id):
+            if self.is_flight_during_shabbat_or_holiday(flight_id):
                 self.show_error_message("The flight is during Shabbat or a holiday, \n it is not possible to buy a ticket.")
                 print
                 return
@@ -127,6 +139,8 @@ class PassengerController:
         """Calls the booking method to purchase a flight."""
         self.book_flight(flight_id)
         self.main_controller.go_back()
+
+
 
     def watch_landings(self):
         """Fetch and show landings in Ben Gurion Airport within the next 5 hours."""
