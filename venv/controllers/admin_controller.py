@@ -14,16 +14,17 @@ from exceptions import FlightRetrievalException,AircraftNotFoundException, Aircr
 from collections import defaultdict
 from datetime import timedelta
 from PySide6.QtCore import Qt
-
+from dateutil.relativedelta import relativedelta
+from collections import defaultdict
 
 class AdminController:
     def __init__(self, main_controller, dal: IDAL):
         self.main_controller = main_controller
         self.dal = dal
 
-    def show_admin_view(self):
+    def show_admin_view(self,user=None):
         # Recreate ManagerView each time it's needed
-        self.manager_view = ManagerView(controller=self)
+        self.manager_view = ManagerView(controller=self,user=user)
         self.main_controller.set_view(self.manager_view)  # Set the view in the main window
 
     def go_back(self):
@@ -222,33 +223,41 @@ class AdminController:
             return None
         
     def show_purchase_summary(self):
-        """Show the purchase summary view with a graph for the next 12 months."""
+        """Show the purchase summary view with a graph for the next 12 months, based on flight departure dates."""
         try:
+            # Fetch all flights
+            all_flights = self.dal.Flight.get_flights()
+
             # Fetch all tickets
             all_tickets = self.dal.Ticket.get_tickets()
 
-            # Process the tickets by month
+            # Process the tickets by the month of the flight's departure date
             current_date = datetime.now()
 
             # Get the months from this month (inclusive) to the next 12 months
-            last_12_months = [(current_date + timedelta(days=30 * i)).strftime('%m') for i in range(12)]
-            purchases_by_month = defaultdict(int)
+            next_12_months = [(current_date + relativedelta(months=i)).strftime('%Y-%m') for i in range(12)]
+            tickets_by_month = defaultdict(int)
 
+            # Create a mapping of flight ID to departure month
+            flight_departure_month = {}
+            for flight in all_flights:
+                departure_month = flight.departure_datetime.strftime('%Y-%m')
+                if departure_month in next_12_months:
+                    flight_departure_month[flight.id] = departure_month
+
+            # Count tickets for flights with departures in the next 12 months
             for ticket in all_tickets:
-                purchase_date = ticket.purchase_datetime
-                # Get the month in MM format from the purchase date
-                purchase_month = purchase_date.strftime('%m')
+                flight_id = ticket.flight_id
+                if flight_id in flight_departure_month:
+                    departure_month = flight_departure_month[flight_id]
+                    tickets_by_month[departure_month] += 1
 
-                # Only count tickets that are purchased from the current month to the next 12 months
-                if purchase_month in last_12_months:
-                    purchases_by_month[purchase_month] += 1
-
-            # Sort the purchases by the next 12 months
-            sorted_purchases = [purchases_by_month[month] for month in last_12_months]
+            # Sort the ticket purchases by the next 12 months
+            sorted_purchases = [tickets_by_month[month] for month in next_12_months]
 
             # Create the PurchaseSummaryView and plot the data
             self.purchase_summary_view = PurchaseSummaryView(controller=self)
-            self.purchase_summary_view.plot_graph(last_12_months, sorted_purchases)
+            self.purchase_summary_view.plot_graph([month.split('-')[1] for month in next_12_months], sorted_purchases)  # Show only month numbers on the X-axis
             self.main_controller.set_view(self.purchase_summary_view)
 
         except Exception as e:
