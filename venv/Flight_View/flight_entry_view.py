@@ -12,6 +12,19 @@ class FlightEntryView(QWidget):
         layout = QVBoxLayout()
         layout.setAlignment(Qt.AlignCenter)
 
+        # Go Back button
+        self.back_button = QPushButton("← Go Back", self)
+        self.back_button.clicked.connect(self.controller.go_back)  # Go back logic in controller
+        self.back_button.setStyleSheet("""
+            background-color: #3498db; 
+            color: white; 
+            padding: 10px; 
+            font-size: 14px; 
+            border-radius: 5px;
+        """)
+        layout.addWidget(self.back_button)
+        layout.addSpacing(20)
+
         # Fonts for styling
         title_font = QFont("Arial", 24, QFont.Bold)  # Bigger title font
         regular_font = QFont("Arial", 14)  # Regular font for descriptions
@@ -46,10 +59,9 @@ class FlightEntryView(QWidget):
         layout.addSpacing(30)
 
         # "Purchase" Button - centered
-                # Purchase Button - centered
         self.purchase_button = QPushButton("Purchase Ticket", self)
         self.purchase_button.clicked.connect(self.purchase_flight)
-        self.purchase_button.setStyleSheet("background-color: #3498db; color: white; padding: 10px 20px; margin-top: 20px;")  # Add spacing and padding
+        self.purchase_button.setStyleSheet("background-color: #3498db; color: white; padding: 10px 20px; margin-top: 20px;")
         self.purchase_button.setFont(QFont("Arial", 16))
         layout.addWidget(self.purchase_button)
 
@@ -62,8 +74,6 @@ class FlightEntryView(QWidget):
         credit_box.setFrameShape(QFrame.Box)
         credit_box.setLineWidth(2)
         credit_box.setFixedWidth(400)  # Make the credit card section narrower
-
-
 
         credit_layout = QFormLayout()
         credit_layout.setAlignment(Qt.AlignCenter)
@@ -89,10 +99,7 @@ class FlightEntryView(QWidget):
         credit_layout.addRow(QLabel("Expiry Date:"), expiry_date_input)
 
         return credit_box
-    
 
     def purchase_flight(self):
         """ Calls the controller to purchase the flight """
         self.controller.purchase_ticket(self.flight.id)
-
-
