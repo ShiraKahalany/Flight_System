@@ -1,85 +1,98 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton
-from PySide6.QtGui import QPixmap
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QHBoxLayout, QFrame
+from PySide6.QtGui import QPainter, QPixmap, QIcon
+from PySide6.QtCore import Qt, QSize, QEvent, QEvent
+
 from PySide6.QtCore import Qt
 
 class LoginView(QWidget):
     def __init__(self, controller):
         super().__init__()
         self.controller = controller
-        layout = QVBoxLayout()
 
-        # Load and display the logo
-        self.logo_label = QLabel(self)
+        # Main layout for the page
+        main_layout = QVBoxLayout()
+        icon_label = QLabel(self)
+        pixmap = QPixmap(r"Flight_View\icons\logo2.png")  # Use your provided icon path here
+        icon_label.setPixmap(pixmap.scaled(600, 280))  # Adjust icon size
+        icon_label.setAlignment(Qt.AlignCenter)
+        icon_label.setStyleSheet("background-color: rgba(255, 255, 255, 0);")  # Fully transparent background
 
-        # Ensure correct path for the image file
-        logo_path = "Flight_View/icons/logo.jpg"  # Adjust this to the correct file path if it's not in the current directory
+        # Add the icon at the top of the main layout
+        main_layout.addWidget(icon_label, alignment=Qt.AlignCenter)
 
-        # Check if the pixmap loads the image correctly
-        pixmap = QPixmap(logo_path)
-        if not pixmap.isNull():
-            # Scale the image to a fixed size (you can adjust the width and height as needed)
-            pixmap = pixmap.scaled(600, 400, Qt.KeepAspectRatio, Qt.SmoothTransformation)  # Example size
-            self.logo_label.setPixmap(pixmap)
-        else:
-            # Fallback to text if image can't be loaded
-            self.logo_label.setText("Logo could not be loaded.")
-            self.logo_label.setStyleSheet("color: red;")
+        # Create a frame to act as a semi-transparent rectangle container
+        container = QFrame(self)
+        container_layout = QVBoxLayout()
 
-        self.logo_label.setAlignment(Qt.AlignCenter)
-        layout.addWidget(self.logo_label)
+        # Set the container's style (semi-transparent white background, rounded corners)
+        container.setStyleSheet("""
+            background-color: rgba(255, 255, 255, 0.05);  /* Semi-transparent white */
+            border-radius: 20px;  /* Rounded corners */
+            padding: 20px;
+        """)
+        container_layout.addSpacing(10)
 
         # Username input
         self.username_input = QLineEdit(self)
         self.username_input.setPlaceholderText("Username")
+        self.username_input.setFixedWidth(300)  # Set a fixed width for the text input
         self.username_input.setStyleSheet("padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #bdc3c7;")
-        layout.addWidget(self.username_input)
+        container_layout.addWidget(self.username_input, alignment=Qt.AlignCenter)
 
         # Password input
         self.password_input = QLineEdit(self)
         self.password_input.setPlaceholderText("Password")
         self.password_input.setEchoMode(QLineEdit.Password)
+        self.password_input.setFixedWidth(300)  # Set a fixed width for the text input
         self.password_input.setStyleSheet("padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #bdc3c7;")
-        layout.addWidget(self.password_input)
-
-        # Connect returnPressed signal to the login function
-        self.username_input.returnPressed.connect(self.login)
-        self.password_input.returnPressed.connect(self.login)
+        container_layout.addWidget(self.password_input, alignment=Qt.AlignCenter)
 
         # Login button
         self.login_button = QPushButton("Login", self)
+        self.login_button.setFixedWidth(250)  # Make the button slightly shorter than the text inputs
         self.login_button.setStyleSheet(
             """
             background-color: #3498db; 
             color: white; 
             padding: 10px; 
             font-size: 16px; 
-            border-radius: 5px; 
+            border-radius: 20px; 
             margin-top: 10px;
             """
         )
         self.login_button.clicked.connect(self.login)
-        layout.addWidget(self.login_button)
+        container_layout.addWidget(self.login_button, alignment=Qt.AlignCenter)
+        container_layout.addSpacing(10)
+
+        # Add the form container to the main layout
+        container.setLayout(container_layout)
+        main_layout.addWidget(container, alignment=Qt.AlignCenter)
 
         # Error message label
         self.error_label = QLabel("", self)
         self.error_label.setAlignment(Qt.AlignCenter)
         self.error_label.setStyleSheet("color: red;")
-        layout.addWidget(self.error_label)
+        main_layout.addWidget(self.error_label, alignment=Qt.AlignCenter)
 
-        layout.setAlignment(Qt.AlignCenter)
-        layout.setContentsMargins(50, 50, 50, 50)
+        # Set main layout
+        main_layout.setContentsMargins(50, 50, 50, 50)
+        self.setLayout(main_layout)
 
-        self.setLayout(layout)
-        self.setStyleSheet("background-color: #ecf0f1;")  # Light background
+    def paintEvent(self, event):
+        """ Custom paint event to add the background image with a dark overlay. """
+        painter = QPainter(self)
 
-    def resizeEvent(self, event):
-        """ Override resize event to adjust the logo size when the window is resized. """
-        logo_path = "Flight_View/icons/logo.jpg"  # Adjust this to the correct file path if necessary
-        pixmap = QPixmap(logo_path)
+        # Load the background image
+        pixmap = QPixmap(r"Flight_View/icons/backgroundSky.png")  # Replace with the correct path
+
+        # Draw the background image
         if not pixmap.isNull():
-            scaled_pixmap = pixmap.scaled(700, 500, Qt.KeepAspectRatio, Qt.SmoothTransformation)  # Keep the logo size smaller
-            self.logo_label.setPixmap(scaled_pixmap)
-        super().resizeEvent(event)
+            painter.drawPixmap(self.rect(), pixmap)
+
+        # Add a semi-transparent dark overlay to darken the background
+        painter.setBrush(Qt.black)
+        painter.setOpacity(0.2)  # Adjust opacity to make it darker
+        painter.drawRect(self.rect())
 
     def login(self):
         """Handles the login button click event."""
@@ -90,3 +103,8 @@ class LoginView(QWidget):
     def show_error(self, message):
         """Displays error messages to the user."""
         self.error_label.setText(message)
+
+    def keyPressEvent(self, event):
+        """Handles the Enter key press event to trigger login."""
+        if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+            self.login()

@@ -65,17 +65,17 @@ class ManagerView(QWidget):
         buttons_layout.setContentsMargins(20, 0, 20, 200)
 
         # Manager-specific buttons with the same style as the passenger buttons
-        self.add_aircraft_button = self.create_button("Add Aircraft", self.controller.add_aircraft)
+        self.add_aircraft_button = self.create_button("Add Aircraft", self.controller.add_aircraft, icon_path=r"Flight_View\icons\addplane.png")
         buttons_layout.addWidget(self.add_aircraft_button)
 
-        self.add_flight_button = self.create_button("Add Flight", self.controller.add_flight)
+        self.add_flight_button = self.create_button("Add Flight", self.controller.add_flight, icon_path=r"Flight_View\icons\addflight.png")
         buttons_layout.addWidget(self.add_flight_button)
 
         # Modified buttons with loading square logic
-        self.all_flights_button = self.create_button("All Coming Flights", self.show_loading_and_fetch_all_flights)
+        self.all_flights_button = self.create_button("All Coming Flights", self.show_loading_and_fetch_all_flights, icon_path=r"Flight_View\icons\worldPlane.png")
         buttons_layout.addWidget(self.all_flights_button)
 
-        self.purchase_summary_button = self.create_button("Purchase Summary", self.show_loading_and_fetch_purchase_summary)
+        self.purchase_summary_button = self.create_button("Purchase Summary", self.show_loading_and_fetch_purchase_summary, icon_path=r"Flight_View\icons\graph.png")
         buttons_layout.addWidget(self.purchase_summary_button)
 
         # Add buttons_layout (with buttons in a row) to the main layout
@@ -88,21 +88,35 @@ class ManagerView(QWidget):
         self.loading_square = self.create_loading_square()
         self.loading_square.hide()  # Hide the loading square initially
         
-    def create_button(self, text, callback):
-        """Helper function to create consistent styled buttons."""
+    def create_button(self, text, callback, icon_path=None):
+        """Helper function to create consistent styled buttons with optional icons."""
         button = QPushButton(text, self)
+        
+        # Add icon if icon_path is provided
+        if icon_path:
+            button.setIcon(QIcon(icon_path))
+            button.setIconSize(QSize(40,40))  # Set the icon size as needed
+
+        # Adjust the style to add space between the icon and text
         button.setStyleSheet("""
-            background-color: #ffffff;
-            color: #3498db;
-            padding: 10px;
-            font-size: 20px;
-            border-radius: 25px;
-            border: 2px solid #3498db;  /* Blue border */
+            QPushButton {
+                background-color: rgba(255, 255, 255, 0.6);
+                color: #2c3e50;
+                padding: 10px;
+                font-weight: bold;
+                font-size: 15px;
+                border-radius: 25px;
+                border: 2px solid #3498db;  /* Blue border */
+                text-align: center;  /* Make text and icon inline */
+            }
         """)
-        button.setMinimumHeight(50)  # Make buttons taller
+
+        button.setIconSize(QSize(40, 40))  # Adjust icon size
+        button.setMinimumHeight(100)  # Make buttons taller to fit both icon and text
         button.setMinimumWidth(150)  # Set minimum width to make them look like squares
         button.clicked.connect(callback)
         return button
+
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -120,11 +134,11 @@ class ManagerView(QWidget):
         """Creates a small, sleek loading square with a blue border and centered text."""
         loading_frame = QFrame(self)  # Make it a child of the main widget, not part of the layout
         loading_frame.setStyleSheet("""
-            background-color: white;
-            border: 3px solid #000000;  /* Blue border */
-            border-radius: 10px;
+            background-color: rgba(0,0,0,0.65);
+            border: 1px  #34cfff;  /* Blue border */
+            border-radius: 20px;
         """)
-        loading_frame.setFixedSize(250, 180)  # Define a square-like proportion
+        loading_frame.setFixedSize(240, 110)  # Define a square-like proportion
         loading_layout = QVBoxLayout()
 
         # Loading text with centered alignment
@@ -132,7 +146,8 @@ class ManagerView(QWidget):
         loading_label.setAlignment(Qt.AlignCenter)
         loading_label.setStyleSheet("""
             font-size: 16px;
-            color: #000000;  /* Blue text */
+            background-color: transparent;  /* Transparent background */
+            color: #34cfff;  /* Blue text */
             font-weight: bold;
         """)
         loading_layout.addWidget(loading_label)

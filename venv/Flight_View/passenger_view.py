@@ -70,15 +70,15 @@ class PassengerView(QWidget):
         buttons_layout.setContentsMargins(20, 0, 20, 200)
 
         # Button to view available flights
-        self.flights_button = self.create_button("Flights", self.show_loading_and_fetch_flights, icon_path=r"Flight_View\icons\airplane.png")
+        self.flights_button = self.create_button("  All Flights", self.show_loading_and_fetch_flights, icon_path=r"Flight_View\icons\worldPlane.png")
         buttons_layout.addWidget(self.flights_button)
 
         # Button to view upcoming landings
-        self.landings_button = self.create_button("Watch Landings", self.show_loading_and_fetch_landings, icon_path=r"Flight_View\icons\airplane.png")
+        self.landings_button = self.create_button("  Watch Landings", self.show_loading_and_fetch_landings, icon_path=r"Flight_View\icons\landings.png")
         buttons_layout.addWidget(self.landings_button)
 
         # Button to view booked flights
-        self.my_flights_button = self.create_button("My Flights", self.show_loading_and_fetch_my_flights, icon_path=r"Flight_View\icons\airplane.png")
+        self.my_flights_button = self.create_button("   My Flights", self.show_loading_and_fetch_my_flights, icon_path=r"Flight_View\icons\ticket.png")
         buttons_layout.addWidget(self.my_flights_button)
 
         # Add buttons_layout (with buttons in a row) to the main layout
@@ -99,19 +99,19 @@ class PassengerView(QWidget):
         # Add icon if icon_path is provided
         if icon_path:
             button.setIcon(QIcon(icon_path))
-            button.setIconSize(QSize(40, 40))  # Set the icon size as needed
+            button.setIconSize(QSize(40,40))  # Set the icon size as needed
 
         # Adjust the style to add space between the icon and text
         button.setStyleSheet("""
             QPushButton {
-                background-color: #ffffff;
-                color: #3498db;
+                background-color: rgba(255, 255, 255, 0.6);
+                color: #2c3e50;
                 padding: 10px;
-                font-size: 20px;
+                font-weight: bold;
+                font-size: 25px;
                 border-radius: 25px;
                 border: 2px solid #3498db;  /* Blue border */
-                text-align: left;  /* Make text and icon inline */
-                padding-left: 20px;  /* Add space between the icon and text */
+                text-align: center;  /* Make text and icon inline */
             }
         """)
 
@@ -139,11 +139,11 @@ class PassengerView(QWidget):
         """Creates a small, sleek loading square with a blue border and centered text."""
         loading_frame = QFrame(self)  # Make it a child of the main widget, not part of the layout
         loading_frame.setStyleSheet("""
-            background-color: white;
-            border: 3px solid #000000;  /* Blue border */
-            border-radius: 10px;
+            background-color: rgba(0,0,0,0.65);
+            border: 1px  #34cfff;  /* Blue border */
+            border-radius: 20px;
         """)
-        loading_frame.setFixedSize(250, 180)  # Define a square-like proportion
+        loading_frame.setFixedSize(240, 110)  # Define a square-like proportion
         loading_layout = QVBoxLayout()
 
         # Loading text with centered alignment
@@ -151,7 +151,8 @@ class PassengerView(QWidget):
         loading_label.setAlignment(Qt.AlignCenter)
         loading_label.setStyleSheet("""
             font-size: 16px;
-            color: #000000;  /* Blue text */
+            background-color: transparent;  /* Transparent background */
+            color: #34cfff;  /* Blue text */
             font-weight: bold;
         """)
         loading_layout.addWidget(loading_label)
