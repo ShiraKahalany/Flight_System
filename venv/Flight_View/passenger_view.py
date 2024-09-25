@@ -1,6 +1,9 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QFrame
 from PySide6.QtGui import QPainter, QPixmap
 from PySide6.QtCore import Qt, QTimer, QCoreApplication
+from PySide6.QtGui import QIcon
+from PySide6.QtCore import QSize  
+
 
 class PassengerView(QWidget):
     def __init__(self, controller=None, user=None):
@@ -15,13 +18,19 @@ class PassengerView(QWidget):
         # Top layout for "Go Back" button aligned to the left
         top_layout = QHBoxLayout()
 
-        self.back_button = QPushButton("← Go Back", self)
+        self.back_button = QPushButton(self)
+        self.back_button.setIcon(QIcon(r"Flight_View\icons\back.png"))  # Replace with the actual path to your icon
+        self.back_button.setIconSize(QSize(20, 20))  # Adjust icon size as needed
+
+        # Apply styles to make the button circular
         self.back_button.setStyleSheet("""
-            background-color: #3498db; 
-            color: white; 
-            padding: 10px; 
-            font-size: 14px; 
-            border-radius: 5px;
+            background-color: white; 
+            border-radius: 18px;  /* Circular button with a radius of 16px */
+            border: 2px solid #3498db;  /* Blue border */
+            min-width: 36px;  /* Button size equal to twice the radius */
+            min-height: 36px; /* Button size equal to twice the radius */
+            max-width: 36px;  /* Ensures button is a square */
+            max-height: 36px; /* Ensures button is a square */
         """)
         self.back_button.clicked.connect(self.controller.go_back)
 
@@ -48,15 +57,15 @@ class PassengerView(QWidget):
         buttons_layout.setContentsMargins(20, 0, 20, 200)
 
         # Button to view available flights
-        self.flights_button = self.create_button("Flights", self.show_loading_and_fetch_flights)
+        self.flights_button = self.create_button("Flights", self.show_loading_and_fetch_flights, icon_path=r"Flight_View\icons\airplane.png")
         buttons_layout.addWidget(self.flights_button)
 
         # Button to view upcoming landings
-        self.landings_button = self.create_button("Watch Landings", self.show_loading_and_fetch_landings)
+        self.landings_button = self.create_button("Watch Landings", self.show_loading_and_fetch_landings, icon_path=r"Flight_View\icons\airplane.png")
         buttons_layout.addWidget(self.landings_button)
 
         # Button to view booked flights
-        self.my_flights_button = self.create_button("My Flights", self.show_loading_and_fetch_my_flights)
+        self.my_flights_button = self.create_button("My Flights", self.show_loading_and_fetch_my_flights, icon_path=r"Flight_View\icons\airplane.png")
         buttons_layout.addWidget(self.my_flights_button)
 
         # Add buttons_layout (with buttons in a row) to the main layout
@@ -69,22 +78,38 @@ class PassengerView(QWidget):
         self.loading_square = self.create_loading_square()
         self.loading_square.hide()  # Hide the loading square initially
         
-    def create_button(self, text, callback):
-        """Helper function to create consistent styled buttons."""
+
+    def create_button(self, text, callback, icon_path=None):
+        """Helper function to create consistent styled buttons with optional icons."""
         button = QPushButton(text, self)
+        
+        # Add icon if icon_path is provided
+        if icon_path:
+            button.setIcon(QIcon(icon_path))
+            button.setIconSize(QSize(40, 40))  # Set the icon size as needed
+
+        # Adjust the style to add space between the icon and text
         button.setStyleSheet("""
-            background-color: #ffffff;
-            color: #3498db;
-            padding: 10px;
-            font-size: 20px;
-            border-radius: 25px;
-            border: 2px solid #3498db;  /* Blue border */
+            QPushButton {
+                background-color: #ffffff;
+                color: #3498db;
+                padding: 10px;
+                font-size: 20px;
+                border-radius: 25px;
+                border: 2px solid #3498db;  /* Blue border */
+                text-align: left;  /* Make text and icon inline */
+                padding-left: 20px;  /* Add space between the icon and text */
+            }
         """)
-        button.setMinimumHeight(50)  # Make buttons taller
+
+        button.setIconSize(QSize(40, 40))  # Adjust icon size
+        button.setMinimumHeight(100)  # Make buttons taller to fit both icon and text
         button.setMinimumWidth(150)  # Set minimum width to make them look like squares
         button.clicked.connect(callback)
         return button
 
+
+    
     def paintEvent(self, event):
         painter = QPainter(self)
 
