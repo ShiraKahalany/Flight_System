@@ -11,6 +11,7 @@ from models.ticket import Ticket
 from Flight_View.my_flights_view import MyFlightsView
 from dal.interfaces.idal import IDAL
 from datetime import datetime, timedelta
+from controllers.utils import Utils
 from models.aircraft import Aircraft
 from exceptions import TicketCreationException,TicketRetrievalException, FlightRetrievalException, AircraftNotFoundException, UnexpectedErrorException, NetworkException, FlightNotFoundException
 from reportlab.lib.pagesizes import letter
@@ -28,12 +29,24 @@ class PassengerController:
         self.passenger_view = None
         self.current_user_id = None  # Set this when the user logs in
 
-    def show_passenger_view(self):
-        self.passenger_view = PassengerView(controller=self)
+    def show_passenger_view(self,user=None):
+        self.passenger_view = PassengerView(controller=self,user=user)
         self.main_controller.set_view(self.passenger_view)
 
     def go_back(self):
         self.main_controller.go_back()
+
+    def is_flight_during_shabbat_or_holiday(self, flight_id) -> bool:
+        try:
+            flight = self.dal.Flight.get_flight_by_id(flight_id)
+            departure_info= self.dal.DateDetails.get_date_details(flight.departure_datetime, flight.source)
+            arrival_info = self.dal.DateDetails.get_date_details(flight.landing_datetime, flight.destination)
+            return (departure_info.day_of_week==6 or arrival_info.day_of_week==6 or
+                    departure_info.is_holiday or arrival_info.is_holiday)
+        except Exception as e:
+            raise e
+            return false
+    
 
     def book_flight(self, flight_id):
         """Functionality to book a flight."""
@@ -43,6 +56,10 @@ class PassengerController:
                 user_id=self.current_user_id,
                 purchase_datetime=datetime.now()
             )
+            if self.is_flight_during_shabbat_or_holiday(flight_id):
+                self.show_error_message("The flight is during Shabbat or a holiday, \n it is not possible to buy a ticket.")
+                print
+                return
             self.dal.Ticket.create_ticket(new_ticket)
             print(f"New Ticket Created: {new_ticket}")
             self.show_success_message("Flight booked successfully!")
@@ -122,6 +139,8 @@ class PassengerController:
         """Calls the booking method to purchase a flight."""
         self.book_flight(flight_id)
         self.main_controller.go_back()
+
+
 
     def watch_landings(self):
         """Fetch and show landings in Ben Gurion Airport within the next 5 hours."""

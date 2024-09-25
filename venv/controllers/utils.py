@@ -17,6 +17,7 @@ class Utils:
     def get_date_info(self, date: datetime, location: str) -> DateDetails:
         return self.dal.DateDetails.get_date_details(date, location)
     
+    @classmethod
     def is_flight_during_shabbat_or_holiday(self, departure: datetime, arrival: datetime, location: str) -> bool:
         departure_info = self.get_date_info(departure, location)
         arrival_info = self.get_date_info(arrival, location)
@@ -24,9 +25,22 @@ class Utils:
         return (departure_info.day_of_week==6 or arrival_info.day_of_week==6 or
                 departure_info.is_holiday or arrival_info.is_holiday)
     
-    def is_flight_allowed(
-            self, flight:Flight) -> bool:
-        departure_info = self.get_date_info(flight.departure_datetime, flight.source)
-        arrival_info = self.get_date_info(flight.landing_datetime, flight.destination)
-        return (departure_info.day_of_week!=6 and arrival_info.day_of_week!=6 and
-                not departure_info.is_holiday and not arrival_info.is_holiday)
+    @classmethod
+    def is_flight_allowed(cls, flight_id) -> bool:
+        try:
+            flight = self.dal.Flight.get_flight(flight_id)
+            departure_info = self.get_date_info(flight.departure_datetime, flight.source)
+            arrival_info = self.get_date_info(flight.landing_datetime, flight.destination)
+            return (departure_info.day_of_week!=6 and arrival_info.day_of_week!=6 and
+                    not departure_info.is_holiday and not arrival_info.is_holiday)
+        except Exception as e:
+            raise e
+            return false
+
+
+    # def is_flight_allowed(
+    #         self, flight:Flight) -> bool:
+    #     departure_info = self.get_date_info(flight.departure_datetime, flight.source)
+    #     arrival_info = self.get_date_info(flight.landing_datetime, flight.destination)
+    #     return (departure_info.day_of_week!=6 and arrival_info.day_of_week!=6 and
+    #             not departure_info.is_holiday and not arrival_info.is_holiday)

@@ -22,7 +22,7 @@ class LandingsView(QWidget):
         layout.addWidget(self.time_dropdown)
 
         # Create a table to display landings with images and predictions
-        self.table = QTableWidget(self)
+        self.table = QTableWidget(self) 
         self.table.setRowCount(0)
         self.table.setColumnCount(7)  # Add a column for the Landing Prediction
         self.table.setHorizontalHeaderLabels(["Image", "Flight ID", "Source", "Destination", "Departure", "Landing", "Prediction"])
@@ -49,6 +49,9 @@ class LandingsView(QWidget):
         # Use controller to get the upcoming landings based on the selected hours
         filtered_flights = self.controller.get_upcoming_landings(hours_ahead)
 
+        #if there are no flights, return
+        if not filtered_flights:
+            return
         self.table.setRowCount(len(filtered_flights))
 
         # Populate the table with filtered flight data and images

@@ -96,7 +96,7 @@ class AdminController:
             )
 
             created_aircraft = self.dal.Aircraft.create_aircraft(new_aircraft)
-            self.show_success_message(f"Aircraft added successfully!\n{created_aircraft}")
+            self.show_success_message(f"Aircraft added successfully!\n")
 
         except AircraftCreationException:
             self.show_error_message("Unable to create aircraft. There might be a problem with the server. Please try again later or contact support.")
@@ -151,7 +151,7 @@ class AdminController:
             )
 
             created_flight = self.dal.Flight.create_flight(new_flight)
-            self.show_success_message(f"Flight added successfully! {created_flight}")
+            self.show_success_message(f"Flight from {source} to {destination} added successfully!")
 
         except FlightCreationException:
             self.show_error_message("Unable to create flight. There might be a problem with the server. Please try again later or contact support.")
