@@ -2,6 +2,8 @@
 from Flight_View.login_view import LoginView
 from dal.interfaces.idal import IDAL
 from exceptions import UserNotFoundException, InvalidCredentialsException, NetworkException, UnexpectedErrorException
+from datetime import datetime, timedelta
+
 
 class LoginController:
     def __init__(self, main_controller, admin_controller, passenger_controller, dal: IDAL):
@@ -28,6 +30,7 @@ class LoginController:
 
         try:
             user = self.dal.User.login_user(username, password)
+            today_details = self.dal.DateDetails.get_date_details(datetime.now(), "Tel Aviv")
 
             if user:
                 self.passenger_controller.current_user_id = user.id
@@ -35,7 +38,7 @@ class LoginController:
                 if user.role == 'admin':
                     self.admin_controller.show_admin_view()
                 else:
-                    self.passenger_controller.show_passenger_view(user=user)
+                    self.passenger_controller.show_passenger_view(user=user, date_details=today_details)
             else:
                 self.login_view.show_error("Invalid username or password.")
 
