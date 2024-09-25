@@ -236,39 +236,48 @@ class PassengerController:
 
         weather_event = "Clear" if random.randint(0, 1) == 0 else "Adverse"
 
-        # Create the prediction object
-        new_landing_pred = pd.DataFrame({
-            'Season': [season],
-            'FlightDistance': [flight_distance],
-            'FlightDuration': [flight_duration],
-            'DepartureAirportCongestion': [departure_congestion],
-            'ArrivalAirportCongestion': [arrival_congestion],
-            'DayOfWeek': [flight.landing_datetime.strftime('%A')],
-            'TimeOfFlight': [flight.departure_datetime.strftime('%H:%M')],
-            'ScheduledDepartureTime': [scheduled_departure.strftime('%H:%M')],
-            'ActualDepartureTime': [actual_departure.strftime('%H:%M')],
-            'DepartureDelay': [departure_delay],
-            'Temperature': [temperature],
-            'Visibility': [random.uniform(5, 10)],
-            'WindSpeed': [random.uniform(5, 20)],
-            'WeatherEvent': [weather_event]
-        })
-        print ("new_landing_pred: \n",new_landing_pred)
-        # Call the prediction function and return the result
-        return self.dal.Flight.is_landing_delayed(new_landing_pred)
+        # Create the flight details object that will be sent
+        flight_details = {
+            'Season': season,
+            'FlightDistance': flight_distance,
+            'FlightDuration': flight_duration,
+            'DepartureAirportCongestion': departure_congestion,
+            'ArrivalAirportCongestion': arrival_congestion,
+            'DayOfWeek': flight.landing_datetime.strftime('%A'),
+            'TimeOfFlight': flight.departure_datetime.strftime('%H:%M'),
+            'ScheduledDepartureTime': scheduled_departure.strftime('%H:%M'),
+            'ActualDepartureTime': actual_departure.strftime('%H:%M'),
+            'DepartureDelay': departure_delay,
+            'Temperature': temperature,
+            'Visibility': random.uniform(5, 10),
+            'WindSpeed': random.uniform(5, 20),
+            'WeatherEvent': weather_event
+        }
 
+        # Send flight_details to the prediction service
+        print("Sending flight details to prediction service:\n", flight_details)
+
+        # Call the prediction function and return the result
+        try:
+            prediction_result = self.dal.Flight.is_landing_delayed(flight_details)
+            print("Prediction result:\n", prediction_result)
+            return prediction_result
+        except Exception as e:
+            print(f"Error predicting flight delay: {e}")
+            raise FlightRetrievalException(f"Failed to retrieve flight delay status: {e}") from e
 
     def get_season(self, date):
-        """Determine the season from the date."""
-        month = date.month
-        if month in [12, 1, 2]:
-            return "Winter"
-        elif month in [3, 4, 5]:
-            return "Spring"
-        elif month in [6, 7, 8]:
-            return "Summer"
-        else:
-            return "Fall"
+            """Determine the season from the date."""
+            month = date.month
+            if month in [12, 1, 2]:
+                return "Winter"
+            elif month in [3, 4, 5]:
+                return "Spring"
+            elif month in [6, 7, 8]:
+                return "Summer"
+            else:
+                return "Fall"
+
 
     def show_error_message(self, message):
         """Show a pop-up error message."""
