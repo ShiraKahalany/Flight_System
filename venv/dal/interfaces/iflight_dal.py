@@ -22,6 +22,10 @@ class IFlightDAL(ABC):
     def get_flight_by_id(self, flight_id):
         pass
 
+    @abstractmethod
+    def is_landing_delayed(self, flight_details):
+        pass
+
     # @abstractmethod
     # def update_flight(self, flight_id, flight_data):
     #     pass

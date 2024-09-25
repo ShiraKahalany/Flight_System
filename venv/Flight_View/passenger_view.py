@@ -6,10 +6,11 @@ from PySide6.QtCore import QSize
 
 
 class PassengerView(QWidget):
-    def __init__(self, controller=None, user=None):
+    def __init__(self, controller=None, user=None, date_details=None):
         super().__init__(parent=None)
         self.controller = controller
         self.user = user
+        self.date_details = date_details
 
         # Create the main layout with reduced spacing
         main_layout = QVBoxLayout()
@@ -41,6 +42,18 @@ class PassengerView(QWidget):
 
         # Greeting the user with "Welcome back {user.first_name}!"
         self.greeting_label = QLabel(f"Welcome back {self.user.first_name}!", self)
+
+
+        #!!!!!!!!!!לתמר היקרה
+        shabbat_start = self.date_details.shabbat_start.strftime("%H:%M")
+        shabbat_end = self.date_details.shabbat_end.strftime("%H:%M")
+        parasha = self.date_details.parasha
+        hebrew_date = self.date_details.hebrew_date
+        days_of_week = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"]
+        day = days_of_week[self.date_details.day_of_week]
+        
+        #!!!!!!!!
+
         self.greeting_label.setAlignment(Qt.AlignCenter)
         self.greeting_label.setStyleSheet("""
             font-size: 50px; 
