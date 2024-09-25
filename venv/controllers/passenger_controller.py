@@ -11,6 +11,7 @@ from models.ticket import Ticket
 from Flight_View.my_flights_view import MyFlightsView
 from dal.interfaces.idal import IDAL
 from datetime import datetime, timedelta
+from controllers.utils import Utils
 from models.aircraft import Aircraft
 from exceptions import TicketCreationException,TicketRetrievalException, FlightRetrievalException, AircraftNotFoundException, UnexpectedErrorException, NetworkException, FlightNotFoundException
 from reportlab.lib.pagesizes import letter
@@ -43,6 +44,10 @@ class PassengerController:
                 user_id=self.current_user_id,
                 purchase_datetime=datetime.now()
             )
+            if not Utils.is_flight_allowed(flight_id):
+                self.show_error_message("The flight is during Shabbat or a holiday, \n it is not possible to buy a ticket.")
+                print
+                return
             self.dal.Ticket.create_ticket(new_ticket)
             print(f"New Ticket Created: {new_ticket}")
             self.show_success_message("Flight booked successfully!")
