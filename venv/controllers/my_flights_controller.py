@@ -19,9 +19,9 @@ class MyFlightsController:
             my_flights_view = MyFlightsView(controller=self, tickets=tickets)
             self.main_controller.set_view(my_flights_view)
         except TicketRetrievalException as tre:
-            self.show_error_message(f"Unable to retrieve your flights: {tre}")
+            self.show_error_message(f"Unable to retrieve your flights")
         except NetworkException as ne:
-            self.show_error_message(f"Network error while fetching your flights: {ne}")
+            self.show_error_message(f"Network error while fetching your flights")
         except UnexpectedErrorException as uee:
             self.show_error_message("An unexpected error occurred. Please try again later.")
         except Exception as e:
