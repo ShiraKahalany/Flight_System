@@ -1,6 +1,6 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, QPushButton, QLabel
-from PySide6.QtGui import QPixmap
-from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, QPushButton, QLabel, QFrame, QHeaderView, QSizePolicy
+from PySide6.QtGui import QPixmap, QIcon, QPainter
+from PySide6.QtCore import Qt, QSize
 
 class FlightsView(QWidget):
     def __init__(self, controller=None, flights=None):
@@ -10,37 +10,73 @@ class FlightsView(QWidget):
         layout = QVBoxLayout()
 
         # "Go Back" Button
-        self.back_button = QPushButton("← Go Back", self)
-        self.back_button.clicked.connect(self.go_back)
-        layout.addWidget(self.back_button)
+        self.back_button = QPushButton(self)
+        self.back_button.setIcon(QIcon(r"Flight_View/icons/back.png"))
+        self.back_button.setIconSize(QSize(20, 20)) 
 
+        self.back_button.setStyleSheet("""
+            background-color: white; 
+            border-radius: 18px;  
+            border: 2px solid #3498db;  
+            min-width: 36px;
+            min-height: 36px;
+            max-width: 36px;
+            max-height: 36px;
+        """)
+        self.back_button.clicked.connect(self.go_back)
+        layout.addWidget(self.back_button, alignment=Qt.AlignLeft)
+
+        # Create a semi-transparent container for the table
+        container = QFrame(self)
+        container.setStyleSheet("""
+            background-color: rgba(255, 255, 255, 0.8);  
+            border-radius: 20px;
+            padding: 20px;
+        """)
+        container.setFixedWidth(1000)  
+        container_layout = QVBoxLayout()
+
+        # Title label for the page
+        self.label = QLabel(f"All Flights", self)
+        self.label.setAlignment(Qt.AlignCenter)
+        self.label.setStyleSheet("""
+            font-size: 50px; 
+            font-weight: bold;
+            color: #000066;
+            background-color: transparent;
+            padding: 10px;
+        """)
+        container_layout.addWidget(self.label)
 
         # Create a table to display flights
         self.table = QTableWidget(self)
         self.table.setRowCount(len(self.flights))
-        self.table.setColumnCount(9)  # Add one more column for the Price
+        self.table.setColumnCount(9)  
         self.table.setHorizontalHeaderLabels(["Aircraft Image", "ID", "Aircraft", "Source", "Destination", "Departure", "Landing", "Price", "Action"])
 
-        # Set column width to make it wider
-        self.table.setColumnWidth(0, 100)  # Aircraft Image
-        self.table.setColumnWidth(1, 40)   # Flight ID
-        self.table.setColumnWidth(2, 100)  # Aircraft
-        self.table.setColumnWidth(3, 100)  # Source
-        self.table.setColumnWidth(4, 120)  # Destination
-        self.table.setColumnWidth(5, 120)  # Departure
-        self.table.setColumnWidth(6, 120)  # Landing
-        self.table.setColumnWidth(7, 80)   # Price
-        self.table.setColumnWidth(8, 60)   # Action
+        self.table.horizontalHeader().setVisible(True)
+        self.table.horizontalHeader().setStyleSheet("""
+            QHeaderView::section {
+                background-color: #3498db;  
+                color: white;
+                font-size: 16px;
+                font-weight: bold;
+                padding: 8px;
+                border: none;
+            }
+        """)
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)  
+        self.table.verticalHeader().setVisible(False)
 
-        # Populate the table with flight data and add "Watch" buttons
+        self.table.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
         for row, flight in enumerate(self.flights):
             if flight.aircraft:
-                # Add image to the first column
                 image_label = QLabel()
                 if flight.aircraft.image_data:
                     pixmap = QPixmap()
                     pixmap.loadFromData(flight.aircraft.image_data)
-                    pixmap = pixmap.scaled(80, 80, Qt.KeepAspectRatio)  # Scale the image
+                    pixmap = pixmap.scaled(80, 80, Qt.KeepAspectRatio)
                     image_label.setPixmap(pixmap)
                 else:
                     image_label.setText("No Image")
@@ -53,14 +89,23 @@ class FlightsView(QWidget):
             self.table.setItem(row, 4, QTableWidgetItem(flight.destination))
             self.table.setItem(row, 5, QTableWidgetItem(flight.departure_datetime.strftime('%Y-%m-%d %H:%M')))
             self.table.setItem(row, 6, QTableWidgetItem(flight.landing_datetime.strftime('%Y-%m-%d %H:%M')))
-            self.table.setItem(row, 7, QTableWidgetItem(f"${flight.price}"))  # Display the price
+            self.table.setItem(row, 7, QTableWidgetItem(f"${flight.price}"))
 
-            # Add the "Watch" button
-            watch_button = QPushButton("Watch", self)
+            watch_button = QPushButton(self)
+            watch_button.setIcon(QIcon(r"Flight_View/icons/watch.png"))  
+            watch_button.setIconSize(QSize(24, 24))
+            watch_button.setStyleSheet("""
+                QPushButton {
+                    background-color: transparent;
+                    border: none;
+                }
+            """)
             watch_button.clicked.connect(lambda _, f=flight: self.watch_flight(f))
             self.table.setCellWidget(row, 8, watch_button)
 
-        layout.addWidget(self.table)
+        container_layout.addWidget(self.table)
+        layout.addWidget(container, alignment=Qt.AlignTop | Qt.AlignHCenter)
+        container.setLayout(container_layout)
         self.setLayout(layout)
 
     def watch_flight(self, flight):
@@ -71,3 +116,12 @@ class FlightsView(QWidget):
         """ Calls go_back from the main application window """
         if self.parent() and hasattr(self.parent(), 'go_back'):
             self.parent().go_back()
+
+    def paintEvent(self, event):
+        """ Custom paint event to add the background image. """
+        painter = QPainter(self)
+        pixmap = QPixmap(r"Flight_View/icons/backgroundSky.png")  
+        if not pixmap.isNull():
+            painter.drawPixmap(self.rect(), pixmap)
+        else:
+            print("Image could not be loaded.")
