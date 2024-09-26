@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QFormLayout, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QLineEdit, QFrame
+from PySide6.QtWidgets import QWidget, QFormLayout, QLabel, QPushButton, QVBoxLayout, QLineEdit, QFrame
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QFont, QIcon, QPixmap, QPainter
 
@@ -35,8 +35,8 @@ class FlightEntryView(QWidget):
             border-radius: 20px;
             padding: 20px;
         """)
-        container.setFixedWidth(700)  # Adjust the width as needed
-        container.setFixedHeight(700)  # Adjust the width as needed
+        container.setFixedWidth(700)  
+        container.setFixedHeight(550)  
 
         container_layout = QVBoxLayout()
 
@@ -67,9 +67,9 @@ class FlightEntryView(QWidget):
 
         # Credit card details form
         credit_card_box = self.create_credit_card_box()
-        container_layout.addWidget(credit_card_box)
+        container_layout.addWidget(credit_card_box, alignment=Qt.AlignCenter)
 
-        container_layout.addSpacing(30)
+        container_layout.addSpacing(20)
 
         # "Purchase" Button - centered
         self.purchase_button = QPushButton("Purchase Ticket", self)
@@ -81,7 +81,7 @@ class FlightEntryView(QWidget):
             margin-top: 20px;
         """)
         self.purchase_button.setFont(QFont("Arial", 16))
-        container_layout.addWidget(self.purchase_button)
+        container_layout.addWidget(self.purchase_button, alignment=Qt.AlignCenter)
 
         # Add container layout to the container
         container.setLayout(container_layout)
@@ -95,30 +95,51 @@ class FlightEntryView(QWidget):
         credit_box = QFrame()
         credit_box.setFrameShape(QFrame.Box)
         credit_box.setLineWidth(2)
-        credit_box.setFixedWidth(400)
+        credit_box.setFixedWidth(450)  # Adjust width to fit inputs properly
+        credit_box.setFixedHeight(200)
 
         credit_layout = QFormLayout()
-        credit_layout.setAlignment(Qt.AlignCenter)
+        credit_layout.setHorizontalSpacing(5)  # Add space between labels and inputs
         credit_box.setLayout(credit_layout)
 
         # Credit card details input
         card_number_input = QLineEdit()
         card_number_input.setPlaceholderText("Card Number")
-        card_number_input.setFont(QFont("Arial", 12))
+        card_number_input.setFont(QFont("Arial", 10))
+        card_number_input.setFixedHeight(30)  # Adjust input box height
+        card_number_input.setFixedWidth(250)  # Adjust input box width
 
         cvv_input = QLineEdit()
         cvv_input.setPlaceholderText("CVV")
-        cvv_input.setFont(QFont("Arial", 12))
+        cvv_input.setFont(QFont("Arial", 10))
         cvv_input.setMaxLength(3)
+        cvv_input.setFixedHeight(30)  # Adjust input box height
+        cvv_input.setFixedWidth(150)  # Adjust input box width
 
         expiry_date_input = QLineEdit()
         expiry_date_input.setPlaceholderText("Expiry Date (MM/YY)")
-        expiry_date_input.setFont(QFont("Arial", 12))
+        expiry_date_input.setFont(QFont("Arial", 10))
+        expiry_date_input.setFixedHeight(30)  # Adjust input box height
+        expiry_date_input.setFixedWidth(250)  # Adjust input box width
+
+        # Styling labels
+        label_font = QFont("Arial", 10)
+
+        card_label = QLabel("Card Number:")
+        card_label.setFixedHeight(25)
+        card_label.setFont(label_font)
+        cvv_label = QLabel("CVV:")
+        cvv_label.setFixedHeight(25)
+        cvv_label.setFont(label_font)
+        expiry_label = QLabel("Expiry Date:")
+        expiry_label.setFixedHeight(25)
+
+        expiry_label.setFont(label_font)
 
         # Add the fields to the layout
-        credit_layout.addRow(QLabel("Card Number:"), card_number_input)
-        credit_layout.addRow(QLabel("CVV:"), cvv_input)
-        credit_layout.addRow(QLabel("Expiry Date:"), expiry_date_input)
+        credit_layout.addRow(card_label, card_number_input)
+        credit_layout.addRow(cvv_label, cvv_input)
+        credit_layout.addRow(expiry_label, expiry_date_input)
 
         return credit_box
 
