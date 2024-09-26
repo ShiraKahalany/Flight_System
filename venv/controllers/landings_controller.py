@@ -74,8 +74,6 @@ class LandingsController:
             'WeatherEvent': weather_event
         }
 
-        print("Sending flight details to prediction service:\n", flight_details)
-
         try:
             prediction_result = self.dal.Flight.is_landing_delayed(flight_details)
             print("Prediction result:\n", prediction_result)
