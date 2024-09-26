@@ -92,11 +92,11 @@ public class TicketService : ITicketService
     // Get all tickets by user Id
     public async Task<IEnumerable<Ticket>> GetTicketsByUserIdAsync(int userId)
     {
-        var tickets = await _context.Tickets.Where(t => t.UserId == userId).ToListAsync();
-        if (!tickets.Any())
-        {
-            throw new KeyNotFoundException($"No tickets found for user {userId}.");
-        }
-        return tickets;
+         return await _context.Tickets.Where(t => t.UserId == userId).ToListAsync();
+        //if (!tickets.Any())
+        //{
+        //    throw new KeyNotFoundException($"No tickets found for user {userId}.");
+        //}
+        //return tickets;
     }
 }
