@@ -1,6 +1,4 @@
 import sys
-import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from PySide6.QtWidgets import QApplication, QMainWindow
 from controllers.login_controller import LoginController
