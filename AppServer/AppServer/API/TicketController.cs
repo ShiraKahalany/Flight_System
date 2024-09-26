@@ -115,10 +115,6 @@ public class TicketController : ControllerBase
         try
         {
             var tickets = await _ticketService.GetTicketsByUserIdAsync(userId);
-            if (tickets == null || !tickets.Any())
-            {
-                return NotFound($"No tickets found for user {userId}.");
-            }
             return Ok(tickets);
         }
         catch (Exception ex)
