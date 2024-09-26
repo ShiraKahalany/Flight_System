@@ -10,7 +10,7 @@ from models.flight import Flight
 from dal.interfaces.idal import IDAL
 from datetime import datetime
 from models.aircraft import Aircraft
-from exceptions import FlightRetrievalException,AircraftNotFoundException, AircraftCreationException, AircraftRetrievalException, NetworkException, UnexpectedErrorException, FlightCreationException, ImageAnalysisException
+from exceptions import  FlightRetrievalException,AircraftNotFoundException, AircraftCreationException, AircraftRetrievalException, NetworkException, UnexpectedErrorException, FlightCreationException, ImageAnalysisException, TicketRetrievalException, TicketNotFoundException
 from collections import defaultdict
 from datetime import timedelta
 from PySide6.QtCore import Qt
@@ -71,7 +71,7 @@ class AdminController:
         try:
             is_aircraft = self.dal.ImageRecognition.is_aircraft_image(image_url)
             if not is_aircraft:
-                errors.append("The provided image does not appear to be an aircraft. Please upload an appropriate image.")
+                errors.append("The provided image does not appear to be an aircraft. \n Please upload an appropriate image.")
         except ImageAnalysisException:
             errors.append("Failed to analyze the image")
         except NetworkException:
@@ -100,9 +100,9 @@ class AdminController:
             self.show_success_message(f"Aircraft added successfully!\n")
 
         except AircraftCreationException:
-            self.show_error_message("Unable to create aircraft. There might be a problem with the server. Please try again later or contact support.")
+            self.show_error_message("Unable to create aircraft. \n Please try again later or contact support.")
         except NetworkException:
-            self.show_error_message("Network error occurred. Please check your internet connection and try again.")
+            self.show_error_message("Network error occurred. Please check your internet connection.")
         except Exception as e:
             self.show_error_message("An unexpected error occurred. Please try again later or contact support.")
             print(f"Unexpected error in save_aircraft: {e}")
@@ -155,7 +155,7 @@ class AdminController:
             self.show_success_message(f"Flight from {source} to {destination} added successfully!")
 
         except FlightCreationException:
-            self.show_error_message("Unable to create flight. There might be a problem with the server. Please try again later or contact support.")
+            self.show_error_message("Unable to create flight. There might be a problem with the server. \n Please try again later or contact support.")
         except NetworkException:
             self.show_error_message("Network error occurred. Please check your internet connection and try again.")
         except Exception as e:
@@ -196,18 +196,24 @@ class AdminController:
                 except AircraftNotFoundException:
                     flight.aircraft = None
                     print(f"Aircraft not found for flight {flight.id}")
+                except NetworkException:
+                    flight.aircraft = None
+                    print(f"Network error while fetching aircraft for flight {flight.id}")
+                except Exception as e:
+                    flight.aircraft = None
+                    print(f"Error fetching aircraft for flight {flight.id}: {e}")
             
             self.manager_flights_view = ManagerFlightsView(controller=self, flights=all_flights)
             self.main_controller.set_view(self.manager_flights_view)
         except FlightRetrievalException as fre:
-            self.show_error_message(f"Unable to retrieve flights: {fre}")
+            self.show_error_message(f"Sorry, unable to retrieve flights")
         except NetworkException as ne:
-            self.show_error_message(f"Network error while fetching flights: {ne}")
+            self.show_error_message(f"Network error while fetching flights")
         except UnexpectedErrorException as uee:
             self.show_error_message("An unexpected error occurred. Please try again later.")
             print(f"Unexpected error in show_all_flights: {uee}")
         except Exception as e:
-            self.show_error_message(f"Error loading flights: {e}")
+            self.show_error_message(f"Error loading flights")
 
     def download_image(self, url):
         """Download the image from the given URL and return its binary content."""
@@ -260,6 +266,16 @@ class AdminController:
             self.purchase_summary_view.plot_graph([month.split('-')[1] for month in next_12_months], sorted_purchases)  # Show only month numbers on the X-axis
             self.main_controller.set_view(self.purchase_summary_view)
 
+        except FlightRetrievalException:
+            self.show_error_message("Failed to retrieve flights. Please try again later.")
+            self.go_back()
+        except NetworkException:
+            self.show_error_message("Network error occurred. Please check your internet connection and try again.")
+            self.go_back()
+        except TicketRetrievalException:
+            self.show_error_message("Failed to retrieve tickets. Please try again later.")   
+            self.go_back()
         except Exception as e:
-            self.show_error_message(f"Error loading purchase summary: {e}")
+            self.show_error_message(f"Error loading purchase summary")
+            self.go_back()
 

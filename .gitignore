@@ -36,6 +36,8 @@ project.assets.json
 project.nuget.cache
 ApiEndpoints.json
 apphost.exe
+applicationhost.config
+
 staticwebassets.*
 /AppServer/AppServer/obj/project.nuget.cache
 /AppServer/AppServer/obj/project.assets.json
@@ -101,6 +103,8 @@ AppServer/.vs/ProjectEvaluation/appserver.metadata.v7.bin
 AppServer/.vs/ProjectEvaluation/appserver.projects.v7.bin
 AppServer/.vs/AppServer/v17/.futdcache.v2
 AppServer/.vs/AppServer/v17/.futdcache.v2
+AppServer/.vs/AppServer/config/applicationhost.config
+AppServer/.vs/AppServer/config/applicationhost.config
 AppServer/.vs/AppServer/config/applicationhost.config
 AppServer/.vs/AppServer/config/applicationhost.config
 AppServer/.vs/AppServer/config/applicationhost.config

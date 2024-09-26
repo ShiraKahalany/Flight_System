@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QMessageBox
 from Flight_View.flights_view import FlightsView
 from Flight_View.flight_entry_view import FlightEntryView
 from models.ticket import Ticket
-from exceptions import TicketCreationException, NetworkException, UnexpectedErrorException, AircraftNotFoundException
+from exceptions import TicketCreationException,FlightRetrievalException, NetworkException, UnexpectedErrorException, AircraftNotFoundException, DateDetailsRetrievalException, NetworkException
 from datetime import datetime
 import requests
 
@@ -23,10 +23,19 @@ class FlightBookingController:
                         aircraft.image_data = self.download_image(aircraft.image_url)
                 except AircraftNotFoundException:
                     flight.aircraft = None
+                except Exception as e:
+                    flight.aircraft = None
             flights_view = FlightsView(controller=self, flights=future_flights)
             self.main_controller.set_view(flights_view)
+        except FlightRetrievalException as fre:
+            self.show_error_message(f"Error loading flights")
+            self.main_controller.go_back()
+        except NetworkException as ne:
+            self.show_error_message(f"Network error")
+            self.main_controller.go_back()
         except Exception as e:
-            self.show_error_message(f"Error loading flights: {e}")
+            self.show_error_message(f"Error loading flights")
+            self.main_controller.go_back()
 
     def show_flight_details(self, flight_id):
         try:
@@ -37,8 +46,17 @@ class FlightBookingController:
                 self.main_controller.set_view(flight_entry_view)
             else:
                 raise Exception("Flight not found")
+                self.show_error_message("Flight not found") 
+                self.main_controller.go_back()
+        except FlightRetrievalException as fre:
+            self.show_error_message(f"Error loading flight details")
+            self.main_controller.go_back()
+        except NetworkException as ne:
+            self.show_error_message(f"Network error")
+            self.main_controller.go_back()
         except Exception as e:
-            self.show_error_message(f"Error loading flight details: {e}")
+            self.show_error_message(f"Error loading flight details")
+            self.main_controller.go_back()
 
     def book_flight(self, flight_id, user_id):
         try:
@@ -53,6 +71,11 @@ class FlightBookingController:
             )
             self.dal.Ticket.create_ticket(new_ticket)
             self.show_success_message("Flight booked successfully!")
+        except TicketCreationException as tce:
+            self.show_error_message(f"Error booking this flight")
+            self.main_controller.go_back() 
+        except NetworkException as ne:
+            self.show_error_message(f"Network error, please check your connection")
         except Exception as e:
             self.show_error_message(f"Error booking flight: {e}")
             
@@ -64,13 +87,25 @@ class FlightBookingController:
 
     def is_flight_during_shabbat_or_holiday(self, flight_id):
         try:
-            flight = self.dal.Flight.get_flight_by_id(flight_id)
-            departure_info = self.dal.DateDetails.get_date_details(flight.departure_datetime, flight.source)
-            arrival_info = self.dal.DateDetails.get_date_details(flight.landing_datetime, flight.destination)
-            return (departure_info.day_of_week == 6 or arrival_info.day_of_week == 6 or
-                    departure_info.is_holiday or arrival_info.is_holiday)
+            try:
+                flight = self.dal.Flight.get_flight_by_id(flight_id)
+            except FlightNotFoundException as e:
+                self.show_error_message("Sorry, Cant purchase tichet to this flight")
+                return False
+            
+            try:
+                departure_info = self.dal.DateDetails.get_date_details(flight.departure_datetime, flight.source)
+                arrival_info = self.dal.DateDetails.get_date_details(flight.landing_datetime, flight.destination)
+                return (departure_info.day_of_week == 6 or arrival_info.day_of_week == 6 or
+                        departure_info.is_holiday or arrival_info.is_holiday)
+            except DateDetailsRetrievalException as ddre:
+                self.show_error_message(f"Error checking flight schedule")
+                return False
+        except NetworkException as ne:
+            self.show_error_message(f"Network error")
+            self.main_controller.go_back()
         except Exception as e:
-            self.show_error_message(f"Error checking flight schedule: {e}")
+            self.show_error_message(f"Error checking flight schedule")
             return False
 
     def download_image(self, url):

@@ -41,23 +41,25 @@ class FlightDAL(IFlightDAL):
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 404:
                 raise FlightNotFoundException(f"No flights found for user {user_id}") from e
+            elif e.response.status_code == 400:
+                raise FlightRetrievalException(f"Invalid user id") from e
             else:
-                raise FlightRetrievalException(f"Failed to retrieve user flights: {e}") from e
+                raise FlightRetrievalException(f"Failed to retrieve user flights") from e
         except NetworkException as e:
-            raise NetworkException(f"Network error during user flight retrieval: {e}") from e
+            raise NetworkException(f"Network error during user flight retrieval") from e
         except Exception as e:
-            raise UnexpectedErrorException(f"Unexpected error during user flight retrieval: {e}") from e
+            raise UnexpectedErrorException(f"Unexpected error during user flight retrieval") from e
     
     def get_BGR_lands_next_5_hours(self):
         try:
             res = self.api_client.get("flight/next5hours")
             return [Flight.to_client_format(flight_data) for flight_data in res.json()]
         except requests.exceptions.HTTPError as e:
-            raise FlightRetrievalException(f"Failed to retrieve BGR flights for next 5 hours: {e}") from e
+            raise FlightRetrievalException(f"Failed to retrieve BGR flights for next 5 hours") from e
         except NetworkException as e:
-            raise NetworkException(f"Network error during BGR flight retrieval: {e}") from e
+            raise NetworkException(f"Network error") from e
         except Exception as e:
-            raise UnexpectedErrorException(f"Unexpected error during BGR flight retrieval: {e}") from e
+            raise UnexpectedErrorException(f"Unexpected error during BGR flight retrieval") from e
     
     def get_flight_by_id(self, flight_id):
         try:
