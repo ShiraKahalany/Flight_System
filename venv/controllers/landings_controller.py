@@ -11,9 +11,15 @@ class LandingsController:
 
     def watch_landings(self):
         try:
-            flights_in_next_5_hours = self.dal.Flight.get_BGR_lands_next_5_hours()
+            #flights_in_next_5_hours = self.dal.Flight.get_BGR_lands_next_5_hours()
             landings_view = LandingsView(controller=self)
             self.main_controller.set_view(landings_view)
+        except NetworkException as ne:
+            self.show_error_message(f"Networt error. Please check your connection.")
+            self.go_back()
+        except FlightRetrievalException as fre:
+            self.show_error_message(f"Sorry. Error loading landings")
+            self.main_controller.go_back()
         except Exception as e:
             self.show_error_message(f"Error fetching landings: {e}")
 
@@ -24,6 +30,12 @@ class LandingsController:
             future_time = now + timedelta(hours=hours_ahead)
             filtered_flights = [f for f in flights_in_next_5_hours if now <= f.landing_datetime <= future_time]
             return filtered_flights
+        except NetworkException as ne:
+            self.show_error_message(f"Networt error. Please check your connection.")
+            self.go_back()
+        except FlightRetrievalException as fre:
+            self.show_error_message(f"Sorry. Error loading landings")
+            self.main_controller.go_back()
         except Exception as e:
             self.show_error_message(f"Error retrieving upcoming landings: {e}")
             return []
@@ -78,9 +90,13 @@ class LandingsController:
             prediction_result = self.dal.Flight.is_landing_delayed(flight_details)
             print("Prediction result:\n", prediction_result)
             return prediction_result
+        except NetworkException as ne:
+            self.show_error_message(f"Predicting network error")
+            return False
         except Exception as e:
             print(f"Error predicting flight delay: {e}")
-            raise FlightRetrievalException(f"Failed to retrieve flight delay status: {e}") from e
+            self.show_error_message(f"Error predicting flight delay")
+            return False
 
     def get_season(self, date):
         month = date.month

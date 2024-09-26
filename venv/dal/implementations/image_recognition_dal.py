@@ -13,6 +13,10 @@ class ImageRecognitionDAL(IImageRecognitionDAL):
             #response = requests.get(f"image/analyze/{image_url}")
             return response.text
         except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 400:
+                raise ImageAnalysisException(f"Invalid image data: {e.response.text}") from e
+            else:
+                raise ImageAnalysisException(f"Error analyzing image: {e}") from e
             raise ImageAnalysisException(f"Error analyzing image: {e}") from e
         except NetworkException as e:
             raise NetworkException(f"Network error during image analysis: {e}") from e

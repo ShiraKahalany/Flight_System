@@ -71,26 +71,33 @@ class MyFlightsController:
         content.append(Paragraph(f"Flight Ticket: {ticket.id}", title_style))
         content.append(Spacer(1, 12))
 
-        flight = self.dal.Flight.get_flight_by_id(ticket.flight_id)
-        aircraft = self.dal.Aircraft.get_aircraft_by_id(flight.aircraft_id)
+        try:
+            flight = self.dal.Flight.get_flight_by_id(ticket.flight_id)
+            aircraft = self.dal.Aircraft.get_aircraft_by_id(flight.aircraft_id)
         
-        details = [
-            {"label": "Flight", "value": f"{flight.source} → {flight.destination}"},
-            {"label": "Departure", "value": flight.departure_datetime.strftime('%Y-%m-%d %H:%M')},
-            {"label": "Landing", "value": flight.landing_datetime.strftime('%Y-%m-%d %H:%M')},
-            {"label": "Aircraft", "value": aircraft.nickname},
-            {"label": "Purchase time", "value": ticket.purchase_datetime.strftime('%Y-%m-%d %H:%M')}
-        ]
+            details = [
+                {"label": "Flight", "value": f"{flight.source} → {flight.destination}"},
+                {"label": "Departure", "value": flight.departure_datetime.strftime('%Y-%m-%d %H:%M')},
+                {"label": "Landing", "value": flight.landing_datetime.strftime('%Y-%m-%d %H:%M')},
+                {"label": "Aircraft", "value": aircraft.nickname},
+                {"label": "Purchase time", "value": ticket.purchase_datetime.strftime('%Y-%m-%d %H:%M')}
+            ]
 
-        for detail in details:
-            content.append(Paragraph(detail["label"], label_style))
-            content.append(Paragraph(detail["value"], normal_style))
-            content.append(Spacer(1, 10))
+            for detail in details:
+                content.append(Paragraph(detail["label"], label_style))
+                content.append(Paragraph(detail["value"], normal_style))
+                content.append(Spacer(1, 10))
 
-        pdf.build(content)
+            pdf.build(content)
 
-        print(f"PDF saved: {file_path}")
-        os.startfile(file_path)  # This will open the file automatically on Windows.
+            print(f"PDF saved: {file_path}")
+            os.startfile(file_path)  # This will open the file automatically on Windows.
+        except NetworkException as ne:
+            print(f"Network error while fetching flight details: {ne}")
+            self.show_error_message("Network error while fetching flight details. Please try again.")
+        except Exception as e:
+            print(f"Error creating PDF: {e}")
+            self.show_error_message("Error creating PDF. Please try again.")
 
     def show_error_message(self, message):
         QMessageBox.critical(None, "Error", message, QMessageBox.Ok)
