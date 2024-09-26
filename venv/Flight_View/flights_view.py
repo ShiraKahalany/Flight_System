@@ -33,7 +33,10 @@ class FlightsView(QWidget):
             border-radius: 20px;
             padding: 20px;
         """)
-        container.setFixedWidth(1000)  
+        container.setFixedWidth(1100)  
+        container.setFixedHeight(600)  
+
+
         container_layout = QVBoxLayout()
 
         # Title label for the page
@@ -46,7 +49,7 @@ class FlightsView(QWidget):
             background-color: transparent;
             padding: 10px;
         """)
-        container_layout.addWidget(self.label)
+        container_layout.addWidget(self.label)        
 
         # Create a table to display flights
         self.table = QTableWidget(self)
@@ -55,21 +58,26 @@ class FlightsView(QWidget):
         self.table.setHorizontalHeaderLabels(["Aircraft Image", "ID", "Aircraft", "Source", "Destination", "Departure", "Landing", "Price", "Action"])
 
         self.table.horizontalHeader().setVisible(True)
-        self.table.horizontalHeader().setStyleSheet("""
-            QHeaderView::section {
-                background-color: #3498db;  
+        self.table.horizontalHeader().setStyleSheet("font-weight: bold; font-size: 11px; background-color: #3498db; color: white; padding: 2px;")
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.table.verticalHeader().setVisible(False)  # Hide the vertical header
+
+        self.table.setContentsMargins(0, 100, 0, 100)
+        self.table.setStyleSheet("""
+            QTableWidget::item {
+                padding: 0px;
+                text-align: center;  /* Center align text */
+            }
+            QTableWidget::item:selected {
+                background-color: #3498db;
                 color: white;
-                font-size: 16px;
-                font-weight: bold;
-                padding: 8px;
-                border: none;
+            }
+            QTableWidget {
+                gridline-color: #3498db;
+                background-color: white;
+                alternate-background-color: #ecf0f1;
             }
         """)
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)  
-        self.table.verticalHeader().setVisible(False)
-
-        self.table.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-
         for row, flight in enumerate(self.flights):
             if flight.aircraft:
                 image_label = QLabel()
@@ -102,6 +110,8 @@ class FlightsView(QWidget):
             """)
             watch_button.clicked.connect(lambda _, f=flight: self.watch_flight(f))
             self.table.setCellWidget(row, 8, watch_button)
+            self.table.setRowHeight(row, 60)  # Set the row height to 80 (adjust as needed)
+
 
         container_layout.addWidget(self.table)
         layout.addWidget(container, alignment=Qt.AlignTop | Qt.AlignHCenter)
