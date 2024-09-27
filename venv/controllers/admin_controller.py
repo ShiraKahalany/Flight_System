@@ -214,6 +214,7 @@ class AdminController:
             print(f"Unexpected error in show_all_flights: {uee}")
         except Exception as e:
             self.show_error_message(f"Error loading flights")
+            print(f"Error in show_all_flights: {e}")
 
     def download_image(self, url):
         """Download the image from the given URL and return its binary content."""

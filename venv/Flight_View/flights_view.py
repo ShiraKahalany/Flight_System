@@ -58,7 +58,7 @@ class FlightsView(QWidget):
         self.table.setHorizontalHeaderLabels(["Aircraft Image", "ID", "Aircraft", "Source", "Destination", "Departure", "Landing", "Price", "Action"])
 
         self.table.horizontalHeader().setVisible(True)
-        self.table.horizontalHeader().setStyleSheet("font-weight: bold; font-size: 11px; background-color: #3498db; color: white; padding: 2px;")
+        self.table.horizontalHeader().setStyleSheet("font-weight: bold; font-size: 11px; background-color: #3498db; color: #3498db; padding: 2px;")
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.table.verticalHeader().setVisible(False)  # Hide the vertical header
 

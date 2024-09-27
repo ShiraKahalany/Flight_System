@@ -85,7 +85,7 @@ class LandingsView(QWidget):
 
         # Set column widths and make headers visible
         self.table.horizontalHeader().setVisible(True)
-        self.table.horizontalHeader().setStyleSheet("font-weight: bold; font-size: 11px; background-color: #3498db; color: white; padding: 0px;")
+        self.table.horizontalHeader().setStyleSheet("font-weight: bold; font-size: 11px; background-color: #3498db; color: #3498db; padding: 0px;")
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.table.verticalHeader().setVisible(False)  # Hide the vertical header
 
